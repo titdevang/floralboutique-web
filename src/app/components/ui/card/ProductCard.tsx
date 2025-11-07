@@ -2,7 +2,7 @@ import { Product, ProductCardProps } from "@/app/types/Product";
 import Link from "next/link";
 import React, {memo, useState} from "react";
 import ImageWithFallback from "../fields/ImageWithFallback";
-import AddToCart from "@/app/components/ui/button/AddToCart";
+// import AddToCart from "@/app/components/ui/button/AddToCart";
 import Modal from "@/app/components/ui/modal/modal";
 import ProductDetail from "@/app/components/section/ProductDetailComponent";
 
@@ -37,7 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
                   }
 
               </h4>}
-              <AddToCart product={product} onAdded={(p) => setAddedProduct(p)}  className="absolute z-20 -bottom-0.5 w-full py-1.5 bg-black hover:bg-opacity-100 bg-opacity-65 transform translate-y-full group-hover:translate-y-0 transition-all duration-300 ease-in-out flex justify-center"/>
+              {/*<AddToCart product={product} onAdded={(p) => setAddedProduct(p)}  className="absolute z-20 -bottom-0.5 w-full py-1.5 bg-black hover:bg-opacity-100 bg-opacity-65 transform translate-y-full group-hover:translate-y-0 transition-all duration-300 ease-in-out flex justify-center"/>*/}
           </div>
           <div className="flex flex-col flex-grow justify-between">
             <h3 className="mb-2 line-clamp-2 text-gray-extra-dark group-hover:text-primary duration-300">
