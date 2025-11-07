@@ -82,7 +82,7 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({
 
     return (
         <aside className="space-y-4 text-[15px] p-3 pt-2 border border-gray-light rounded text-gray-extra-dark">
-            <div className={"flex justify-between items-center"}>
+            <div className={"flex justify-between items-center border-b border-neutral-100 py-2"}>
                 <h4 className={"text-lg font-semibold"}>Filter</h4>
                 {Object.values(filters).some(
                     (value) =>

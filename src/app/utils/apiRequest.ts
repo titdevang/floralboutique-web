@@ -33,7 +33,7 @@ export const apiRequest = async <T>(
     headers: {
       ...config.headers,
       "Content-Type": "application/json",
-      ...(method === "GET" ? { "edge-cache": true } : {}),
+      ...(method === "GET" ? { "edge-cache": false } : {}),
     },
     ...(isPdfRequest ? { responseType: "blob" as const } : {}),
   };
