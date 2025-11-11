@@ -1,6 +1,7 @@
 export interface ProductCardProps {
   product: Product;
   categoryName: string;
+  onClick?: () => void;
 }
 
 export interface ProductsProps {
@@ -65,4 +66,5 @@ export interface Product {
   productInfo: string;
   moreInfo: string;
   quantity: number;
+  thumbnail_img?: string; 
 }

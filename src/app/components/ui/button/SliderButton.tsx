@@ -17,7 +17,7 @@ const SliderButton: React.FC<SliderButtonProps> = ({
     "absolute z-10 top-1/2 -translate-y-1/2 bg-primary font-bold text-white shadow rounded-tl-xl rounded-br-xl flex items-center justify-center";
 
   const sizeClasses =
-    "w-[24px] h-[24px] md:w-[40px] md:h-[40px] md:text-lg ";
+    "w-[24px] h-[24px] md:w-[20px] md:h-[40px] md:text-lg ";
 
   return (
     <button

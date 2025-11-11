@@ -31,6 +31,7 @@ export default function ProductDetail({params}: ProductProps) {
     const { addToCart } = useCart()
 
     useEffect(() => {
+        console.log(pathname)
         const fetchProduct = async () => {
             try {
                 const response = await apiRequest("GET", `/product/${pathname}`);

@@ -67,9 +67,14 @@ module.exports = {
                         boxShadow: "0 0 0 16px rgba(103, 25, 69, 0.3)",
                     }
                 },
+                fadeIn: {
+                    "0%": { opacity: "0" },
+                    "100%": { opacity: "1" },
+                },
             },
             animation: {
                 "shadow-blink": "shadow-blink 1.5s infinite ease-in-out",
+                fadeIn: "fadeIn 0.2s ease-in",
             },
             fontSize: {
                 "md": "18px"

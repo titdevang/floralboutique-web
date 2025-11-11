@@ -31,7 +31,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     const menuRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
-    const { cartData, setCartData } = useCart();
+    const {cartData, setCartData, removeFromCart} = useCart();
     const contentEl = useRef<HTMLDivElement>(null);
     const height = menuOpen ? contentEl.current?.scrollHeight : 0;
 
@@ -48,6 +48,19 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        if (menuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [menuOpen]);
+
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
@@ -97,7 +110,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     };
 
     const handleRemoveItem = (id: number) => {
-        setCartData((prevData) => prevData.filter((item) => item.id !== id));
+        removeFromCart(id)
     };
 
     const subtotal = cartData.reduce(
@@ -129,35 +142,41 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
             </div>
 
             <div
-                className={`absolute ${
-                    align === "right" ? "md:right-0 -right-5" : "left-0"
-                } mt-2 w-[300px] md:min-w-[350px] bg-white shadow-xl border-gray z-50 overflow-hidden transition-[max-height,opacity] duration-500 ease-in-out`}
+                className={`fixed inset-0 bg-black bg-opacity-20 z-40 transition-opacity duration-300 ${
+                    menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+                onClick={() => setMenuOpen(false)}
+            ></div>
+
+            <div
+                className={`fixed top-0 right-0 z-50 h-screen overflow-hidden transition-transform duration-500 ease-in-out`}
                 ref={contentEl}
                 style={{
-                    maxHeight: height ? `${height}px` : "0px",
-                    transition: "max-height 0.4s ease-in-out, opacity 0.4s ease-in-out",
+                    transform: menuOpen ? 'translateX(0)' : 'translateX(100%)',
                     opacity: menuOpen ? 1 : 0,
+                    transition: 'transform 0.4s ease-in-out, opacity 0.4s ease-in-out',
                 }}
                 id={menuId}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby={triggerRef.current?.firstElementChild?.id}
             >
-                <div className=" p-6 w-full max-w-md bg-white flex flex-col">
+                <div className=" p-6 w-full max-w-md md:min-w-[350px] h-full rounded-l-sm bg-white flex flex-col text-gray-extra-dark">
                     {cartData.length ? (
                         <>
-                            <h3 className="font-semibold text-sm text-gray-800 mb-4 border-b border-gray-light pb-2">
+                            <h3 className="font-semibold text-sm mb-4 border-b border-gray-light pb-2">
                                 Cart Items
                             </h3>
 
-                            <div className="flex flex-col gap-4 flex-1 overflow-y-auto max-h-[50vh]">
+                            <div className="flex flex-col gap-4 flex-1 overflow-y-auto ">
                                 {cartData.map((item, index) => (
                                     <div
                                         key={index}
                                         role="none"
                                         className="flex items-start justify-between gap-3 pb-3 "
                                     >
-                                        <Link href={`/product/${item.slug}`} onClick={()=>handleItemClick()} className="flex gap-3 flex-1 group">
+                                        <Link href={`/product/${item.slug}`} onClick={() => handleItemClick()}
+                                              className="flex gap-3 flex-1 group">
 
                                             <Image
                                                 src={`${item?.imageUrl}`}
@@ -188,7 +207,8 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
 
                             {/* Subtotal & Actions */}
                             <div className="mt-4 pt-3 bottom-0 bg-white">
-                                <div className="flex justify-between text-sm font-medium py-3 mb-3 border-y border-gray-light ">
+                                <div
+                                    className="flex justify-between text-sm font-medium py-3 mb-3 border-y border-gray-light ">
                                     <span>Subtotal</span>
                                     <span>
             ₹
@@ -196,7 +216,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                                      </span>
                                 </div>
 
-                                <Link href={"/checkout"} >
+                                <Link href={"/checkout"}>
                                     <button
                                         onClick={() => handleItemClick()}
                                         className="w-full bg-secondary-base text-white py-2 rounded-full font-medium hover:bg-hov-secondary-base transition">

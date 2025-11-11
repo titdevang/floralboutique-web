@@ -52,21 +52,21 @@ const Navbar = () => {
           </div>
           <div className="flex items-center gap-7">
             {/* ------------wishlist------------- */}
-              <div>
+            {/*  <div>*/}
 
-            <Tooltip text="Wishlist">
-              <Link href={"/"} className="relative">
-                <SvgIcon
-                  name={"wishlist.svg"}
-                  localImage="wishlist.svg"
-                  fill="currentColor"
-                  className="text-primary"
-                  width={25}
-                  height={25}
-                />
-              </Link>
-            </Tooltip>
-              </div>
+            {/*<Tooltip text="Wishlist">*/}
+            {/*  <Link href={"/"} className="relative">*/}
+            {/*    <SvgIcon*/}
+            {/*      name={"wishlist.svg"}*/}
+            {/*      localImage="wishlist.svg"*/}
+            {/*      fill="currentColor"*/}
+            {/*      className="text-primary"*/}
+            {/*      width={25}*/}
+            {/*      height={25}*/}
+            {/*    />*/}
+            {/*  </Link>*/}
+            {/*</Tooltip>*/}
+            {/*  </div>*/}
 
             {/* ---------------location------------- */}
               <div>

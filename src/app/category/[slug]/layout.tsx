@@ -12,6 +12,8 @@ import MobileSortFilter from "@/app/components/layout/category/MobileSortFilter"
 import MobileFilterModal from "@/app/components/layout/category/MobileFilterModal";
 import SmoothAccordion from "@/app/components/section/accordion/SmoothAccordion";
 import {accordionItem} from "@/app/types/Types";
+import {CategoryProvider} from "@/app/context/CategoryContext";
+import {CategoryListCacheProvider} from "@/app/context/CategoryListCacheContext";
 
 export default function Layout({
                                    children,
@@ -66,7 +68,7 @@ export default function Layout({
     }, [slug]);
 
     return (
-        <div>
+        <CategoryListCacheProvider>
             <div>
                 <ImageWithFallback
                     src={"https://floralboutique.in/uploads/all/IAhKAFq9j2vtIdh0CHsEv2cbbspBppp6hURO7RnI.png"}
@@ -136,6 +138,6 @@ export default function Layout({
 
                 </div>
             </div>
-        </div>
+        </CategoryListCacheProvider>
     );
 }

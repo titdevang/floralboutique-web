@@ -6,7 +6,7 @@ import ImageWithFallback from "../fields/ImageWithFallback";
 import Modal from "@/app/components/ui/modal/modal";
 import ProductDetail from "@/app/components/section/ProductDetailComponent";
 
-const CategoryCard: React.FC<ProductCardProps> = memo(({ product }) => {
+const CategoryCard: React.FC<ProductCardProps> = memo(({ product, onClick }) => {
     const [addedProduct, setAddedProduct] = useState<null | Product>(null);
 
   return (
@@ -21,6 +21,7 @@ const CategoryCard: React.FC<ProductCardProps> = memo(({ product }) => {
       <Link
         href={"/product/" + product.slug}
         className="group  h-full duration-300 select-none flex flex-col justify-between"
+        onClick={onClick}
       >
         <div className="flex flex-col h-full rounded-md bg-product-card border border-neutral-200 hover:shadow-[0px_0px_20px_-1px_rgba(0,0,0,0.17)] duration-300 overflow-hidden pb-2">
           <div className="relative w-full aspect-square mb-3 overflow-hidden">
