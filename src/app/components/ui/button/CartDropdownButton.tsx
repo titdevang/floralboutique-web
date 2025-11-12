@@ -32,24 +32,24 @@ const CartDropdownButton: React.FC<CartDropdownButtonProps> = ({
     ];
 
     return (
-        <CartDropdownMenu
-            items={userMenuItems}
-            align="right"
-            trigger={
-                <button className="cursor-pointer !">
-                    <SvgIcon
-                        name={icon + (isMobile ? "-mobile" : "")}
-                        width={25}
-                        height={25}
-                        localImage={icon}
-                        fill="currentColor"
-                        className="text-primary"
-                    />
-                </button>
-            }
-            actionClassName="!text-hov-primary"
-            linkClassName="hover:text-primary duration-300"
-        />
+      <CartDropdownMenu
+        items={userMenuItems}
+        align="right"
+        trigger={
+          <button type="button" aria-label="Cart" className="cursor-pointer !">
+            <SvgIcon
+              name={icon + (isMobile ? "-mobile" : "")}
+              width={25}
+              height={25}
+              localImage={icon}
+              fill="currentColor"
+              className="text-primary"
+            />
+          </button>
+        }
+        actionClassName="!text-hov-primary"
+        linkClassName="hover:text-primary duration-300"
+      />
     );
 };
 

@@ -62,7 +62,7 @@ const MobileSortFilter = () => {
                     className={"rotate-90"}
                 />
                 <div>
-                    <h4 className={"text-md"}>Short</h4>
+                    <p className={"text-md"}>Short</p>
                     <p className={"font-light"}>{selectedSort}</p>
                 </div>
             </div>

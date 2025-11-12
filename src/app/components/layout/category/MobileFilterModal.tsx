@@ -127,7 +127,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ filtersConfig }) 
                     className={"rotate-90"}
                 />
                 <div>
-                    <h4 className={"text-md"}>Filter</h4>
+                    <p className={"text-md"}>Filter</p>
                     <div>
                         <p className={"font-light"}>
                             {Object.values(filters).filter(f => Array.isArray(f) && f.length > 0).length } Filters

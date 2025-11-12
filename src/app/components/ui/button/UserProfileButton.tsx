@@ -37,15 +37,15 @@ const UserProfileButton: React.FC<UserProfileButtonProps> = ({
 
     if (!userAuthenticated) {
         return (
-            <Link href="/users/login" className="text-primary">
-                <SvgIcon
-                    name={`login-${icon}`}
-                    width={25}
-                    height={25}
-                    localImage={icon}
-                    fill="currentColor"
-                />
-            </Link>
+          <Link href="/users/login" aria-label="Login" className="text-primary">
+            <SvgIcon
+              name={`login-${icon}`}
+              width={25}
+              height={25}
+              localImage={icon}
+              fill="currentColor"
+            />
+          </Link>
         );
     }
 

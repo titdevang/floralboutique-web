@@ -81,150 +81,167 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({
     const rangePrice = filtersConfig?.find((f) => f.key === "price") || null;
 
     return (
-        <aside className="space-y-4 text-[15px] p-3 pt-2 border border-gray-light rounded text-gray-extra-dark">
-            <div className={"flex justify-between items-center border-b border-neutral-100 py-2"}>
-                <h4 className={"text-lg font-semibold"}>Filter</h4>
-                {Object.values(filters).some(
-                    (value) =>
-                        (Array.isArray(value) && value.length > 0) ||
-                        (typeof value === "object" &&
-                            value !== null &&
-                            "0" in value &&
-                            "1" in value &&
-                            (
-                                value[0] !==
-                                filtersConfig.find((f) => f.key === "price")?.range?.min ||
-                                value[1] !==
-                                filtersConfig.find((f) => f.key === "price")?.range?.max
-                            ))
-                ) && (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            const clearedFilters: Record<string, FilterValue> = {};
-                            filtersConfig.forEach((item) => {
-                                if (item.type === "checkbox") clearedFilters[item.key] = [];
-                                else if (item.type === "range" && item.range)
-                                    clearedFilters[item.key] = [item.range.min, item.range.max];
-                            });
-                            setFilters(clearedFilters);
-                        }}
-                        className="text-primary text-xs"
-                    >
-                        Clear all
-                    </button>
-                )}
+      <aside className="space-y-4 text-[15px] p-3 pt-2 border border-gray-light rounded text-gray-extra-dark">
+        <div
+          className={
+            "flex justify-between items-center border-b border-neutral-100 py-2"
+          }
+        >
+          <h4 className={"text-lg font-semibold"}>Filter</h4>
+          {Object.values(filters).some(
+            (value) =>
+              (Array.isArray(value) && value.length > 0) ||
+              (typeof value === "object" &&
+                value !== null &&
+                "0" in value &&
+                "1" in value &&
+                (value[0] !==
+                  filtersConfig.find((f) => f.key === "price")?.range?.min ||
+                  value[1] !==
+                    filtersConfig.find((f) => f.key === "price")?.range?.max))
+          ) && (
+            <button
+              type="button"
+              onClick={() => {
+                const clearedFilters: Record<string, FilterValue> = {};
+                filtersConfig.forEach((item) => {
+                  if (item.type === "checkbox") clearedFilters[item.key] = [];
+                  else if (item.type === "range" && item.range)
+                    clearedFilters[item.key] = [item.range.min, item.range.max];
+                });
+                setFilters(clearedFilters);
+              }}
+              className="text-primary text-xs"
+            >
+              Clear all
+            </button>
+          )}
+        </div>
+        {rangePrice && rangePrice?.type === "range" && rangePrice?.range && (
+          <div className="flex flex-col gap-3 pb-4">
+            <p
+              className={
+                "w-full lg:text-xs xl:text-sm font-semibold flex justify-between items-center hover:text-primary py-1 transition"
+              }
+            >
+              Price{" "}
+            </p>
+            <div className="relative w-full flex flex-col px-4">
+              <div className="relative h-1 border border-gray-light rounded-full mt-6">
+                <div
+                  className="absolute h-1 bg-primary rounded-full"
+                  style={{
+                    left: `${
+                      (((filters[rangePrice.key] as [number, number])[0] -
+                        rangePrice.range.min) /
+                        (rangePrice.range.max - rangePrice.range.min)) *
+                      100
+                    }%`,
+                    right: `${
+                      100 -
+                      (((filters[rangePrice.key] as [number, number])[1] -
+                        rangePrice.range.min) /
+                        (rangePrice.range.max - rangePrice.range.min)) *
+                        100
+                    }%`,
+                  }}
+                />
 
-            </div>
-            {rangePrice && rangePrice?.type === "range" && rangePrice?.range && (
-                <div className="flex flex-col gap-3 pb-4">
-                    <p className={"w-full lg:text-xs xl:text-sm font-semibold flex justify-between items-center hover:text-primary py-1 transition"}>Price </p>
-                    <div className="relative w-full flex flex-col px-4">
-
-                        <div className="relative h-1 border border-gray-light rounded-full mt-6">
-                            <div
-                                className="absolute h-1 bg-primary rounded-full"
-                                style={{
-                                    left: `${
-                                        ((filters[rangePrice.key] as [number, number])[0] - rangePrice.range.min) /
-                                        (rangePrice.range.max - rangePrice.range.min) *
-                                        100
-                                    }%`,
-                                    right: `${
-                                        100 -
-                                        ((filters[rangePrice.key] as [number, number])[1] - rangePrice.range.min) /
-                                        (rangePrice.range.max - rangePrice.range.min) *
-                                        100
-                                    }%`,
-                                }}
-                            />
-
-                            <div
-                                className="absolute -top-7 -translate-x-1/2 "
-                                style={{
-                                    left: `${
-                                        ((filters[rangePrice.key] as [number, number])[0] - rangePrice.range.min) /
-                                        (rangePrice.range.max - rangePrice.range.min) *
-                                        100
-                                    }%`,
-                                }}
-                            >
-                                            <span className=" px-2 py-0.5 bg-white lg:text-xs xl:text-sm">
-                                              {(filters[rangePrice.key] as [number, number])[0]}
-                                            </span>
-                            </div>
-
-                            <div
-                                className="absolute -top-7 -translate-x-2/3 "
-                                style={{
-                                    left: `${
-                                        ((filters[rangePrice.key] as [number, number])[1] - rangePrice.range.min) /
-                                        (rangePrice.range.max - rangePrice.range.min) *
-                                        100
-                                    }%`,
-                                }}
-                            >
-                                            <span className=" px-2 py-0.5 bg-white lg:text-xs xl:text-sm">
-                                              {(filters[rangePrice.key] as [number, number])[1]}
-                                            </span>
-                            </div>
-
-                            <input
-                                type="range"
-                                min={rangePrice.range.min}
-                                max={rangePrice.range.max}
-                                step={1}
-                                value={(filters[rangePrice.key] as [number, number])[0]}
-                                onChange={(e) =>
-                                    handleRangeChange(rangePrice.key, 0, Number(e.target.value))
-                                }
-                                className="absolute w-full top-[-6px] appearance-none bg-transparent pointer-events-auto range-thumb "
-                            />
-                            <input
-                                type="range"
-                                min={rangePrice.range.min}
-                                max={rangePrice.range.max}
-                                step={1}
-                                value={(filters[rangePrice.key] as [number, number])[1]}
-                                onChange={(e) =>
-                                    handleRangeChange(rangePrice.key, 1, Number(e.target.value))
-                                }
-                                className="absolute  w-full top-[-6px] appearance-none bg-transparent pointer-events-auto range-thumb"
-                            />
-                        </div>
-
-                    </div>
-                </div>
-            )}
-            {filtersConfig.filter((item) => item.type !== "range").map((item) => (
-                <DropdownSection
-                    key={item.key}
-                    title={item.label}
-                    isOpen={openDropdown === item.key}
-                    onToggle={() => toggleDropdown(item.key)}
+                <div
+                  className="absolute -top-7 -translate-x-1/2 "
+                  style={{
+                    left: `${
+                      (((filters[rangePrice.key] as [number, number])[0] -
+                        rangePrice.range.min) /
+                        (rangePrice.range.max - rangePrice.range.min)) *
+                      100
+                    }%`,
+                  }}
                 >
-                    <div className="flex flex-col gap-3">
-                        {/* Checkbox Filter */}
-                        {item.type === "checkbox" &&
-                            item.options?.map((option, index) => (
-                                <label key={index} className="w-fit">
-                                    <Checkbox
-                                        name={option.name}
-                                        label={option.name + " (" + String(option.productCount) + ")"}
-                                        checked={(filters[item.key] as string[]).includes(option.id)}
-                                        onChange={() => handleCheckboxChange(item.key, option.id)}
-                                        value={option.id?.toString()}
-                                        className="!h-4 !w-4"
-                                        labelClassName={"text-sm"}
-                                    />
-                                </label>
-                            ))}
+                  <span className=" px-2 py-0.5 bg-white lg:text-xs xl:text-sm">
+                    {(filters[rangePrice.key] as [number, number])[0]}
+                  </span>
+                </div>
 
+                <div
+                  className="absolute -top-7 -translate-x-2/3 "
+                  style={{
+                    left: `${
+                      (((filters[rangePrice.key] as [number, number])[1] -
+                        rangePrice.range.min) /
+                        (rangePrice.range.max - rangePrice.range.min)) *
+                      100
+                    }%`,
+                  }}
+                >
+                  <span className=" px-2 py-0.5 bg-white lg:text-xs xl:text-sm">
+                    {(filters[rangePrice.key] as [number, number])[1]}
+                  </span>
+                </div>
 
-                    </div>
-                </DropdownSection>
-            ))}
-        </aside>
+                <input
+                  type="range"
+                  min={rangePrice.range.min}
+                  max={rangePrice.range.max}
+                  step={1}
+                  value={(filters[rangePrice.key] as [number, number])[0]}
+                  onChange={(e) =>
+                    handleRangeChange(rangePrice.key, 0, Number(e.target.value))
+                  }
+                  aria-label="Minimum price"
+                  className="absolute w-full top-[-6px] appearance-none bg-transparent pointer-events-auto range-thumb "
+                />
+                <input
+                  type="range"
+                  min={rangePrice.range.min}
+                  max={rangePrice.range.max}
+                  step={1}
+                  value={(filters[rangePrice.key] as [number, number])[1]}
+                  onChange={(e) =>
+                    handleRangeChange(rangePrice.key, 1, Number(e.target.value))
+                  }
+                  aria-label="Maximum price"
+                  className="absolute  w-full top-[-6px] appearance-none bg-transparent pointer-events-auto range-thumb"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        {filtersConfig
+          .filter((item) => item.type !== "range")
+          .map((item) => (
+            <DropdownSection
+              key={item.key}
+              title={item.label}
+              isOpen={openDropdown === item.key}
+              onToggle={() => toggleDropdown(item.key)}
+            >
+              <div className="flex flex-col gap-3">
+                {/* Checkbox Filter */}
+                {item.type === "checkbox" &&
+                  item.options?.map((option, index) => (
+                    <label key={index} className="w-fit">
+                      <Checkbox
+                        name={option.name}
+                        label={
+                          option.name + " (" + String(option.productCount) + ")"
+                        }
+                        checked={(filters[item.key] as string[]).includes(
+                          option.id
+                        )}
+                        onChange={() =>
+                          handleCheckboxChange(item.key, option.id)
+                        }
+                        value={option.id?.toString()}
+                        className="!h-4 !w-4"
+                        labelClassName={"text-sm"}
+                      />
+                    </label>
+                  ))}
+              </div>
+            </DropdownSection>
+          ))}
+      </aside>
     );
 };
 

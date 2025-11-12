@@ -125,9 +125,9 @@ const HoverDropdownMenu: React.FC<HoverDropdownMenuProps> = ({
           menuOpen ? "max-h-[350px]" : "max-h-0"
         }`}
         id={menuId}
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby={triggerRef.current?.firstElementChild?.id}
+        // role="menu"
+        // aria-orientation="vertical"
+        // aria-labelledby={triggerRef.current?.firstElementChild?.id}
       >
         <ul>
           {items.map((item, index) => (
@@ -138,7 +138,7 @@ const HoverDropdownMenu: React.FC<HoverDropdownMenuProps> = ({
                   ref={(el) => {
                     itemsRef.current[index] = el;
                   }}
-                  role="menuitem"
+                  // role="menuitem"
                   tabIndex={-1}
                   className={`flex items-center w-full gap-3 text-sm focus:bg-soft-secondary-base focus:outline-none group duration-300 px-4 py-3 cursor-pointer border border-[#ddd] border-b-0  hover:bg-soft-secondary-base ${
                     focusedIndex === index ? "bg-soft-secondary-base" : ""
@@ -161,7 +161,7 @@ const HoverDropdownMenu: React.FC<HoverDropdownMenuProps> = ({
                   ref={(el) => {
                     itemsRef.current[index] = el;
                   }}
-                  role="menuitem"
+                  // role="menuitem"
                   tabIndex={-1}
                   className={`flex items-center w-full gap-3 text-sm focus:bg-soft-secondary-base focus:outline-none group duration-300 px-4 py-3 cursor-pointer border border-[#ddd] border-b-0 last:border-b-1 hover:bg-soft-secondary-base ${
                     focusedIndex === index ? "bg-soft-secondary-base" : ""

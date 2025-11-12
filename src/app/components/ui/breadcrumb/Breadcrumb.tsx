@@ -18,7 +18,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ pathname }) => {
         <li className="flex items-center">
           <Link
             href="/"
-            className="text-primary hover:opacity-100 opacity-50 transition-colors"
+            className="text-primary hover:brightness-125 transition-all"
           >
             Home
           </Link>
@@ -38,10 +38,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ pathname }) => {
                   {title}
                 </span>
               ) : (
-                <Link
-                  href={href}
-                  className="text-primary transition-colors"
-                >
+                <Link href={href} className="text-primary transition-colors">
                   {title}
                 </Link>
               )}

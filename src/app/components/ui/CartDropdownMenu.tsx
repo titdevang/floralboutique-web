@@ -158,9 +158,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
             transition: "transform 0.4s ease-in-out, opacity 0.4s ease-in-out",
           }}
           id={menuId}
-          role="menu"
-          aria-modal="true"
-          aria-labelledby="cart-drawer-title"
+          // role="menu"
         >
           <div className=" p-6 w-full max-w-md md:min-w-[350px] h-full rounded-l-sm bg-white flex flex-col text-gray-extra-dark">
             {cartData.length ? (
