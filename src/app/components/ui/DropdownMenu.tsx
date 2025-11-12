@@ -113,9 +113,9 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
             <div
                 ref={triggerRef}
                 onClick={() => setMenuOpen(prev => !prev)}
-                aria-haspopup="true"
-                aria-expanded={menuOpen}
-                aria-controls={menuOpen ? menuId : undefined}
+                // aria-haspopup="true"
+                // aria-expanded={menuOpen}
+                // aria-controls={menuOpen ? menuId : undefined}
                 className={"w-full"}
             >
                 {trigger}

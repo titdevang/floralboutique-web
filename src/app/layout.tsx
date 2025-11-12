@@ -6,6 +6,7 @@ import { AppProvider } from "./context/AppContext";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import MainLayout from "./components/layout/MainLayout";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -44,6 +45,7 @@ export default function RootLayout({
             <CartProvider>
               <HeaderMenuItemProvider>
                 <MainLayout>{children}</MainLayout>
+                <SpeedInsights />
               </HeaderMenuItemProvider>
             </CartProvider>
           </AppProvider>
