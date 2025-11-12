@@ -16,7 +16,7 @@ const UserProfileButton: React.FC<UserProfileButtonProps> = ({
                                                                  icon = "profile.svg",
                                                                  isMobile = false
                                                              }) => {
-    const {userAuthenticated, logout} = useAuth();
+    const { userAuthenticated, logout, authUserName } = useAuth();
     const router = useRouter();
 
     const handleLogout = () => {
@@ -50,26 +50,20 @@ const UserProfileButton: React.FC<UserProfileButtonProps> = ({
     }
 
     return (
-        <DropdownMenu
-            items={userMenuItems}
-            align="right"
-            trigger={
-                <button className="cursor-pointer">
-                    <SvgIcon
-
-                        name={icon + (isMobile ? "-mobile" : "")}
-                        width={25}
-                        height={25}
-                        localImage={icon}
-                        fill="currentColor"
-                        className="text-primary"
-                    />
-                </button>
-            }
-            actionClassName="!text-hov-primary"
-            linkClassName="hover:text-primary duration-300"
-            isMobile={isMobile}
-        />
+      <DropdownMenu
+        items={userMenuItems}
+        align="right"
+        trigger={
+          <button className="cursor-pointer">
+            <div className="border-2 border-primary rounded-full h-[28px] w-[28px] flex items-center justify-center">
+              <span className=" font-semibold text-primary text-sm">{authUserName?.slice(0, 2)}</span>
+            </div>
+          </button>
+        }
+        actionClassName="!text-hov-primary"
+        linkClassName="hover:text-primary duration-300"
+        isMobile={isMobile}
+      />
     );
 };
 

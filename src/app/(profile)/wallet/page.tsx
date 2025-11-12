@@ -1,7 +1,9 @@
+'use client'
+import RechargeWallet from "@/app/components/section/modal/RechargeWallet";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 import Table from "@/app/components/ui/table/Table";
 import { Column } from "@/app/types/Table";
-import React from "react";
+import React, { useState } from "react";
 
 interface Order {
   orderId: string;
@@ -13,6 +15,8 @@ interface Order {
 }
 
 const page = () => {
+  const [rechargeWalletModal, setRechargeWalletModal] = useState(false);
+
   const columns = [
     { key: "orderId", label: "Order Id" },
     { key: "date", label: "Date" },
@@ -49,6 +53,10 @@ const page = () => {
   ];
   return (
     <div>
+      <RechargeWallet
+        setRechargeWalletModal={setRechargeWalletModal}
+        rechargeWalletModal={rechargeWalletModal}
+      />
       <h2 className="text-xl font-semibold mb-6">My Wallet</h2>
       <div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
@@ -69,7 +77,11 @@ const page = () => {
           </div>
 
           <div className="p-6 flex flex-col justify-between items-center relative overflow-hidden bg-soft-light hover:bg-soft-secondary-base duration-500 text-black py-10">
-            <div className="flex flex-col justify-center items-center text-center h-full space-y-2">
+            <button
+              type="button"
+              onClick={() => setRechargeWalletModal(true)}
+              className="flex flex-col justify-center items-center text-center h-full space-y-2"
+            >
               <div className="text-white p-2 flex justify-center items-center bg-dark rounded-full">
                 <SvgIcon
                   name="add.svg"
@@ -80,7 +92,7 @@ const page = () => {
                 />
               </div>
               <h2 className="opacity-50">Recharge Wallet</h2>
-            </div>
+            </button>
           </div>
         </div>
         <div className="mt-4 border border-gray-light p-3 md:p-6">

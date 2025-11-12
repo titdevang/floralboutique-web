@@ -1,52 +1,73 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 
+export type Option = string | number | { label: string; value: string | number };
+
 interface SelectProps {
-  options: string[];
-  selected: string;
-  onChange: (selection: string) => void;
+  options: Option[];
+  selected?: Option;
+  onChange: (selection: Option) => void;
   placeholder?: string;
 }
 
-export default function Select({ options, selected, onChange, placeholder = "Select..." }: SelectProps) {
+export default function Select({
+  options,
+  selected,
+  onChange,
+  placeholder = "Select...",
+}: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [dropdownWidth, setDropdownWidth] = useState<number | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const filtered = options.filter((o) =>
-    o.toLowerCase().includes(search.toLowerCase())
+  const normalize = (opt: Option) =>
+    typeof opt === "object"
+      ? { label: opt.label, value: opt.value }
+      : { label: String(opt), value: opt };
+
+  const normalizedOptions = options.map(normalize);
+  const filtered = normalizedOptions.filter((o) =>
+    o.label.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Close on outside click
+  const selectedValue = selected ? normalize(selected).value : undefined;
+  const selectedLabel = selected ? normalize(selected).label : "";
+
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (e: MouseEvent) => {
       if (
         wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
+        !wrapperRef.current.contains(e.target as Node)
       ) {
         setIsOpen(false);
       }
-    }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Keyboard navigation
+    useEffect(() => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownWidth(rect.width);
+      }
+    }, []);
+
+
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement | HTMLInputElement>
   ) => {
     if (!isOpen) {
-      if (e.key === "ArrowDown") {
+      if (["ArrowDown", "Enter", " "].includes(e.key)) {
         e.preventDefault();
         setIsOpen(true);
         setHighlightIndex(0);
-      }
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        setIsOpen(true);
       }
       return;
     }
@@ -70,32 +91,27 @@ export default function Select({ options, selected, onChange, placeholder = "Sel
     }
   };
 
-  // Auto-scroll highlighted item
   useEffect(() => {
     if (listRef.current && isOpen) {
-      const highlighted = listRef.current.querySelector(
+      const el = listRef.current.querySelector(
         `li[data-index="${highlightIndex}"]`
       );
-      if (highlighted) {
-        highlighted.scrollIntoView({ block: "nearest" });
-      }
+      el?.scrollIntoView({ block: "nearest" });
     }
   }, [highlightIndex, isOpen]);
 
   return (
-    <div
-      ref={wrapperRef}
-      className="w-full mx-auto mt-6"
-    >
+    <div ref={wrapperRef} className="w-full mx-auto">
       <div className="flex gap-5">
         <div className="relative w-full">
+          {/* Button */}
           <button
             ref={buttonRef}
             onClick={() => setIsOpen(!isOpen)}
             onKeyDown={handleKeyDown}
             className="peer w-full focus:border-primary border border-gray-light px-4 py-3 rounded-sm flex justify-between items-center focus:outline-none"
           >
-            <span>{selected || placeholder}</span>
+            <span>{selectedLabel || placeholder}</span>
             <svg
               className={`ml-2 h-4 w-4 transform transition-transform text-gray duration-200 peer-focus:text-primary ${
                 isOpen ? "rotate-180" : "rotate-0"
@@ -115,8 +131,15 @@ export default function Select({ options, selected, onChange, placeholder = "Sel
           </button>
 
           {/* Dropdown */}
-          {isOpen && (
-            <div className="absolute mt-1 w-full bg-white rounded-md shadow-lg z-50">
+          {
+            <div
+              style={{ width: dropdownWidth ?? "auto" }}
+              className={`mt-1 fixed bg-white  z-50 mb-4 overflow-hidden transition-[opacity] duration-500 ease-in-out ${
+                isOpen
+                  ? "h-fit opacity-100 border border-gray-light shadow-lg"
+                  : "h-0 opacity-0"
+              }`}
+            >
               {/* Search box */}
               <input
                 type="text"
@@ -126,10 +149,12 @@ export default function Select({ options, selected, onChange, placeholder = "Sel
                   setSearch(e.target.value);
                   setHighlightIndex(0);
                 }}
-                className="w-full px-3 py-2 border-b border-gray-200 focus:outline-none"
+                className="w-full px-3 py-2 border-b border-gray-light focus:outline-none"
                 onKeyDown={handleKeyDown}
                 autoFocus
               />
+
+              {/* List */}
               <ul
                 ref={listRef}
                 className="max-h-48 overflow-y-auto focus:outline-none"
@@ -137,12 +162,12 @@ export default function Select({ options, selected, onChange, placeholder = "Sel
                 {filtered.length === 0 ? (
                   <li className="px-3 py-2 text-gray-400">No results</li>
                 ) : (
-                  filtered.map((option, idx) => (
+                  filtered.map((opt, idx) => (
                     <li
-                      key={option}
+                      key={opt.value}
                       data-index={idx}
                       onClick={() => {
-                        onChange(option);
+                        onChange(opt);
                         setIsOpen(false);
                         setSearch("");
                       }}
@@ -150,18 +175,18 @@ export default function Select({ options, selected, onChange, placeholder = "Sel
                       className={`px-3 py-2 cursor-pointer duration-500 ${
                         idx === highlightIndex
                           ? "bg-[#671945] text-white"
-                          : selected === option
+                          : selectedValue === opt.value
                           ? "bg-[#671945] text-white"
                           : ""
                       }`}
                     >
-                      {option}
+                      {opt.label}
                     </li>
                   ))
                 )}
               </ul>
             </div>
-          )}
+          }
         </div>
       </div>
     </div>

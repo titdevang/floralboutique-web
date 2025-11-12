@@ -1,10 +1,20 @@
+'use client'
+import InputField from "@/app/components/common/fields/InputField";
+import Select, { Option } from "@/app/components/common/fields/Select";
+import RechargeWallet from "@/app/components/section/modal/RechargeWallet";
+import Modal from "@/app/components/ui/modal/modal";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 import Link from "next/link";
-import React from "react";
+import { useState } from "react";
 
 const page = () => {
+  const [rechargeWalletModal, setRechargeWalletModal] = useState(false);
+
   return (
     <div>
+
+      <RechargeWallet setRechargeWalletModal={setRechargeWalletModal} rechargeWalletModal={rechargeWalletModal}/>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Wallet Balance Card */}
         <div className=" p-6 flex flex-col justify-between relative overflow-hidden bg-dark text-white">
@@ -17,7 +27,11 @@ const page = () => {
               <p className="text-lg font-semibold">0</p>
             </div>
           </div>
-          <button className="mt-4 rounded-full px-4 py-3 text-sm border border-white border-opacity-60 bg-white bg-opacity-20 hover:bg-transparent duration-300">
+          <button
+            type="button"
+            onClick={() => setRechargeWalletModal(true)}
+            className="mt-4 rounded-full px-4 py-3 text-sm border border-white border-opacity-60 bg-white bg-opacity-20 hover:bg-transparent duration-300"
+          >
             + Recharge Wallet
           </button>
           <div className="absolute bottom-0 right-0 opacity-20">

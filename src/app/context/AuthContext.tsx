@@ -15,27 +15,36 @@ type AuthContextType = {
   setUserAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   login: (token: string, user: string) => void;
   logout: () => void;
+  authUserName: string;
+  setAuthUserName: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userAuthenticated, setUserAuthenticated] = useState<boolean>(false);
+  const [authUserName, setAuthUserName] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     // Example: Check if user info exists in localStorage
     const storedUser = Cookies.get("token");
+    const storedUserName = localStorage.getItem("authUserName");
     if (storedUser) {
       setUserAuthenticated(true);
     } else {
       setUserAuthenticated(false);
     }
+    if(storedUserName) {
+      setAuthUserName(storedUserName);
+    } else {
+      setAuthUserName('')
+    }
   }, []);
 
   const login = (token: string, user: string) => {
     setUserAuthenticated(true);
-    // setAuthUserName(user);
+    setAuthUserName(user);
     Cookies.set("token", token);
     localStorage.setItem("authUserName", user);
   };
@@ -48,7 +57,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{userAuthenticated,setUserAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        userAuthenticated,
+        setUserAuthenticated,
+        login,
+        logout,
+        authUserName,
+        setAuthUserName
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
