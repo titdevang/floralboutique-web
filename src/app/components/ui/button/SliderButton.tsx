@@ -1,7 +1,7 @@
 import React from "react";
 
 interface SliderButtonProps {
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
   disabled: boolean;
   event: "next" | "prev";
   className?: string;
@@ -14,23 +14,21 @@ const SliderButton: React.FC<SliderButtonProps> = ({
   className,
 }) => {
   const baseClasses =
-    "absolute z-10 top-1/2 -translate-y-1/2 bg-primary font-bold text-white shadow rounded-tl-xl rounded-br-xl flex items-center justify-center";
+    "absolute z-10 top-1/2 -translate-y-1/2 bg-primary font-semibold text-white shadow rounded-tl-xl rounded-br-xl flex items-center justify-center";
 
   const sizeClasses =
-    "w-[24px] h-[24px] md:w-[20px] md:h-[40px] md:text-lg ";
+    "w-[24px] h-[24px] md:w-[15px] md:h-[60px] md:text-lg ";
 
   return (
-    <button
-      type="button"
+    <div
       onClick={onClick}
-      disabled={disabled}
-      aria-label={event === "prev" ? "Previous slide" : "Next slide"} 
+      aria-label={event === "prev" ? "Previous slide" : "Next slide"}
       className={`${baseClasses} ${sizeClasses} ${
         event === "prev" ? "left-4" : "right-4"
-      } ${className} lg:flex hidden`}
+      } ${className} lg:flex hidden cursor-pointer`}
     >
       {event === "prev" ? "‹" : "›"}
-    </button>
+    </div>
   );
 };
 

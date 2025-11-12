@@ -53,7 +53,7 @@ const ProductCarousel: React.FC<ProductsProps> = ({
           {products.map((product, index) => (
             <div
               key={index}
-              className="flex-[0_0_65%] sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_25%]"
+              className="flex-[0_0_65%] sm:flex-[0_0_50%] md:flex-[0_0_33.333%] lg:flex-[0_0_23%]"
             >
               <ProductCard product={product} categoryName={categoryName} />
             </div>

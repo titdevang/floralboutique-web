@@ -49,7 +49,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
                     <p className="text-primary font-bold">₹{product.finalPrice}</p>
                     :
                     <div className={"flex items-center gap-1"}>
-                        <p className="text-gray-dark line-through ">₹{product.unitPrice}</p>
+                        <p className="text-neutral-500 line-through ">₹{product.unitPrice}</p>
                         <p className="text-primary font-bold">₹{product.finalPrice}</p>
                     </div>
                 }
