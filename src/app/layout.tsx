@@ -44,8 +44,10 @@ export default function RootLayout({
           <AppProvider>
             <CartProvider>
               <HeaderMenuItemProvider>
-                <MainLayout>{children}</MainLayout>
-                <SpeedInsights />
+                <MainLayout>
+                  {children}
+                  <SpeedInsights />
+                </MainLayout>
               </HeaderMenuItemProvider>
             </CartProvider>
           </AppProvider>
