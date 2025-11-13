@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
               className="object-cover pointer-events-none group-hover:scale-105 duration-500"
               loading="lazy"
             />
-              {product.discount?.discount && <h4 className="absolute z-20 bg-primary text-white top-2 left-2 px-2 py-0.5 rounded-tl-md rounded-sm">
+              {!!product.discount?.discount && <h4 className="absolute z-20 bg-primary text-white top-2 left-2 px-2 py-0.5 rounded-tl-md rounded-sm">
                   {
                       product.discount?.discount_type == 'percent' ? <span>-{product.discount?.discount}%</span> : <span>-₹{product.discount?.discount}</span>
                   }
