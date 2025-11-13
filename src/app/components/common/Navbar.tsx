@@ -13,6 +13,7 @@ import { useCart } from "@/app/context/CartContext";
 import UserProfileButton from "../ui/button/UserProfileButton";
 import SvgIcon from "../ui/SvgIcon";
 import CartDropdownButton from "@/app/components/ui/button/CartDropdownButton";
+import Location from "../section/modal/Location";
 
 const Navbar = () => {
   const { menuItems, navbarSticky } = useHeaderMenuItem();
@@ -70,28 +71,7 @@ const Navbar = () => {
 
             {/* ---------------location------------- */}
               <div>
-
-            <Tooltip text="Location">
-              <div>
-                <span className="cursor-pointer">
-                  <span
-                    className="position-relative d-inline-block"
-                    data-toggle="tooltip"
-                    data-title="{{ translate('Location') }}"
-                    data-placement="top"
-                  >
-                    <SvgIcon
-                      name={"location.svg"}
-                      localImage="location.svg"
-                      fill="currentColor"
-                      className="text-primary"
-                      width={25}
-                      height={25}
-                    />
-                  </span>
-                </span>
-              </div>
-            </Tooltip>
+                <Location/>
               </div>
 
             {/* -------------cart---------------- */}

@@ -35,7 +35,7 @@ const RecursiveSubMenu: React.FC<RecursiveSubMenuProps> = ({
             <span className="truncate group-hover:text-primary">
               {section.name}
             </span>
-            {section.categoriesCount > 0 && (
+            {section.subCategory.length > 0 && (
               <span className="group-hover:text-primary ml-4">›</span>
             )}
           </Link>

@@ -9,6 +9,7 @@ interface SelectProps {
   selected?: Option;
   onChange: (selection: Option) => void;
   placeholder?: string;
+  dropdownClassName?: string;
 }
 
 export default function Select({
@@ -16,6 +17,7 @@ export default function Select({
   selected,
   onChange,
   placeholder = "Select...",
+  dropdownClassName,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -24,7 +26,7 @@ export default function Select({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-   const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const normalize = (opt: Option) =>
     typeof opt === "object"
@@ -52,13 +54,12 @@ export default function Select({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-    useEffect(() => {
-      if (buttonRef.current) {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setDropdownWidth(rect.width);
-      }
-    }, []);
-
+  useEffect(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownWidth(rect.width);
+    }
+  }, [isOpen]);
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLButtonElement | HTMLInputElement>
@@ -134,7 +135,7 @@ export default function Select({
           {
             <div
               style={{ width: dropdownWidth ?? "auto" }}
-              className={`mt-1 fixed bg-white  z-50 mb-4 overflow-hidden transition-[opacity] duration-500 ease-in-out ${
+              className={`${dropdownClassName} mt-1 fixed bg-white z-50 mb-4 overflow-hidden transition-[opacity] duration-500 ease-in-out ${
                 isOpen
                   ? "h-fit opacity-100 border border-gray-light shadow-lg"
                   : "h-0 opacity-0"

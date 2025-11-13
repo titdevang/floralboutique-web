@@ -43,6 +43,8 @@ module.exports = {
 
                 muted: "var(--muted)",
                 "soft-peach": "var(--soft-peach)",
+                "peach": "var(--peach)",
+                "peach-light": "var(--peach-light)",
                 "product-card": "var(--product-card)",
 
                 "initial-avtar": "var(--initial-avtar)",

@@ -15,21 +15,29 @@ import { ApiResponse } from "../types/ApiRequest";
 interface CartItem extends Product {
   quantity: number;
   productData?: Product
+  id: number
 }
 
 interface CartContextType {
   cartData: CartItem[];
   setCartData: React.Dispatch<React.SetStateAction<CartItem[]>>;
   addToCart: (product: Product) => void;
-  updateQuantity: (productId: number, newQuantity: number) => void;
-  removeFromCart: (productId: number) => void;
+  updateQuantity: (
+    productId: number,
+    newQuantity: number,
+    cartId: number
+  ) => void;
+  removeFromCart: (cartId: number) => void;
   clearCart: () => void;
+  setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  menuOpen: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartData, setCartData] = useState<CartItem[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const getCartData = async () => {
     try {
@@ -44,6 +52,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         (response?.data?.data as unknown as CartItem[])?.map((item) => ({
           ...item.productData,
           quantity: item.quantity,
+          cart_id: item.id,
+          deliverySlot: {
+            date: "17th Nov",
+            time: "09:00 - 21:00 Hrs",
+            type: "Courier",
+            cost: 19,
+          },
         })) || [];
 
       setCartData(result as unknown as CartItem[]);
@@ -57,43 +72,71 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const addToCart = async (product: Product) => {
-    try {
-      const response = await apiRequest<ApiResponse>(
-        "POST",
-        "/cart",
-        { product_id: product.id },
-        { headers: { "X-Guest-Token": getGuestToken() } }
-      );
 
-      if (
-        response?.status === 201 &&
-        (response.data?.data as unknown as { guest_token : 'string'})?.guest_token
-      ) {
-        localStorage.setItem(
-          "guest_token",
-          (response.data?.data as unknown as { guest_token: "string" })
-            ?.guest_token
-        );
-      }
+           const existingProduct = cartData.find((p) => p.id === product.id);
+            setMenuOpen(true);
+           if (existingProduct) {
+             updateQuantity(
+               existingProduct.id,
+               existingProduct.quantity + 1,
+               existingProduct
+             .cart_id);
 
-      setCartData((prevCart) => {
-        const existingIndex = prevCart.findIndex((p) => p.id === product.id);
-        if (existingIndex > -1) {
-          const updatedCart = [...prevCart];
-          updatedCart[existingIndex].quantity += 1;
-          return updatedCart;
-        }
-        return [...prevCart, { ...product, quantity: 1 }];
-      });
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-    }
+             return;
+           }
+
+             try {
+               const response = await apiRequest<ApiResponse>(
+                 "POST",
+                 "/cart",
+                 { product_id: product.id },
+                 { headers: { "X-Guest-Token": getGuestToken() } }
+               );
+
+               if (
+                 response?.status === 201 &&
+                 (response.data?.data as unknown as { guest_token: "string" })
+                   ?.guest_token
+               ) {
+                 localStorage.setItem(
+                   "guest_token",
+                   (response.data?.data as unknown as { guest_token: "string" })
+                     ?.guest_token
+                 );
+               }
+               if (
+                 response?.status == 201 &&
+                 !(response.data?.data as unknown as { guest_token: "string" })
+                   ?.guest_token
+               ) {
+                 setCartData((prevCart) => {
+                   return [
+                     ...prevCart,
+                     {
+                       ...product,
+                       quantity: 1,
+                       deliverySlot: {
+                         date: "17th Nov",
+                         time: "09:00 - 21:00 Hrs",
+                         type: "Courier",
+                         cost: 19,
+                       },
+                       cart_id: (
+                         response.data.data as unknown as { cart_id: {id: number} }
+                       ).cart_id.id,
+                     },
+                   ];
+                 });
+               }
+             } catch (error) {
+               console.error("Error adding to cart:", error);
+             }
   };
 
-  const updateQuantity = (productId: number, newQuantity: number) => {
+  const updateQuantity = (productId: number, newQuantity: number, cartId: number) => {
     apiRequest(
       "PUT",
-      "/cart/update",
+      `/cart/${cartId}`,
       { product_id: productId, quantity: newQuantity },
       { headers: { "X-Guest-Token": getGuestToken() } }
     );
@@ -109,15 +152,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = (cartId: number) => {
     apiRequest(
       "DELETE",
-      `/cart/${productId}`,
+      `/cart/${cartId}`,
       {},
       { headers: { "X-Guest-Token": getGuestToken() } }
     );
 
-    setCartData((prev) => prev.filter((item) => item.id !== productId));
+    setCartData((prev) => prev.filter((item) => item.cart_id !== cartId));
   };
 
   const clearCart = () => setCartData([]);
@@ -131,6 +174,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         updateQuantity,
         removeFromCart,
         clearCart,
+        setMenuOpen,
+        menuOpen
       }}
     >
       {children}
@@ -138,7 +183,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// ✅ Hook for using the cart
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {

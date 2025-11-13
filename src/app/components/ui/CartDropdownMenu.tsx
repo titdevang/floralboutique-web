@@ -4,7 +4,7 @@ import React, {useState, useEffect, useRef, useId} from "react";
 import Link from "next/link";
 import SvgIcon from "./SvgIcon";
 import {useCart} from "@/app/context/CartContext";
-import Image from "next/image";
+import CartItemCard from "./card/CartDeliveryCard";
 
 export interface MenuItem {
     name: string;
@@ -26,14 +26,12 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                                                                trigger,
                                                                align = "right",
                                                            }) => {
-    const [menuOpen, setMenuOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const menuRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
-    const {cartData, setCartData, removeFromCart} = useCart();
+    const { cartData, removeFromCart, setMenuOpen, menuOpen } = useCart();
     const contentEl = useRef<HTMLDivElement>(null);
-    const height = menuOpen ? contentEl.current?.scrollHeight : 0;
 
     const id = useId();
     const menuId = `menu-${id}`;
@@ -116,7 +114,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     const subtotal = cartData.reduce(
         (total, item) => total + item.finalPrice * item.quantity,
         0
-    );
+    ).toFixed(2);
 
     return (
       <div
@@ -143,7 +141,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
         </div>
 
         <div
-          className={`fixed inset-0 bg-black bg-opacity-20 z-40 transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-black backdrop-blur-[1px] bg-opacity-20 z-40 transition-opacity duration-300 ${
             menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           onClick={() => setMenuOpen(false)}
@@ -160,88 +158,108 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
           id={menuId}
           // role="menu"
         >
-          <div className=" p-6 w-full max-w-md md:min-w-[350px] h-full rounded-l-sm bg-white flex flex-col text-gray-extra-dark">
+          <div className=" w-full max-w-md md:w-[420px] h-full rounded-l-sm bg-white flex flex-col text-gray-extra-dark">
+            <div
+              id="cart-drawer-title"
+              className="px-4 py-3 font-semibold text-[16px] border-b border-peach-light flex items-center justify-between"
+            >
+              <h3 className="text-lg">Cart</h3>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                className="p-1.5 rounded-full bg-gray text-white hover:bg-primary transition-colors duration-500"
+              >
+                <SvgIcon
+                  name={"close.svg"}
+                  width={15}
+                  height={15}
+                  localImage="close.svg"
+                  fill="currentColor"
+                />
+              </button>
+            </div>
             {cartData.length ? (
               <>
-                <div
-                  id="cart-drawer-title"
-                  className="font-semibold text-sm mb-4 border-b border-gray-light pb-2 flex items-center justify-between"
-                >
-                  <h3>Cart Items</h3>
-                  <button type="button" onClick={() => setMenuOpen(false)}>✕</button>
-                </div>
-
-                <div className="flex flex-col gap-4 flex-1 overflow-y-auto ">
+                <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
                   {cartData.map((item, index) => (
                     <div
                       key={index}
                       role="none"
-                      className="flex items-start justify-between gap-3 pb-3 "
+                      className="flex items-start justify-between gap-3 bg-white px-4 py-1 first:pt-4 "
                     >
-                      <Link
-                        href={`/product/${item.slug}`}
-                        onClick={() => handleItemClick()}
-                        className="flex gap-3 flex-1 group"
-                      >
-                        <Image
-                          src={`${item?.imageUrl}`}
-                          alt={item.name}
-                          width={50}
-                          height={50}
-                          className="h-16 w-16 object-cover group-hover:scale-105 duration-300"
-                        />
-
-                        <div className="flex flex-col justify-between">
-                          <h4 className="text-sm font-medium  line-clamp-2 group-hover:text-primary duration-500">
-                            {item.name}
-                          </h4>
-                          <p className="text-xs ">
-                            {item.quantity}x ₹{item.finalPrice}
-                          </p>
-                        </div>
-                      </Link>
-                      <button
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="text-gray"
-                      >
-                        ✕
-                      </button>
+                      <CartItemCard
+                        key={item.id}
+                        location="380001, Ahmedabad, Gujarat"
+                        item={item}
+                        onRemove={() => handleRemoveItem(item.cart_id)}
+                        // onMakeSpecial={handleMakeSpecial}
+                      />
                     </div>
                   ))}
+                  <div className="py-4 bg-white px-4">
+                    <h4 className="text-[16px] font-semibold pb-2">
+                      Price Details
+                    </h4>
+                    <div className=" space-y-1 text-neutral-600 text-[14px] font-[500]">
+                      <p className="flex items-center justify-between">
+                        <span>Total Product Price</span>
+                        <span>₹{subtotal}</span>
+                      </p>
+                      <p className="flex items-center justify-between">
+                        <span>Delivery Charges</span>
+                        <span>₹99</span>
+                      </p>
+                      <p className="flex items-center justify-between">
+                        <span>Convenience Charge</span>
+                        <span>₹99</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Subtotal & Actions */}
-                <div className="mt-4 pt-3 bottom-0 bg-white">
-                  <div className="flex justify-between text-sm font-medium py-3 mb-3 border-y border-gray-light ">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal.toFixed(2)}</span>
+                <div className="px-4 py-4 bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
+                  <div className="flex flex-col h-full items-start justify-center text-sm font-medium w-fit ">
+                    <span className="text-dark text-[16px] font-semibold">
+                      ₹{subtotal}
+                    </span>
+                    <span className="text-peach text-xs truncate">{`View price details >`}</span>
                   </div>
 
-                  <Link href={"/checkout"}>
+                  <Link href={"/checkout"} className="w-full">
                     <button
                       onClick={() => handleItemClick()}
-                      className="w-full bg-secondary-base text-white py-2 rounded-full font-medium hover:bg-hov-secondary-base transition"
+                      className="w-full text-[15px] bg-primary hover:bg-hov-primary duration-300 text-white py-3 rounded-full font-[500] transition"
                     >
-                      Proceed to Checkout
+                      Proceed to Pay
                     </button>
                   </Link>
-                  <button className="w-full bg-primary text-white py-2 rounded-full font-medium mt-2  hover:bg-hov-primary transition">
-                    View cart
-                  </button>
                 </div>
               </>
             ) : (
-              <div className="flex items-center justify-center flex-col text-center">
-                <SvgIcon
-                  name="data-not-found.svg"
-                  width={40}
-                  height={40}
-                  localImage="data-not-found.svg"
-                  fill="currentColor"
-                />
-                <h3 className="font-semibold mt-2">
-                  Uh oh! It looks like your cart is empty.
-                </h3>
+              <div className="px-4 py-4 h-full flex flex-col items-center justify-between">
+                <div className=" h-full flex items-center justify-center flex-col text-center">
+                  <SvgIcon
+                    name="empty-cart.svg"
+                    width={120}
+                    height={100}
+                    localImage="empty-cart.svg"
+                    fill="currentColor"
+                  />
+                  <h3 className="font-semibold text-md mt-2">
+                    Your cart is empty
+                  </h3>
+                  <p>Let's fill it up, shall we?</p>
+                </div>
+                <div className="w-full">
+                  <button
+                    type="button"
+                    onClick={() => setMenuOpen(false)}
+                    className="bg-primary w-full text-white py-3 hover:bg-hov-primary duration-300 rounded-full text-sm "
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
               </div>
             )}
           </div>

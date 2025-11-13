@@ -71,7 +71,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ menuItems }) => {
           className={`absolute left-64 top-10 bg-white shadow-lg px-6 py-4  z-50 transition-all duration-300 ease-in-out ${
             isMenuOpen &&
             activeMenu !== null &&
-            menuItems[activeMenu].categoriesCount > 0
+            menuItems[activeMenu].subCategory.length > 0
               ? "opacity-100 min-h-[350px] min-w-[500px]"
               : "opacity-0 overflow-hidden "
           }`}
@@ -80,7 +80,7 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({ menuItems }) => {
         >
           {isMenuOpen &&
             activeMenu !== null &&
-            menuItems[activeMenu].categoriesCount > 0 && (
+            menuItems[activeMenu].subCategory.length > 0 && (
               <RecursiveSubMenu
                 sections={menuItems[activeMenu].subCategory}
                 setIsMenuOpen={setIsMenuOpen}

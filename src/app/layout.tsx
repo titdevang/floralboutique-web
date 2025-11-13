@@ -7,6 +7,7 @@ import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import MainLayout from "./components/layout/MainLayout";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { LocationProvider } from "./context/LocationContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -40,18 +41,20 @@ export default function RootLayout({
       <body
         className={`${montserrat.className} ${josefinSans.variable} antialiased`}
       >
-        <AuthProvider>
-          <AppProvider>
-            <CartProvider>
-              <HeaderMenuItemProvider>
-                <MainLayout>
-                  {children}
-                  <SpeedInsights />
-                </MainLayout>
-              </HeaderMenuItemProvider>
-            </CartProvider>
-          </AppProvider>
-        </AuthProvider>
+        <LocationProvider>
+          <AuthProvider>
+            <AppProvider>
+              <CartProvider>
+                <HeaderMenuItemProvider>
+                  <MainLayout>
+                    {children}
+                    <SpeedInsights />
+                  </MainLayout>
+                </HeaderMenuItemProvider>
+              </CartProvider>
+            </AppProvider>
+          </AuthProvider>
+        </LocationProvider>
       </body>
     </html>
   );

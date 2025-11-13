@@ -47,6 +47,14 @@ export interface ProductReview {
   timeAgo: string;
 }
 
+export interface DeliverySlot {
+  date: string;
+  time: string;
+  type: string;
+  cost: number;
+}
+
+
 export interface Product {
   id: number;
   name: string;
@@ -66,5 +74,7 @@ export interface Product {
   productInfo: string;
   moreInfo: string;
   quantity: number;
-  thumbnail_img?: string; 
+  thumbnail_img?: string;
+  cart_id: number;
+  deliverySlot?: DeliverySlot;
 }
