@@ -41,7 +41,7 @@ const Table = <T,>({
         </thead>
 
         <tbody className="text-dark w-full">
-          {!loading ? (
+          {loading ? (
             <div className="w-full h-20">
               <Loader />
             </div>
