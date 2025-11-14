@@ -19,14 +19,16 @@ const Location: React.FC<LocationProps> = () => {
         className="max-w-lg"
       >
         <div className="h-full space-y-4 mb-4">
-          <PincodeDropdown
-            isBlink={false}
-          />
+          <PincodeDropdown isBlink={false} />
         </div>
       </Modal>
 
       <Tooltip text="Location">
-        <button type="button" onClick={() => setLocationModal(true)}>
+        <button
+          type="button"
+          aria-label="Location"
+          onClick={() => setLocationModal(true)}
+        >
           <span className="cursor-pointer">
             <span
               className="position-relative d-inline-block"

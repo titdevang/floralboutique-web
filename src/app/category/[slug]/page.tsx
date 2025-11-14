@@ -157,7 +157,10 @@ const CategoryPage = ({ params }: CategoryPageProps) => {
       setLoading(true);
 
       await fetchCategoryData(1);
-      window.scrollTo(0, 0);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, debouncedFilter, cacheKey]); // don't include entire cache
