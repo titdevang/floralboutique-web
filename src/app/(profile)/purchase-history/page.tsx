@@ -1,6 +1,8 @@
+'use client'
 import Table from "@/app/components/ui/table/Table";
 import { Column } from "@/app/types/Table";
-import React from "react";
+import { apiRequest } from "@/app/utils/apiRequest";
+import React, { useEffect, useState } from "react";
 
 interface Order {
   orderId: string;
@@ -21,36 +23,30 @@ const page = () => {
     { key: "options", label: "Options" },
   ] satisfies Column<Order>[]; 
   
-  const data: Order[] = [
-    {
-      orderId: "#12345",
-      date: "2023-10-26",
-      amount: "₹ 500",
-      deliveryStatus: "Pending",
-      paymentStatus: "Paid",
-      options: "...",
-    },
-    {
-      orderId: "#12346",
-      date: "2023-10-25",
-      amount: "₹ 1200",
-      deliveryStatus: "Delivered",
-      paymentStatus: "Paid",
-      options: "...",
-    },
-    {
-      orderId: "#12347",
-      date: "2023-10-24",
-      amount: "₹ 750",
-      deliveryStatus: "Shipped",
-      paymentStatus: "Pending",
-      options: "...",
-    },
-  ];
+    const [ordersData, setOrdersData] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(false);
+  
+    useEffect(()=>{
+      setLoading(true);
+      const fetchOrderesData = async() => {
+        try {
+          const response = await apiRequest("GET", "/orders");
+          if (response?.status == 200 && response.data) {
+            setOrdersData((response.data as {data: Order[]}).data);
+          }
+        } catch (error) {
+         console.error(error) 
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchOrderesData();
+    },[])
+
   return (
     <div className="border border-gray-light p-3 md:p-6">
       <h3 className="text-xl font-semibold mb-6">Purchase History</h3>
-      <Table columns={columns} data={data} />
+      <Table columns={columns} data={ordersData} loading={loading} />
     </div>
   );
 };

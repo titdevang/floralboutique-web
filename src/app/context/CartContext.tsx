@@ -11,6 +11,7 @@ import { Product } from "../types/Product";
 import { apiRequest } from "@/app/utils/apiRequest";
 import { getGuestToken } from "@/app/utils/cartToken";
 import { ApiResponse } from "../types/ApiRequest";
+import { useAuth } from "./AuthContext";
 
 interface CartItem extends Product {
   quantity: number;
@@ -41,6 +42,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const { userAuthenticated } = useAuth();
+
   const getCartData = async () => {
     try {
       setLoading(true);
@@ -48,7 +51,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         "GET",
         "/cart",
         {},
-        { headers: { "X-Guest-Token": getGuestToken() } }
+        {
+          headers: userAuthenticated
+            ? {}
+            : { "X-Guest-Token": getGuestToken() },
+        }
       );
 
       const result =
@@ -93,13 +100,18 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                  "POST",
                  "/cart",
                  { product_id: product.id },
-                 { headers: { "X-Guest-Token": getGuestToken() } }
+                 {
+                   headers: userAuthenticated
+                     ? {}
+                     : { "X-Guest-Token": getGuestToken() },
+                 }
                );
 
                if (
                  response?.status === 201 &&
                  (response.data?.data as unknown as { guest_token: "string" })
-                   ?.guest_token
+                   ?.guest_token &&
+                 !userAuthenticated
                ) {
                  localStorage.setItem(
                    "guest_token",
@@ -140,7 +152,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       "PUT",
       `/cart/${cartId}`,
       { product_id: productId, quantity: newQuantity },
-      { headers: { "X-Guest-Token": getGuestToken() } }
+      {
+        headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
+      }
     );
 
     setCartData((prev) =>
@@ -159,7 +173,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       "DELETE",
       `/cart/${cartId}`,
       {},
-      { headers: { "X-Guest-Token": getGuestToken() } }
+      {
+        headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
+      }
     );
 
     setCartData((prev) => prev.filter((item) => item.cart_id !== cartId));

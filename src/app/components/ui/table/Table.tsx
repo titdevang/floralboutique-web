@@ -3,12 +3,15 @@ import { cn } from "@/app/lib/utils";
 import React from "react";
 import SvgIcon from "../SvgIcon";
 import { Column } from "@/app/types/Table";
+import CartItemCardSkeleton from "../loader/CartItemCardSkeleton";
+import Loader from "../loader/loader";
 
 interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
   renderRow?: (item: T, index: number) => React.ReactNode;
   emptyMessage?: string;
+  loading?:boolean;
 }
 
 const Table = <T,>({
@@ -16,6 +19,7 @@ const Table = <T,>({
   data,
   renderRow,
   emptyMessage = "Nothing found",
+  loading,
 }: TableProps<T>) => {
   return (
     <div className="w-full overflow-x-auto">
@@ -36,8 +40,12 @@ const Table = <T,>({
           </tr>
         </thead>
 
-        <tbody className="text-dark">
-          {data.length > 0 ? (
+        <tbody className="text-dark w-full">
+          {!loading ? (
+            <div className="w-full h-20">
+              <Loader />
+            </div>
+          ) : data.length > 0 ? (
             data.map((item, index) =>
               renderRow ? (
                 renderRow(item, index)

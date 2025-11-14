@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAuthUserName(user);
     Cookies.set("token", token);
     localStorage.setItem("authUserName", user);
+    localStorage.removeItem("guest_token");
   };
 
   const logout = () => {

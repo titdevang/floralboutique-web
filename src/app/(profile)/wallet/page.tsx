@@ -3,7 +3,8 @@ import RechargeWallet from "@/app/components/section/modal/RechargeWallet";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 import Table from "@/app/components/ui/table/Table";
 import { Column } from "@/app/types/Table";
-import React, { useState } from "react";
+import { apiRequest } from "@/app/utils/apiRequest";
+import React, { useEffect, useState } from "react";
 
 interface Order {
   orderId: string;
@@ -25,32 +26,32 @@ const page = () => {
     { key: "paymentStatus", label: "Payment Status" },
     { key: "options", label: "Options" },
   ] satisfies Column<Order>[];
-  const data: Order[] = [
-    {
-      orderId: "#12345",
-      date: "2023-10-26",
-      amount: "₹ 500",
-      deliveryStatus: "Pending",
-      paymentStatus: "Paid",
-      options: "...",
-    },
-    {
-      orderId: "#12346",
-      date: "2023-10-25",
-      amount: "₹ 1200",
-      deliveryStatus: "Delivered",
-      paymentStatus: "Paid",
-      options: "...",
-    },
-    {
-      orderId: "#12347",
-      date: "2023-10-24",
-      amount: "₹ 750",
-      deliveryStatus: "Shipped",
-      paymentStatus: "Pending",
-      options: "...",
-    },
-  ];
+
+        const [data, setData] = useState<Order[]>([]);
+        const [balance, setBalance] = useState(0)
+
+        useEffect(()=>{
+          const fetchData = async() => {
+            try {
+              const response = await apiRequest("GET", "/wallets");
+
+              if (response?.status == 200 && response.data) {
+                setData(
+                  (response.data as { data: { history: {data: Order[]} } }).data.history
+                    .data
+                );
+                setBalance(
+                  (response.data as { data: { balance: number} }).data.balance
+                );
+              }
+            } catch (error) {
+             console.error(error) 
+            }
+          }
+          fetchData();
+        },[])
+  
+
   return (
     <div>
       <RechargeWallet
@@ -72,7 +73,7 @@ const page = () => {
                 />
               </div>
               <h2 className="opacity-70">Wallet Balance</h2>
-              <p className="text-3xl font-bold">₹ 0</p>
+              <p className="text-3xl font-bold">₹ {balance}</p>
             </div>
           </div>
 

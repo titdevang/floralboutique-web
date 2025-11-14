@@ -1,30 +1,58 @@
 'use client'
-import InputField from "@/app/components/common/fields/InputField";
-import Select, { Option } from "@/app/components/common/fields/Select";
 import RechargeWallet from "@/app/components/section/modal/RechargeWallet";
-import Modal from "@/app/components/ui/modal/modal";
+import CountUp from "@/app/components/ui/loader/CountUp";
 import SvgIcon from "@/app/components/ui/SvgIcon";
+import { apiRequest } from "@/app/utils/apiRequest";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface DashboardItem {
+  balance: number;
+  lastRecharge: number;
+  totalExpenditure: number;
+  productsInCart: number;
+  totalOrders: number;
+}
 
 const page = () => {
   const [rechargeWalletModal, setRechargeWalletModal] = useState(false);
+  const [dashboardData, setDashboardData] = useState<DashboardItem>();
 
+  useEffect(()=>{
+    const fetchDashboardData = async() => {
+      try {
+        const response = await apiRequest("GET", "/dashboard");
+        if (response?.status == 200 && response.data) {
+          setDashboardData((response.data as { data: DashboardItem })?.data);
+        }
+      } catch (error) {
+        
+      }
+    }
+    fetchDashboardData()
+  },[])
+  
   return (
     <div>
-
-      <RechargeWallet setRechargeWalletModal={setRechargeWalletModal} rechargeWalletModal={rechargeWalletModal}/>
+      <RechargeWallet
+        setRechargeWalletModal={setRechargeWalletModal}
+        rechargeWalletModal={rechargeWalletModal}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Wallet Balance Card */}
         <div className=" p-6 flex flex-col justify-between relative overflow-hidden bg-dark text-white">
           <div className=" space-y-4">
             <h2 className=" opacity-50">Wallet Balance</h2>
-            <p className="text-3xl font-bold">₹ 0</p>
+            <p className="text-3xl font-bold">
+              ₹ <CountUp value={dashboardData?.balance || 0} />
+            </p>
             <hr className="border-1 border-dotted" />
             <div>
               <p className=" opacity-50">Last Recharge</p>
-              <p className="text-lg font-semibold">0</p>
+              <p className="text-lg font-semibold">
+                {dashboardData?.lastRecharge}
+              </p>
             </div>
           </div>
           <button
@@ -53,7 +81,9 @@ const page = () => {
               <h2 className="">Total Expenditure</h2>
             </div>
             <div className="ml-12">
-              <p className="text-2xl font-semibold">₹0</p>
+              <p className="text-2xl font-semibold">
+                ₹<CountUp value={dashboardData?.totalExpenditure || 0} />
+              </p>
             </div>
           </div>
           <Link
@@ -79,25 +109,8 @@ const page = () => {
               />
             </div>
             <div className="flex flex-col">
-              <h2 className="">Total Expenditure</h2>
-              <h2 className="">0</h2>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 w-full border border-gray-light p-4">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 text-xl rounded-full flex items-center justify-center bg-blue text-white">
-              <SvgIcon
-                name="wishlist.svg"
-                width={20}
-                height={20}
-                localImage="wishlist.svg"
-                fill="currentColor"
-              />
-            </div>
-            <div className="flex flex-col">
-              <h2 className="">Total Expenditure</h2>
-              <h2 className="">0</h2>
+              <h2 className="">Product in Cart</h2>
+              <h2 className="">{dashboardData?.productsInCart}</h2>
             </div>
           </div>
         </div>
@@ -113,8 +126,8 @@ const page = () => {
               />
             </div>
             <div className="flex flex-col">
-              <h2 className="">Total Expenditure</h2>
-              <h2 className="">0</h2>
+              <h2 className="">Total Products Orders</h2>
+              <h2 className="">{dashboardData?.totalOrders}</h2>
             </div>
           </div>
         </div>

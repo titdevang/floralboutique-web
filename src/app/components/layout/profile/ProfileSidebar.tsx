@@ -16,7 +16,7 @@ const menuItems = [
     icon: "refund.svg",
     href: "/sent-refund-request",
   },
-  { name: "Wishlist", icon: "wishlist.svg", href: "/wishlists" },
+  // { name: "Wishlist", icon: "wishlist.svg", href: "/wishlists" },
   { name: "My Wallet", icon: "wallet.svg", href: "/wallet" },
   { name: "Manage Profile", icon: "manage-profile.svg", href: "/profile" },
 ];
@@ -49,7 +49,7 @@ const ProfileSidebar = () => {
       </div>
 
       <div
-        className={`fixed md:static top-0 left-0 h-full md:h-auto bg-white border border-gray-light z-50 
+        className={`fixed md:static top-0 left-0 h-full md:h-auto bg-white border border-gray-light z-50 md:z-0 
           transform transition-transform duration-300 ease-in-out
           ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           w-[260px] md:w-full md:max-w-[280px] flex flex-col justify-between p-6`}

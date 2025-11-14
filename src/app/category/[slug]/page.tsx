@@ -133,7 +133,6 @@ const CategoryPage = ({ params }: CategoryPageProps) => {
     setPageNotFound(false);
 
     const cached = getCacheEntry(cacheKey);
-    console.log({ cached });
 
     const isFresh =
       cached && (TTL_MS === 0 || Date.now() - cached.lastUpdated < TTL_MS);
