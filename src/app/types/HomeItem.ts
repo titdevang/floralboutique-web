@@ -25,3 +25,14 @@ export interface customerReview {
   rating: number;
   timeAgo: string;
 }
+
+export interface TrendingCollections {
+  link: string;
+  image: string;
+}
+
+export interface SayItWithFlower {
+  link: string;
+  image: string;
+  title: string;
+}

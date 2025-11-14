@@ -5,6 +5,7 @@ import Link from "next/link";
 import SvgIcon from "./SvgIcon";
 import {useCart} from "@/app/context/CartContext";
 import CartItemCard from "./card/CartDeliveryCard";
+import CartItemCardSkeleton from "./loader/CartItemCardSkeleton";
 
 export interface MenuItem {
     name: string;
@@ -30,22 +31,11 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     const menuRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
-    const { cartData, removeFromCart, setMenuOpen, menuOpen } = useCart();
+    const { cartData, removeFromCart, setMenuOpen, menuOpen, loading } = useCart();
     const contentEl = useRef<HTMLDivElement>(null);
 
     const id = useId();
     const menuId = `menu-${id}`;
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setMenuOpen(false);
-                setFocusedIndex(-1);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
 
     useEffect(() => {
         if (menuOpen) {
@@ -178,6 +168,11 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                 />
               </button>
             </div>
+            {loading && (
+              <div className="px-4">
+                <CartItemCardSkeleton />
+              </div>
+            )}
             {cartData.length ? (
               <>
                 <div className="flex flex-col gap-2 flex-1 overflow-y-auto">

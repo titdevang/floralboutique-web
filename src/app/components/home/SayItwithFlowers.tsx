@@ -1,41 +1,23 @@
-import React from "react";
 import SayItwithFlowersCard from "../ui/card/SayItwithFlowersCard";
-import { Product } from "@/app/types/Product";
+import { useHomeItem } from "@/app/context/HomeItemContext";
 
 const SayItwithFlowers = () => {
-    const cardData = [
-      {
-        id: 2,
-        imageUrl: "/assets/images/defualt-floralboutique.webp",
-        name: `Say\n“Happy Birthday”`,
-        slug: "",
-      },
-      {
-        id: 3,
-        imageUrl: "/assets/images/defualt-floralboutique.webp",
-        name: `Say\n“Congratulations”`,
-        slug: "",
-      },
-        {
-            id: 3,
-            imageUrl: "/assets/images/defualt-floralboutique.webp",
-            name: `Say\n“Congratulations”`,
-            slug: "",
-        },
-    ];
+  const { sayItWithFlower } = useHomeItem();
+ 
   return (
     <div>
       <div>
         <h4 className="heading-2">Say It with Flowers</h4>
       </div>
-      <div className="flex flex-wrap md:gap-4 gap-3 justify-center mt-4">
-        {cardData.length > 0 &&
-          cardData.map((card, index) => (
-            <SayItwithFlowersCard
-              product={card as Product}
+      <div className="flex flex-wrap items-center justify-center mt-4 gap-2 md:gap-4">
+        {sayItWithFlower.length > 0 &&
+          sayItWithFlower.map((card, index) => (
+            <div
               key={index}
-              categoryName={''}
-            />
+              className="flex-[0_0_40%] sm:flex-[0_0_30%] lg:flex-[0_0_20%]"
+            >
+              <SayItwithFlowersCard item={card} />
+            </div>
           ))}
       </div>
     </div>

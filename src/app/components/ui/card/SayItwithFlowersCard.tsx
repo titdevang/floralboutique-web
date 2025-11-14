@@ -1,25 +1,32 @@
-import { ProductCardProps } from "@/app/types/Product";
 import React from "react";
 import ImageWithFallback from "../fields/ImageWithFallback";
+import { SayItWithFlower } from "@/app/types/HomeItem";
+import Link from "next/link";
 
-const SayItwithFlowersCard: React.FC<ProductCardProps> = ({ product }) => {
+interface SayItwithFlowersCardProps {
+  item: SayItWithFlower;
+}
+
+const SayItwithFlowersCard: React.FC<SayItwithFlowersCardProps> = ({
+  item,
+}) => {
   return (
-    <div
-      key={product.id}
+    <Link
+      href={item.link}
       className="flex flex-col items-center justify-start bg-primary text-white rounded-lg overflow-hidden p-2 md:p-4 text-center"
     >
-      <div className="relative w-full aspect-square mb-4">
+      <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-md ">
         <ImageWithFallback
-          src={product.imageUrl || "/assets/images/placeholder.jpg"}
-          alt={product.name || "Product image"}
+          src={item.image}
+          alt={item.title}
           fill
-          className="rounded-md"
+          className="hover:scale-105 duration-500"
         />
       </div>
       <p className="text-sm md:text-base font-semibold whitespace-pre-line">
-        {product.name}
+        {item.title}
       </p>
-    </div>
+    </Link>
   );
 };
 

@@ -1,20 +1,33 @@
-import Image from 'next/image'
+import { useHomeItem } from '@/app/context/HomeItemContext';
 import Link from 'next/link';
-import React from 'react'
+import ImageWithFallback from '../ui/fields/ImageWithFallback';
 
 const TrendingCollections = () => {
-  return (
-    <div className=" relative h-[150px] md:h-[400px] w-full">
-      <Link href={"/category/online-flower-delivery-in-bangalore"}>
-        <Image
-          src={"/assets/images/trending-collection.webp"}
-          alt="floralboutique"
-          fill
-          className=" object-cover rounded-[20px]"
-        />
-      </Link>
-    </div>
-  );
+  const { trendingCollections } = useHomeItem();
+  
+  if (!trendingCollections) return;
+
+    return (
+      <div>
+        {trendingCollections?.map((collection, index) => {
+          return (
+            <div
+              key={index}
+              className=" relative h-[150px] md:h-[300px] w-full overflow-hidden rounded-[20px]"
+            >
+              <Link href={collection.link}>
+                <ImageWithFallback
+                  src={collection.image}
+                  alt="floralboutique"
+                  fill
+                  className="rounded-[20px] object-cover hover:scale-105 duration-500"
+                />
+              </Link>
+            </div>
+          );
+        })}
+      </div>
+    );
 }
 
 export default TrendingCollections

@@ -11,13 +11,13 @@ const CategoryCard: React.FC<ProductCardProps> = memo(({ product, onClick }) => 
 
   return (
     <div className="select-none p-1 h-full">
-        <Modal
-            isOpen={!!addedProduct}
-            onClose={() => setAddedProduct(null)}
-            title="Added to your cart"
-        >
-            <ProductDetail slug={addedProduct?.slug || ""} />
-        </Modal>
+      <Modal
+        isOpen={!!addedProduct}
+        onClose={() => setAddedProduct(null)}
+        title="Added to your cart"
+      >
+        <ProductDetail slug={addedProduct?.slug || ""} />
+      </Modal>
       <Link
         href={"/product/" + product.slug}
         className="group  h-full duration-300 select-none flex flex-col justify-between"
@@ -32,13 +32,17 @@ const CategoryCard: React.FC<ProductCardProps> = memo(({ product, onClick }) => 
               className="object-cover pointer-events-none group-hover:scale-105 duration-500"
               loading="lazy"
             />
-              {!!product.discount?.discount && <h4 className="absolute z-20 bg-primary text-white top-2 left-2 px-2 py-0.5 rounded-tl-md rounded-sm">
-                  {
-                      product.discount?.discount_type == 'percent' ? <span>-{product.discount?.discount}%</span> : <span>-₹{product.discount?.discount}</span>
-                  }
-
-              </h4>}
-              {/*<AddToCart product={product} onAdded={(p) => setAddedProduct(p)}  className="absolute z-20 -bottom-0.5 w-full py-1.5 bg-black hover:bg-opacity-100 bg-opacity-65 transform translate-y-full group-hover:translate-y-0 transition-all duration-300 ease-in-out flex justify-center"/>*/}
+            {!!product.discount?.discount &&
+              product.discount?.discount_type && (
+                <h4 className="absolute z-20 bg-primary text-white top-2 left-2 px-2 py-0.5 rounded-tl-md rounded-sm">
+                  {product.discount?.discount_type == "percent" ? (
+                    <span>-{product.discount?.discount}%</span>
+                  ) : (
+                    <span>-₹{product.discount?.discount}</span>
+                  )}
+                </h4>
+              )}
+            {/*<AddToCart product={product} onAdded={(p) => setAddedProduct(p)}  className="absolute z-20 -bottom-0.5 w-full py-1.5 bg-black hover:bg-opacity-100 bg-opacity-65 transform translate-y-full group-hover:translate-y-0 transition-all duration-300 ease-in-out flex justify-center"/>*/}
           </div>
           <div className="flex flex-col flex-grow justify-between md:px-3 px-1">
             <h3 className=" line-clamp-2 group-hover:text-primary duration-300">
@@ -46,14 +50,18 @@ const CategoryCard: React.FC<ProductCardProps> = memo(({ product, onClick }) => 
             </h3>
 
             <div className="flex items-center justify-between ">
-                { product.finalPrice == product.unitPrice ?
-                    <p className="text-primary font-bold">₹{product.finalPrice}</p>
-                    :
-                    <div className={"flex items-center gap-1"}>
-                        <p className="text-gray-dark line-through ">₹{product.unitPrice}</p>
-                        <p className="text-primary font-bold">₹{product.finalPrice}</p>
-                    </div>
-                }
+              {product.finalPrice == product.unitPrice ? (
+                <p className="text-primary font-bold">₹{product.finalPrice}</p>
+              ) : (
+                <div className={"flex items-center gap-1"}>
+                  <p className="text-gray-dark line-through ">
+                    ₹{product.unitPrice}
+                  </p>
+                  <p className="text-primary font-bold">
+                    ₹{product.finalPrice}
+                  </p>
+                </div>
+              )}
               <div className="text-sm">
                 <span>
                   {product.rating}{" "}

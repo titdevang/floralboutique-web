@@ -19,8 +19,9 @@ const ZoomImage: React.FC<ZoomImageProps> = ({ src, alt }) => {
 
   useEffect(() => {
     setImgSrc(src);
+    setIsZoomed(false);
   }, [src]);
-    console.log('src', src)
+  
   return (
     <div
       className={`relative aspect-square overflow-hidden ${isZoomed ? "cursor-zoom-out" : "cursor-zoom-in"}`}

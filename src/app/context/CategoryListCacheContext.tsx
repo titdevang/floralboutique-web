@@ -1,33 +1,70 @@
-// context/CategoryListCacheContext.tsx
+// app/context/CategoryListCacheContext.tsx
 "use client";
 import React, { createContext, useContext, useState } from "react";
 import { Product } from "@/app/types/Product";
 
-interface CacheState {
-    categoryData: Product[];
-    page: number;
-    hasMore: boolean;
-    scrollY: number;
-}
+export type CacheState = {
+  categoryData: Product[];
+  page: number;
+  hasMore: boolean;
+  lastUpdated: number;
+};
 
-interface CacheContextValue {
-    cache: Record<string, CacheState>;
-    setCache: React.Dispatch<React.SetStateAction<Record<string, CacheState>>>;
-}
+type CacheMap = Record<string, CacheState>;
 
-const CategoryListCacheContext = createContext<CacheContextValue | undefined>(undefined);
+type Value = {
+  cache: CacheMap;
+  get: (key: string) => CacheState | undefined;
+  set: (key: string, state: CacheState) => void;
+  clear: (key?: string) => void;
+};
 
-export const CategoryListCacheProvider = ({ children }: { children: React.ReactNode }) => {
-    const [cache, setCache] = useState<Record<string, CacheState>>({});
-    return (
-        <CategoryListCacheContext.Provider value={{ cache, setCache }}>
-            {children}
-        </CategoryListCacheContext.Provider>
-    );
+const CategoryListCacheContext = createContext<Value | undefined>(undefined);
+
+export const CategoryListCacheProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [cache, setCache] = useState<CacheMap>({});
+
+  const get = (key: string) => cache[key];
+
+  const set = (key: string, state: CacheState) => {
+    setCache((prev) => {
+      const old = prev[key];
+      // cheap identity checks — don't update if identical to avoid rerenders
+      if (
+        old &&
+        old.page === state.page &&
+        old.hasMore === state.hasMore &&
+        old.categoryData.length === state.categoryData.length
+      ) {
+        return prev;
+      }
+      return { ...prev, [key]: state };
+    });
+  };
+
+  const clear = (key?: string) => {
+    setCache((prev) => {
+      if (!key) return {};
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
+  return (
+    <CategoryListCacheContext.Provider value={{ cache, get, set, clear }}>
+      {children}
+    </CategoryListCacheContext.Provider>
+  );
 };
 
 export const useCategoryListCache = () => {
-    const ctx = useContext(CategoryListCacheContext);
-    if (!ctx) throw new Error("useCategoryListCache must be used inside provider");
-    return ctx;
+  const ctx = useContext(CategoryListCacheContext);
+  if (!ctx)
+    throw new Error("useCategoryListCache must be used inside provider");
+  return ctx;
 };

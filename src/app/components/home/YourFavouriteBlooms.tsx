@@ -1,26 +1,24 @@
-import React from "react";
 import YourFavouriteBloomsCard from "../ui/card/YourFavouriteBloomsCard";
-import { Product } from "@/app/types/Product";
 
 const YourFavouriteBlooms = () => {
   const cardData = [
     {
       id: 1,
-      imageUrl: "/assets/images/defualt-floralboutique.webp",
-      name: `Say\n“Get well soon”`,
-      slug: "",
+      image: "/assets/images/defualt-floralboutique.webp",
+      title: `Say\n“Get well soon”`,
+      link: "",
     },
     {
       id: 2,
-      imageUrl: "/assets/images/defualt-floralboutique.webp",
-      name: `Say\n“Happy Birthday”`,
-      slug: "",
+      image: "/assets/images/defualt-floralboutique.webp",
+      title: `Say\n“Happy Birthday”`,
+      link: "",
     },
     {
       id: 3,
-      imageUrl: "/assets/images/defualt-floralboutique.webp",
-      name: `Say\n“Congratulations”`,
-      slug: "",
+      image: "/assets/images/defualt-floralboutique.webp",
+      title: `Say\n“Congratulations”`,
+      link: "",
     },
   ];
   return (
@@ -28,9 +26,16 @@ const YourFavouriteBlooms = () => {
       <div>
         <h4 className="heading-2">Your Favourite Blooms</h4>
       </div>
-      <div className="flex flex-wrap md:gap-4 gap-3 justify-center mt-4">
+      <div className="flex flex-wrap items-center justify-center mt-4 gap-2 md:gap-4">
         {cardData.map((card, index) => (
-          <YourFavouriteBloomsCard product={card as Product} key={index} categoryName="" />
+          <div
+            key={index}
+            className="flex-[0_0_40%] sm:flex-[0_0_30%] lg:flex-[0_0_20%]"
+          >
+            <YourFavouriteBloomsCard
+              item={card}
+            />
+          </div>
         ))}
       </div>
     </div>

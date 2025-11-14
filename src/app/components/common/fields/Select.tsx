@@ -152,7 +152,6 @@ export default function Select({
                 }}
                 className="w-full px-3 py-2 border-b border-gray-light focus:outline-none"
                 onKeyDown={handleKeyDown}
-                autoFocus
               />
 
               {/* List */}

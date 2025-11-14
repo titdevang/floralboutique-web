@@ -1,4 +1,4 @@
-import { customerReview, headerCategoryMenu, sliderImages } from "./HomeItem";
+import { customerReview, headerCategoryMenu, SayItWithFlower, sliderImages, TrendingCollections } from "./HomeItem";
 import { HeaderMenuItem } from "./Navbar";
 import { Product } from "./Product";
 import { User } from "./user";
@@ -28,4 +28,6 @@ export interface ApiResponse {
   metaDescription: string;
   catDescription: string;
   faqs: accordionItem[];
+  trendingCollections: TrendingCollections[];
+  sayItWithFlower: SayItWithFlower[];
 }

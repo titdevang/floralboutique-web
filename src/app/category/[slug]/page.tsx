@@ -1,6 +1,7 @@
+// pages/.../CategoryPage.tsx (updated)
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import PageNotFound from "@/app/components/section/404";
 import CategoryCard from "@/app/components/ui/card/CategoryCard";
 import CategoryCardSkeleton from "@/app/components/ui/loader/CategoryCardSkeletion";
@@ -10,140 +11,222 @@ import { Product } from "@/app/types/Product";
 import { apiRequest } from "@/app/utils/apiRequest";
 import { useCategoryFilter } from "@/app/context/CategoryFilterContext";
 import { useInView } from "react-intersection-observer";
+import { useCategoryListCache } from "@/app/context/CategoryListCacheContext";
+import { makeCategoryCacheKey } from "@/app/utils/cacheKey";
 
 const useDebounce = <T,>(value: T, delay: number): T => {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-
-    useEffect(() => {
-        const handler = setTimeout(() => setDebouncedValue(value), delay);
-        return () => clearTimeout(handler);
-    }, [value, delay]);
-
-    return debouncedValue;
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
 };
 
 interface CategoryPageProps {
-    params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>;
 }
 
+const TTL_MS = 1000 * 60 * 5; // 5 minutes
+
 const CategoryPage = ({ params }: CategoryPageProps) => {
-    const { slug } = use(params);
-    const { setPageNotFound, pageNotFound } = useAppContext();
-    const { filtterCategorySlug } = useCategoryFilter();
+  const { slug } = use(params);
+  const { setPageNotFound, pageNotFound } = useAppContext();
+  const { filtterCategorySlug } = useCategoryFilter();
 
-    const [loading, setLoading] = useState(true);
-    const [loadingMore, setLoadingMore] = useState(false);
-    const [categoryData, setCategoryData] = useState<Product[]>([]);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+  const {
+    get: getCacheEntry,
+    set: setCacheEntry,
+    clear: clearCacheKey,
+  } = useCategoryListCache();
 
-    const { ref: loadMoreRef, inView } = useInView({
-        rootMargin: "300px",
-        triggerOnce: false,
-    });
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [categoryData, setCategoryData] = useState<Product[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-    const debouncedFilter = useDebounce(filtterCategorySlug, 500);
+  const { ref: loadMoreRef, inView } = useInView({
+    rootMargin: "300px",
+    triggerOnce: false,
+  });
 
-    const fetchCategoryData = async (pageNum: number) => {
-        try {
-            if (pageNum === 1) setLoading(true);
-            else setLoadingMore(true);
+  const debouncedFilter = useDebounce(filtterCategorySlug, 500);
 
-            const response = await apiRequest<{ data: ApiResponse }>(
-                "GET",
-                `/categories/${slug}/products?page=${pageNum}&${filtterCategorySlug}`
-            );
+  const cacheKey = useMemo(
+    () => makeCategoryCacheKey(slug, debouncedFilter),
+    [slug, debouncedFilter]
+  );
 
-            if (response?.status === 200 && Array.isArray(response.data.data)) {
-                const newProducts = response.data.data as Product[];
-                if (newProducts.length === 0) setHasMore(false);
-                else
-                    setCategoryData((prev) => [
-                        ...prev,
-                        ...newProducts.filter(
-                            (p) => !prev.some((item) => item.id === p.id)
-                        ),
-                    ]);
-            } else if (response?.status === 404) {
-                setPageNotFound(true);
-            } else {
-                setHasMore(false);
-            }
-        } catch (error) {
-            console.error("Fetch error:", error);
-            setHasMore(false);
-        } finally {
-            setLoading(false);
-            setLoadingMore(false);
-        }
+  const isMounted = useRef(true);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
     };
+  }, []);
 
-    useEffect(() => {
-        if (!slug) return;
-        setCategoryData([]);
-        setPage(1);
-        setHasMore(true);
-        setPageNotFound(false);
-        fetchCategoryData(1);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [slug, debouncedFilter]);
+  const fetchCategoryData = async (pageNum: number) => {
+    try {
+      if (pageNum === 1) setLoading(true);
+      else setLoadingMore(true);
 
-    useEffect(() => {
-        if (slug) window.scrollTo(0, 0);
-    }, [slug]);
+      const response = await apiRequest<{ data: ApiResponse }>(
+        "GET",
+        `/categories/${slug}/products?page=${pageNum}&${filtterCategorySlug}`
+      );
 
-    useEffect(() => {
-        if (inView && !loading && !loadingMore && hasMore) {
-            setPage((prev) => prev + 1);
+      if (!isMounted.current) return;
+
+      if (response?.status === 200 && Array.isArray(response.data.data)) {
+        const newProducts = response.data.data as Product[];
+
+        if (newProducts.length === 0) {
+          setHasMore(false);
+          return;
         }
-    }, [inView]);
 
-    useEffect(() => {
-        if (page > 1 && hasMore) fetchCategoryData(page);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+        // compute merged outside of state updater
+        setCategoryData((prev) => {
+          const merged = [
+            ...prev,
+            ...newProducts.filter(
+              (p) => !prev.some((item) => item.id === p.id)
+            ),
+          ];
 
-    if (pageNotFound) return <PageNotFound />;
+          return merged;
+        });
 
-    return (
-        <div className="w-full py-3">
-            {loading && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-                    {Array.from({ length: 12 }).map((_, i) => (
-                        <CategoryCardSkeleton key={i} />
-                    ))}
-                </div>
-            )}
+        const current = getCacheEntry(cacheKey)?.categoryData || [];
+        const mergedFinal = [
+          ...current,
+          ...newProducts.filter(
+            (p) => !current.some((item) => item.id === p.id)
+          ),
+        ];
 
-            {/* Empty state */}
-            {!loading && categoryData.length === 0 && (
-                <p className="text-center py-10 text-muted">
-                    No products found in this category.
-                </p>
-            )}
+        setCacheEntry(cacheKey, {
+          categoryData: mergedFinal,
+          page: pageNum,
+          hasMore: newProducts.length > 0,
+          lastUpdated: Date.now(),
+        });
+      } else if (response?.status === 404) {
+        setPageNotFound(true);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setHasMore(false);
+    } finally {
+      if (!isMounted.current) return;
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
 
-            {/* Product grid */}
-            {!loading && categoryData.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 md:gap-2">
-                    {categoryData.map((product, i) => (
-                        <CategoryCard key={product.id || i} product={product} categoryName="" />
-                    ))}
-                </div>
-            )}
+  // restore from cache or fetch page 1 (runs when slug or filter changes)
+  useEffect(() => {
+    if (!slug) return;
+    setPageNotFound(false);
 
-            {/* Sentinel for infinite scroll */}
-            {hasMore && <div ref={loadMoreRef} className="h-10 w-full" />}
+    const cached = getCacheEntry(cacheKey);
+    console.log({ cached });
 
-            {/* Loading more skeletons */}
-            {loadingMore && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 mt-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <CategoryCardSkeleton key={i} />
-                    ))}
-                </div>
-            )}
+    const isFresh =
+      cached && (TTL_MS === 0 || Date.now() - cached.lastUpdated < TTL_MS);
+
+    if (isFresh) {
+      setCategoryData(cached.categoryData || []);
+      setPage(cached.page || 1);
+      setHasMore(typeof cached.hasMore === "boolean" ? cached.hasMore : true);
+      setLoading(false);
+      return;
+    }
+
+    (async () => {
+      if (cached) {
+        // clear stale cache (safe inside effect)
+        clearCacheKey(cacheKey);
+      }
+      setCategoryData([]);
+      setPage(1);
+      setHasMore(true);
+      setLoading(true);
+
+      await fetchCategoryData(1);
+      window.scrollTo(0, 0);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, debouncedFilter, cacheKey]); // don't include entire cache
+
+  // infinite scroll -> increment page
+  useEffect(() => {
+    if (inView && !loading && !loadingMore && hasMore) setPage((p) => p + 1);
+  }, [inView, loading, loadingMore, hasMore]);
+
+  // when page increases, fetch additional pages if not cached
+  useEffect(() => {
+    if (page <= 1 || !hasMore) return;
+
+    const cached = getCacheEntry(cacheKey);
+    const cachedPageCount = cached?.page || 0;
+
+    if (cached && cachedPageCount >= page) {
+      setCategoryData(cached.categoryData || []);
+      setHasMore(cached.hasMore !== undefined ? cached.hasMore : true);
+      setLoading(false);
+      setLoadingMore(false);
+      return;
+    }
+
+    fetchCategoryData(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, hasMore]);
+
+  if (pageNotFound) return <PageNotFound />;
+
+  return (
+    <div className="w-full py-3">
+      {loading && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <CategoryCardSkeleton key={i} />
+          ))}
         </div>
-    );
+      )}
+
+      {!loading && categoryData.length === 0 && (
+        <p className="text-center py-10 text-muted">
+          No products found in this category.
+        </p>
+      )}
+
+      {!loading && categoryData.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 md:gap-2">
+          {categoryData.map((product, i) => (
+            <CategoryCard
+              key={product.id || i}
+              product={product}
+              categoryName=""
+            />
+          ))}
+        </div>
+      )}
+
+      {hasMore && <div ref={loadMoreRef} className="h-10 w-full" />}
+
+      {loadingMore && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 mt-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <CategoryCardSkeleton key={i} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CategoryPage;

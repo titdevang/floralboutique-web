@@ -13,7 +13,9 @@ import {
   categoryMenu,
   customerReview,
   headerCategoryMenu,
+  SayItWithFlower,
   sliderImages,
+  TrendingCollections,
 } from "../types/HomeItem";
 import { useAppContext } from "./AppContext";
 import { Product } from "../types/Product";
@@ -23,7 +25,9 @@ interface HomeItemContextType {
   sliderImages: sliderImages[];
   categoryMenu: categoryMenu[];
   trandingProducts: Product[];
-  customerReview: customerReview[]
+  customerReview: customerReview[];
+  trendingCollections: TrendingCollections[];
+  sayItWithFlower: SayItWithFlower[];
 }
 
 const HomeItemContext = createContext<HomeItemContextType | undefined>(
@@ -38,6 +42,10 @@ export const HomeItemProvider = ({ children }: { children: ReactNode }) => {
   const [categoryMenu, setCategoryMenu] = useState<categoryMenu[]>([]);
   const [trandingProducts, setTrandingProducts] = useState<Product[]>([]);
   const [customerReview, setCustomerReview] = useState<customerReview[]>([])
+  const [trendingCollections, setTrendingCollections] = useState<
+    TrendingCollections[]
+  >([]);
+  const [sayItWithFlower, setSayItWithFlower] = useState<SayItWithFlower[]>([])
   const { setLoading } = useAppContext();
 
   useEffect(() => {
@@ -50,7 +58,9 @@ export const HomeItemProvider = ({ children }: { children: ReactNode }) => {
           setCategoryMenu(response.data.categories);
           setSliderImages(response.data.sliderImages);
           setTrandingProducts(response.data.trendingProducts);
-          setCustomerReview(response.data.review)
+          setCustomerReview(response.data.review);
+          setTrendingCollections(response.data.trendingCollections);
+          setSayItWithFlower(response.data.sayItWithFlower);
         } 
       } catch (error) {
         console.error(error);
@@ -69,6 +79,8 @@ export const HomeItemProvider = ({ children }: { children: ReactNode }) => {
         categoryMenu,
         trandingProducts,
         customerReview,
+        trendingCollections,
+        sayItWithFlower,
       }}
     >
       {children}

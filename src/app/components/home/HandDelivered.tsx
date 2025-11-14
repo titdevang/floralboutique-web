@@ -32,26 +32,26 @@ const HandDelivered = () => {
   return (
     <div>
       <div>
-        <h4 className="heading-1">Hand Delivered With Love</h4>
+        <h4 className="heading-2">Hand Delivered With Love</h4>
       </div>
       <div className="mt-4 sm:mt-6">
         <div className="flex items-center justify-between gap-2 md:gap-8">
           {homeDeliverdList.map((item, index) => (
             <Link href={item.route} key={index}>
-              <div>
+              <div className="overflow-hidden rounded-[15px] md:rounded-[20px] ">
                 <Image
                   src={item.src}
                   alt={item.name + index}
                   width={640}
                   height={360}
-                  className="rounded-[15px] md:rounded-[20px]"
+                  className="hover:scale-105 duration-500"
                   priority={index === 0}
                   loading={index === 0 ? "eager" : "lazy"}
                   fetchPriority={index === 0 ? "high" : "auto"}
                   sizes="(max-width: 768px) 100vw, 640px"
                 />
               </div>
-              <span className=" md:text-[20px] truncate inline-block pt-[10px] text-center w-full font-[600] text-primary">
+              <span className=" md:text-[16px] truncate inline-block pt-[10px] text-center w-full font-[600] text-primary">
                 {item.name}
               </span>
             </Link>

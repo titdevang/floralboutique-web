@@ -48,7 +48,7 @@ export default function CartItemCard({
             {item.quantity} x ₹{item.finalPrice}
           </p>
         </div>
-        <button className="text-peach" onClick={() => onRemove(item.cart_id)}>
+        <button type="button" className="text-peach" onClick={() => onRemove(item.cart_id)}>
           <SvgIcon
             name={"delete.svg"}
             width={22}

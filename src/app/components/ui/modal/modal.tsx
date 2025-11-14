@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         className={`absolute inset-0 bg-black/50 transition-all duration-500 ${
           isMounted
-            ? "backdrop-blur-sm opacity-100"
+            ? "backdrop-blur-[1px] opacity-100"
             : "backdrop-blur-none opacity-0"
         }`}
         onClick={(e) => {

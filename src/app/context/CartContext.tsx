@@ -31,6 +31,7 @@ interface CartContextType {
   clearCart: () => void;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
+  loading: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -38,9 +39,11 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartData, setCartData] = useState<CartItem[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getCartData = async () => {
     try {
+      setLoading(true);
       const response = await apiRequest<ApiResponse>(
         "GET",
         "/cart",
@@ -62,6 +65,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         })) || [];
 
       setCartData(result as unknown as CartItem[]);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching cart:", error);
     }
@@ -72,7 +76,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const addToCart = async (product: Product) => {
-
+          //  setLoading(true);
            const existingProduct = cartData.find((p) => p.id === product.id);
             setMenuOpen(true);
            if (existingProduct) {
@@ -81,10 +85,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                existingProduct.quantity + 1,
                existingProduct
              .cart_id);
-
-             return;
-           }
-
+           } else {
+            setLoading(true);
+            
              try {
                const response = await apiRequest<ApiResponse>(
                  "POST",
@@ -104,11 +107,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                      ?.guest_token
                  );
                }
-               if (
-                 response?.status == 201 &&
-                 !(response.data?.data as unknown as { guest_token: "string" })
-                   ?.guest_token
-               ) {
                  setCartData((prevCart) => {
                    return [
                      ...prevCart,
@@ -122,15 +120,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                          cost: 19,
                        },
                        cart_id: (
-                         response.data.data as unknown as { cart_id: {id: number} }
+                         response?.data.data as unknown as { cart_id: {id: number} }
                        ).cart_id.id,
                      },
                    ];
                  });
-               }
+              
              } catch (error) {
                console.error("Error adding to cart:", error);
              }
+            }
+
+            setMenuOpen(true);
+            setLoading(false);
   };
 
   const updateQuantity = (productId: number, newQuantity: number, cartId: number) => {
@@ -175,7 +177,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         clearCart,
         setMenuOpen,
-        menuOpen
+        menuOpen,
+        loading,
       }}
     >
       {children}
