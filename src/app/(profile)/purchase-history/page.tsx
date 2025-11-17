@@ -17,7 +17,7 @@ const page = () => {
   
     const [ordersData, setOrdersData] = useState<RowData[]>([]);
     const [loading, setLoading] = useState(false);
-    const [perPageLength, setPerPageLength] = useState<number>(50);
+    const [perPageLength, setPerPageLength] = useState<number>(10);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(0);
     const [refreshData, setRefreshData] = useState("");
@@ -26,7 +26,10 @@ const page = () => {
       setLoading(true);
       const fetchOrderesData = async () => {
         try {
-          const response = await apiRequest<ApiResponse>("GET", "/orders");
+          const response = await apiRequest<ApiResponse>(
+            "GET",
+            `/orders?lenght=${perPageLength}&page=${currentPage}`
+          );
           if (response?.status == 200 && response.data) {
             setOrdersData((response.data as unknown as { data: RowData[] }).data);
             setTotalPages(response.data.last_page);
@@ -38,7 +41,7 @@ const page = () => {
         }
       };
       fetchOrderesData();
-    }, [refreshData]);
+    }, [refreshData, perPageLength]);
 
   return (
     <div className="border border-gray-light p-3 md:p-6">

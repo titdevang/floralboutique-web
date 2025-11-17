@@ -22,7 +22,7 @@ const page = () => {
         const [data, setData] = useState<RowData[]>([]);
         const [balance, setBalance] = useState(0)
         const [loading, setLoading] = useState(false);
-        const [perPageLength, setPerPageLength] = useState<number>(50);
+        const [perPageLength, setPerPageLength] = useState<number>(10);
         const [currentPage, setCurrentPage] = useState<number>(1);
         const [totalPages, setTotalPages] = useState<number>(0);
         const [refreshData, setRefreshData] = useState("");
