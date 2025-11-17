@@ -5,13 +5,13 @@ interface CountUpProps {
   className?: string;
 } 
 
-const CountUp: React.FC<CountUpProps> = ({ value, className = "" }) => {
+const CountUpAnimation: React.FC<CountUpProps> = ({ value, className = "" }) => {
   const [currentValue, setCurrentValue] = useState(0);
 
   useEffect(() => {
     let start = 0;
     const end = value; 
-    const duration = 1000
+    const duration = 500
     const increment = (end - start) / (duration / 50); 
 
     const interval = setInterval(() => {
@@ -31,4 +31,4 @@ const CountUp: React.FC<CountUpProps> = ({ value, className = "" }) => {
   );
 };
 
-export default CountUp;
+export default CountUpAnimation;

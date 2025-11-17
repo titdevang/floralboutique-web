@@ -34,6 +34,9 @@ module.exports = {
                 warning: "var(--warning)",
                 "soft-warning": "var(--soft-warning)",
 
+                danger: "var(--danger)",
+                "soft-danger": "var(--soft-danger)",
+
                 light: "var(--light)",
                 "soft-light": "var(--soft-light)",
                 "soft-white": "var(--soft-white)",

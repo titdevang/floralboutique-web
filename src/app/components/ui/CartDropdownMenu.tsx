@@ -157,6 +157,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
+                aria-label="cart menu"
                 className="p-1.5 rounded-full bg-gray text-white hover:bg-primary transition-colors duration-500"
               >
                 <SvgIcon

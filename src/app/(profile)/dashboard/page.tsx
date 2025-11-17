@@ -1,6 +1,7 @@
 'use client'
 import RechargeWallet from "@/app/components/section/modal/RechargeWallet";
-import CountUp from "@/app/components/ui/loader/CountUp";
+import CountUpAnimation from "@/app/components/ui/loader/CountUpAnimation";
+import CountUp from "@/app/components/ui/loader/CountUpAnimation";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 import { apiRequest } from "@/app/utils/apiRequest";
 import Link from "next/link";
@@ -45,7 +46,7 @@ const page = () => {
           <div className=" space-y-4">
             <h2 className=" opacity-50">Wallet Balance</h2>
             <p className="text-3xl font-bold">
-              ₹ <CountUp value={dashboardData?.balance || 0} />
+              ₹ <CountUpAnimation value={dashboardData?.balance || 0} />
             </p>
             <hr className="border-1 border-dotted" />
             <div>
@@ -82,7 +83,10 @@ const page = () => {
             </div>
             <div className="ml-12">
               <p className="text-2xl font-semibold">
-                ₹<CountUp value={dashboardData?.totalExpenditure || 0} />
+                ₹
+                <CountUpAnimation
+                  value={dashboardData?.totalExpenditure || 0}
+                />
               </p>
             </div>
           </div>
@@ -110,7 +114,9 @@ const page = () => {
             </div>
             <div className="flex flex-col">
               <h2 className="">Product in Cart</h2>
-              <h2 className="">{dashboardData?.productsInCart}</h2>
+              <h2 className="">
+                {<CountUpAnimation value={dashboardData?.productsInCart as number} />}
+              </h2>
             </div>
           </div>
         </div>
@@ -127,7 +133,7 @@ const page = () => {
             </div>
             <div className="flex flex-col">
               <h2 className="">Total Products Orders</h2>
-              <h2 className="">{dashboardData?.totalOrders}</h2>
+              <h2 className="">{<CountUpAnimation value={dashboardData?.totalOrders as number}/>}</h2>
             </div>
           </div>
         </div>

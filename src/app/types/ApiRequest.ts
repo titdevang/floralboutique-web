@@ -30,4 +30,5 @@ export interface ApiResponse {
   faqs: accordionItem[];
   trendingCollections: TrendingCollections[];
   sayItWithFlower: SayItWithFlower[];
+  last_page: number;
 }

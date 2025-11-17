@@ -145,22 +145,22 @@ export default function LoginPage() {
 
                                 {!guestUser && <div className={"space-y-4"}>
                                     <div className={"flex items-center w-full"}>
-                                        <div className={"border-2 border-gray-light w-full"}></div>
+                                        <div className={"border border-gray-light w-full"}></div>
                                         <p className={"w-full text-sm font-semibold text-gray-dark text-center"}>Or Sign
                                             Up</p>
-                                        <div className={"border-2 border-gray-light w-full"}></div>
+                                        <div className={"border border-gray-light w-full"}></div>
                                     </div>
 
-                                    <div className={"flex items-center justify-between w-full gap-4"}>
+                                    <div className={"flex flex-col items-center justify-between w-full gap-4"}>
                                         <div className={"w-full"}>
                                             <button
                                                 type="button"
                                                 onClick={() => {
                                                     setGuestUser(true)
                                                 }}
-                                                className="w-full uppercase p-2 flex items-center justify-center gap-1 font-semibold border border-primary text-primary transition duration-500"
+                                                className="w-full uppercase p-2 flex items-center justify-center gap-2 font-semibold border border-primary text-primary transition duration-500"
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px"
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="22px" height="22px"
                                                      viewBox="-3 0 262 262" preserveAspectRatio="xMidYMid">
                                                     <path
                                                         d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
@@ -188,8 +188,8 @@ export default function LoginPage() {
                                                 className="w-full uppercase p-2 flex items-center justify-center gap-1 font-semibold border border-primary text-primary transition duration-500"
                                             >
                                                 <SvgIcon name={"guestProfile.svg"}
-                                                         width={30}
-                                                         height={30}
+                                                         width={25}
+                                                         height={25}
                                                          fill={"currentColor"}
                                                          localImage={"guestProfile.svg"}
                                                 />

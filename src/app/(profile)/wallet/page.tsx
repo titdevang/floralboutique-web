@@ -1,19 +1,11 @@
 'use client'
 import RechargeWallet from "@/app/components/section/modal/RechargeWallet";
+import CountUpAnimation from "@/app/components/ui/loader/CountUpAnimation";
 import SvgIcon from "@/app/components/ui/SvgIcon";
-import Table from "@/app/components/ui/table/Table";
-import { Column } from "@/app/types/Table";
+import Table, { RowData } from "@/app/components/ui/table/Table";
+import { ApiResponse } from "@/app/types/ApiRequest";
 import { apiRequest } from "@/app/utils/apiRequest";
-import React, { useEffect, useState } from "react";
-
-interface Order {
-  orderId: string;
-  date: string;
-  amount: string;
-  deliveryStatus: string;
-  paymentStatus: string;
-  options: string;
-}
+import { useEffect, useState } from "react";
 
 const page = () => {
   const [rechargeWalletModal, setRechargeWalletModal] = useState(false);
@@ -25,31 +17,40 @@ const page = () => {
     { key: "deliveryStatus", label: "Delivery Status" },
     { key: "paymentStatus", label: "Payment Status" },
     { key: "options", label: "Options" },
-  ] satisfies Column<Order>[];
+  ] 
 
-        const [data, setData] = useState<Order[]>([]);
+        const [data, setData] = useState<RowData[]>([]);
         const [balance, setBalance] = useState(0)
+        const [loading, setLoading] = useState(false);
+        const [perPageLength, setPerPageLength] = useState<number>(50);
+        const [currentPage, setCurrentPage] = useState<number>(1);
+        const [totalPages, setTotalPages] = useState<number>(0);
+        const [refreshData, setRefreshData] = useState("");
 
         useEffect(()=>{
+          setLoading(true);
           const fetchData = async() => {
             try {
-              const response = await apiRequest("GET", "/wallets");
+              const response = await apiRequest<ApiResponse>("GET", "/wallets");
 
               if (response?.status == 200 && response.data) {
                 setData(
-                  (response.data as { data: { history: {data: Order[]} } }).data.history
+                  (response.data as unknown as { data: { history: {data: RowData[]} } }).data.history
                     .data
                 );
                 setBalance(
-                  (response.data as { data: { balance: number} }).data.balance
+                  (response.data as unknown as { data: { balance: number} }).data.balance
                 );
+                setTotalPages(response.data.last_page);
               }
             } catch (error) {
              console.error(error) 
+            } finally {
+              setLoading(false);
             }
           }
           fetchData();
-        },[])
+        },[refreshData])
   
 
   return (
@@ -73,7 +74,9 @@ const page = () => {
                 />
               </div>
               <h2 className="opacity-70">Wallet Balance</h2>
-              <p className="text-3xl font-bold">₹ {balance}</p>
+              <p className="text-3xl font-bold">
+                ₹ <CountUpAnimation value={balance} />
+              </p>
             </div>
           </div>
 
@@ -100,7 +103,17 @@ const page = () => {
           <h3 className="text-xl font-semibold mb-6">
             Wallet Recharge History
           </h3>
-          <Table columns={columns} data={data} />
+          <Table
+            columns={columns}
+            data={data}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
+            perPageLength={perPageLength}
+            totalPages={totalPages}
+            loading={loading}
+            setRefreshData={setRefreshData}
+            setPerPageLength={setPerPageLength}
+          />
         </div>
       </div>
     </div>

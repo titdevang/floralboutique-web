@@ -18,7 +18,7 @@ const SayItwithFlowersCard: React.FC<SayItwithFlowersCardProps> = ({
       <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-md ">
         <ImageWithFallback
           src={item.image}
-          alt={item.title}
+          alt={item.title || "Flower"}
           fill
           className="hover:scale-105 duration-500"
         />

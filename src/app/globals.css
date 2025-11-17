@@ -37,6 +37,8 @@
   --muted: #6c757d;
   --product-card: rgba(103, 25, 69, 0.02);
   --initial-avtar: #6b5d3e;
+  --danger: #ef486a;
+  --soft-danger: rgba(239, 72, 106, 0.15);
 }
 
 @theme inline {
