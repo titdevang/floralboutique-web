@@ -31,7 +31,9 @@ const page = () => {
             `/orders?lenght=${perPageLength}&page=${currentPage}`
           );
           if (response?.status == 200 && response.data) {
-            setOrdersData((response.data as unknown as { data: RowData[] }).data);
+            setOrdersData(
+              (response.data as unknown as { data: RowData[] }).data
+            );
             setTotalPages(response.data.last_page);
           }
         } catch (error) {
@@ -41,7 +43,7 @@ const page = () => {
         }
       };
       fetchOrderesData();
-    }, [refreshData, perPageLength]);
+    }, [refreshData, perPageLength, currentPage]);
 
   return (
     <div className="border border-gray-light p-3 md:p-6">

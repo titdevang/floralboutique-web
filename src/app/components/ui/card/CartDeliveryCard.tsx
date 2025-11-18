@@ -3,6 +3,7 @@
 import { Product } from "@/app/types/Product";
 import Image from "next/image";
 import SvgIcon from "../SvgIcon";
+import ImageWithFallback from "../fields/ImageWithFallback";
 
 interface CartItemCardProps {
   location: string;
@@ -33,7 +34,7 @@ export default function CartItemCard({
 
       {/* Product Info */}
       <div className="flex items-start justify-between gap-3 mt-3 p-4">
-        <Image
+        <ImageWithFallback
           src={`${item?.imageUrl}`}
           alt={item.name}
           width={50}

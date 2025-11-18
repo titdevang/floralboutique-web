@@ -15,11 +15,16 @@ import ProductDetailMultiCarousel from "@/app/components/section/ProductDetailMu
 import {useCart} from "@/app/context/CartContext";
 import Modal from "@/app/components/ui/modal/modal";
 import Image from "next/image";
+import CitiesDropdown from "@/app/components/ui/fields/CitiesDropdown";
+import { useLocation } from "@/app/context/LocationContext";
+import { Cities } from "@/app/types/Types";
 
 interface ProductProps {
     params: Promise<{ slug: string }>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+
+
 
 export default function ProductDetail({params}: ProductProps) {
     const {slug} = use(params);
@@ -28,16 +33,23 @@ export default function ProductDetail({params}: ProductProps) {
     const [product, setProduct] = useState<Product | null>(null);
     const [mainImage, setMainImage] = useState<string>("");
     const [productGalleryOpen, setProductGalleryOpen] = useState(false);
+    const [cities, setCities] = useState <Cities[]>([]);
     const { addToCart } = useCart()
+    const { selectCities, selectPincode } = useLocation()
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await apiRequest("GET", `/product/${pathname}`);
+                const getCities = await apiRequest("GET", "/cities");
                 if (response?.status === 200) {
                     const data = response.data as Product;
                     setProduct(data);
                     setMainImage(data.imageUrl);
+                }
+
+                if(getCities?.status == 200) {
+                  setCities((getCities?.data as { data: Cities[] })?.data);
                 }
             } catch (error) {
                 console.error(error);
@@ -227,11 +239,23 @@ export default function ProductDetail({params}: ProductProps) {
             {/*</p>*/}
 
             <div className={"pt-1 pb-6"}>
-              <PincodeDropdown
-                isBlink={true}
+              <CitiesDropdown
+                options={cities}
+                isBlink={!selectCities}
                 dropdownClassName="!absolute"
+                optionLable="name"
+                optionValue="id"
               />
             </div>
+
+            {selectCities && (
+              <div className={"pt-1 pb-6"}>
+                <PincodeDropdown
+                  isBlink={!selectPincode}
+                  dropdownClassName="!absolute"
+                />
+              </div>
+            )}
 
             {/*------------start Delivery Method --------------*/}
             <div className={"mt-6"}>

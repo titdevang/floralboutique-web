@@ -29,10 +29,11 @@ const ProfileSidebar = () => {
 
   const handleToggle = () => setMobileOpen(!mobileOpen);
   const handleClose = () => setMobileOpen(false);
+console.log(pathname);
 
   return (
     <>
-      <div className=" md:hidden items-center justify-between px-2 mb-4 bg-primary w-fit text-white sticky top-0 z-40">
+      <div className=" lg:hidden items-center justify-between px-2 mb-4 bg-primary w-fit text-white sticky top-0 z-40">
         <button
           onClick={handleToggle}
           aria-label="Toggle sidebar"
@@ -49,10 +50,10 @@ const ProfileSidebar = () => {
       </div>
 
       <div
-        className={`fixed md:static top-0 left-0 h-full md:h-auto bg-white border border-gray-light z-50 md:z-0 
+        className={`fixed lg:static top-0 left-0 h-full lg:h-auto bg-white border border-gray-light z-50 lg:z-0 
           transform transition-transform duration-300 ease-in-out
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-          w-[260px] md:w-full md:max-w-[280px] flex flex-col justify-between p-6`}
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          w-[260px] lg:w-full lg:max-w-[280px] flex flex-col justify-between p-6`}
       >
         {/* User Info */}
         {!userProfileData ? (
@@ -73,7 +74,9 @@ const ProfileSidebar = () => {
               />
             </div>
             <h2 className="font-semibold">{userProfileData?.name}</h2>
-            <p className="text-sm text-gray-500">{userProfileData?.phone}</p>
+            <p className="font-light text-gray-dark">
+              {userProfileData?.phone}
+            </p>
           </div>
         )}
 
@@ -87,7 +90,7 @@ const ProfileSidebar = () => {
               href={item.href}
               onClick={handleClose}
               className={`flex items-center gap-3 px-4 py-3 rounded-[25px] transition-colors duration-300 ${
-                pathname === item.href
+                pathname.startsWith(item.href)
                   ? "bg-soft-secondary-base font-medium"
                   : "hover:bg-soft-secondary-base"
               }`}
@@ -121,7 +124,7 @@ const ProfileSidebar = () => {
       {/* --- Mobile Overlay --- */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/30 md:hidden z-40"
+          className="fixed inset-0 bg-black/30 lg:hidden z-40"
           onClick={handleClose}
         />
       )}

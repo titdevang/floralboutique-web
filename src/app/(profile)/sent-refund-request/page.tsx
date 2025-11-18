@@ -2,16 +2,13 @@
 import Table, { RowData } from "@/app/components/ui/table/Table";
 import { ApiResponse } from "@/app/types/ApiRequest";
 import { apiRequest } from "@/app/utils/apiRequest";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const page = () => {
   const columns = [
-    { key: "orderId", label: "Order Id" },
-    { key: "date", label: "Date" },
-    { key: "amount", label: "Amount" },
-    { key: "deliveryStatus", label: "Delivery Status" },
-    { key: "paymentStatus", label: "Payment Status" },
-    { key: "options", label: "Options" },
+    { key: "orderId", label: "#" },
+    { key: "code", label: "Code" },
+    { key: "status", label: "Status" },
   ];
 
       const [refundsData, setRefundsData] = useState<RowData[]>([]);

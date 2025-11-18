@@ -6,6 +6,9 @@ import SvgIcon from "./SvgIcon";
 import {useCart} from "@/app/context/CartContext";
 import CartItemCard from "./card/CartDeliveryCard";
 import CartItemCardSkeleton from "./loader/CartItemCardSkeleton";
+import BottomToUpModal from "./modal/BottomToUpModal";
+import { Product } from "@/app/types/Product";
+import ImageWithFallback from "./fields/ImageWithFallback";
 
 export interface MenuItem {
     name: string;
@@ -31,8 +34,11 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     const menuRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLDivElement>(null);
     const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
+    const [removeCartItemModal, setRemoveCartItemModal] = useState(false);
+    const [removeCartItem, setRemoveCartItem] = useState<Product>();
     const { cartData, removeFromCart, setMenuOpen, menuOpen, loading } = useCart();
     const contentEl = useRef<HTMLDivElement>(null);
+    const priceDetailsRef = useRef <HTMLDivElement | null>(null);
 
     const id = useId();
     const menuId = `menu-${id}`;
@@ -98,7 +104,15 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     };
 
     const handleRemoveItem = (id: number) => {
+        setRemoveCartItemModal(false);
         removeFromCart(id)
+    };
+
+    const scrollToPriceDetails = () => {
+      priceDetailsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     };
 
     const subtotal = cartData.reduce(
@@ -148,6 +162,52 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
           id={menuId}
           // role="menu"
         >
+          <div id="cart-modal-root" className="relative z-[99999]"></div>
+          <BottomToUpModal
+            onClose={() => setRemoveCartItemModal(false)}
+            isOpen={!!removeCartItemModal}
+            portalId="cart-modal-root"
+          >
+            <div className="p-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Remove Item?
+              </h2>
+              <p className="text-gray-600 mt-1">
+                Are you sure you want to remove this gift?
+              </p>
+
+              {/* Product Block */}
+              <div className="flex items-center gap-4 mt-5 p-3">
+                <ImageWithFallback
+                  src={`${removeCartItem?.imageUrl}`}
+                  alt={removeCartItem?.name || ""}
+                  width={50}
+                  height={50}
+                  className="h-16 w-16 object-cover rounded-md group-hover:scale-105 duration-300"
+                />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">
+                    {removeCartItem?.name}
+                  </p>
+                  <p className="font-semibold text-[16px] text-primary mt-1">
+                    {removeCartItem?.quantity} x ₹{removeCartItem?.finalPrice}
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-6">
+                <button
+                  onClick={() =>
+                    handleRemoveItem(removeCartItem?.cart_id as number)
+                  }
+                  className="w-full bg-primary text-white py-3 rounded font-semibold hover:bg-hov-primary duration-300"
+                >
+                  Yes, Remove
+                </button>
+              </div>
+            </div>
+          </BottomToUpModal>
           <div className=" w-full max-w-md md:w-[420px] h-full rounded-l-sm bg-white flex flex-col text-gray-extra-dark">
             <div
               id="cart-drawer-title"
@@ -169,6 +229,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                 />
               </button>
             </div>
+
             {loading && (
               <div className="px-4">
                 <CartItemCardSkeleton />
@@ -187,12 +248,15 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                         key={item.id}
                         location="380001, Ahmedabad, Gujarat"
                         item={item}
-                        onRemove={() => handleRemoveItem(item.cart_id)}
+                        onRemove={() => {
+                          setRemoveCartItem(item);
+                          setRemoveCartItemModal(true);
+                        }}
                         // onMakeSpecial={handleMakeSpecial}
                       />
                     </div>
                   ))}
-                  <div className="py-4 bg-white px-4">
+                  <div ref={priceDetailsRef} className="py-4 bg-white px-4">
                     <h4 className="text-[16px] font-semibold pb-2">
                       Price Details
                     </h4>
@@ -219,7 +283,10 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                     <span className="text-dark text-[16px] font-semibold">
                       ₹{subtotal}
                     </span>
-                    <span className="text-peach text-xs truncate">{`View price details >`}</span>
+                    <span
+                      onClick={scrollToPriceDetails}
+                      className="text-peach text-xs truncate"
+                    >{`View price details >`}</span>
                   </div>
 
                   <Link href={"/checkout"} className="w-full">

@@ -1,12 +1,16 @@
 "use client";
 import { cn } from "@/app/lib/utils";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import SvgIcon from "../SvgIcon";
 import { Column } from "@/app/types/Table";
 import Loader from "../loader/loader";
 import PerPageList from "../../section/pagination/PerPageList";
 import PaginationNumber from "../../section/pagination/PaginationNumber";
 import Link from "next/link";
+import Modal from "../modal/modal";
+import { apiRequest } from "@/app/utils/apiRequest";
+import { toast } from "react-toastify";
+import { ApiResponse } from "@/app/types/ApiRequest";
 
 export type RowData = {
   id: number;
@@ -38,9 +42,56 @@ const Table = <T,>({
   setPerPageLength,
   perPageLength,
   totalPages,
+  setRefreshData,
 }: TableProps<T>) => {
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const handleDelete = async () => {
+    setDeleteModal(false);
+    try {
+      const response = await apiRequest<ApiResponse>(
+        "POST",
+        `/order/${selectedId}/cancel`
+      );
+      if (response?.status == 200 && response.data) {
+        toast.success(response.data.message);
+        setRefreshData(selectedId?.toString() || "");
+      } else {
+        toast.error("something went wrong");
+      }
+    } catch (error) {
+      toast.error("something went wrong");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="w-full overflow-x-auto">
+      <Modal
+        isOpen={!!deleteModal}
+        onClose={() => setDeleteModal(false)}
+        title="Delete Confirmation"
+        className="max-w-sm"
+      >
+        <div className="text-center space-y-4">
+          <h4 className="text-sm">Are you sure to delete this?</h4>
+          <div className=" space-x-4 font-[500]">
+            <button
+              onClick={() => setDeleteModal(false)}
+              className="p-2 bg-primary text-white rounded-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleDelete()}
+              className="p-2 bg-danger text-white rounded-sm"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
       <table className="w-full border-collapse text-left">
         <thead className=" border-b border-light text-gray-dark">
           <tr className="">
@@ -48,7 +99,7 @@ const Table = <T,>({
               <th
                 key={String(col.key)}
                 className={cn(
-                  "text-[10px] last:text-end pb-3 font-semibold tracking-wide",
+                  "text-[10px] last:text-end pb-3 px-3 font-semibold tracking-wide",
                   col.className
                 )}
               >
@@ -72,7 +123,7 @@ const Table = <T,>({
             data.map((item, index) => (
               <tr key={index} className="hover:bg-light cursor-pointer">
                 {columns.map((col) => (
-                  <td key={String(col.key)} className="py-3">
+                  <td key={String(col.key)} className="p-3 truncate">
                     {col.key == "orderId" ? (
                       <Link
                         href={`/purchase-history/details/${item.id}`}
@@ -119,6 +170,10 @@ const Table = <T,>({
                         {/*---------- Delete------ */}
                         {item.paymentStatus == "unpaid" && (
                           <button
+                            onClick={() => {
+                              setDeleteModal(true);
+                              setSelectedId(item.id);
+                            }}
                             title="Cancel"
                             className="text-danger bg-soft-danger hover:bg-danger hover:text-white duration-500 p-2 rounded-full"
                           >
@@ -131,7 +186,8 @@ const Table = <T,>({
                             />
                           </button>
                         )}
-                        <button
+                        <Link
+                          href={`/purchase-history/details/${item.id}`}
                           title="Order detail"
                           className="text-blue bg-soft-blue hover:bg-blue hover:text-white duration-500 p-2 rounded-full"
                         >
@@ -142,7 +198,7 @@ const Table = <T,>({
                             localImage="order-detail.svg"
                             fill="currentColor"
                           />
-                        </button>
+                        </Link>
                         <button
                           title="Download Invoice"
                           className="text-secondary-base bg-soft-secondary-base hover:bg-secondary-base hover:text-white duration-500 p-2 rounded-full"

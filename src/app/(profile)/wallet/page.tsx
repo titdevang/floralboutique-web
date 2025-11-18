@@ -11,13 +11,11 @@ const page = () => {
   const [rechargeWalletModal, setRechargeWalletModal] = useState(false);
 
   const columns = [
-    { key: "orderId", label: "Order Id" },
+    { key: "orderId", label: "#" },
     { key: "date", label: "Date" },
     { key: "amount", label: "Amount" },
-    { key: "deliveryStatus", label: "Delivery Status" },
-    { key: "paymentStatus", label: "Payment Status" },
-    { key: "options", label: "Options" },
-  ] 
+    { key: "paymentMethod", label: "Payment method" },
+  ]; 
 
         const [data, setData] = useState<RowData[]>([]);
         const [balance, setBalance] = useState(0)
