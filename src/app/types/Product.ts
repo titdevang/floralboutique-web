@@ -77,4 +77,34 @@ export interface Product {
   thumbnail_img?: string;
   cart_id: number;
   deliverySlot?: DeliverySlot;
+  city_id: string;
+  pin_code: string;
+  date?: string;
+  delivery_id: number | null;
+  time_slot_id: number | null;
+  tax: number;
+  pincode: string;
+  deliveryDate: string;
+  deliveryTypeId: number | null;
+  deliveryTimeSlot: string;
+  cutoff_time: string;
+  delivery_type: string;
+  delivery_price: number;
+  city: string;
+  deliveryTimeSlotId: number;
+  isPanIndia: number;
 }
+
+export interface DeliveryMethod {
+  id: number;
+  custom_shipping: number;
+  name: string;
+  price: number;
+}
+
+export interface DeliveryTimeSlot {
+  id: number;
+  start_time: string;
+  time_slots: string;
+}
+

@@ -67,9 +67,11 @@ module.exports = {
                 "shadow-blink": {
                     "0%": {
                         boxShadow: "0 0 0 0 rgba(103, 25, 69, 0.4)",
+                        borderRadius: "4px"
                     },
                     "100%": {
                         boxShadow: "0 0 0 16px rgba(103, 25, 69, 0.3)",
+                        borderRadius: "4px"
                     }
                 },
                 fadeIn: {
@@ -78,7 +80,7 @@ module.exports = {
                 },
             },
             animation: {
-                "shadow-blink": "shadow-blink 1.5s infinite ease-in-out",
+                "shadow-blink": "shadow-blink 2s infinite ease-in-out",
                 fadeIn: "fadeIn 0.2s ease-in",
             },
             fontSize: {

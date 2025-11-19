@@ -14,15 +14,14 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
 
     const handleIncrement = () => {
         updateQuantity(
-          product.id,
+          product,
           (product.quantity || 0) + 1,
-          product.cart_id
         );
     };
 
     const handleDecrement = () => {
         if ((product.quantity || 0) > 1) {
-            updateQuantity(product.id, (product.quantity || 0) - 1, product.cart_id);
+            updateQuantity(product, (product.quantity || 0) - 1);
         }
     };
 

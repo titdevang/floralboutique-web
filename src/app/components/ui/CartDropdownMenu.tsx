@@ -246,7 +246,6 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                     >
                       <CartItemCard
                         key={item.id}
-                        location="380001, Ahmedabad, Gujarat"
                         item={item}
                         onRemove={() => {
                           setRemoveCartItem(item);

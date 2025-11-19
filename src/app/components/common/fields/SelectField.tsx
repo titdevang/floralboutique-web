@@ -42,29 +42,6 @@ const SelectField = <T,>({
 }: SelectSingleProps<T>) => {
   const [currentOption, setCurrentOption] = useState<T | null>();
   const animatedComponents = makeAnimated();
-  const [showRightLabel, setShowRightLabel] = useState(false);
-  useEffect(() => {
-    function showRightLabel() {
-      if (selectRef.current) {
-        const rect = selectRef.current.getBoundingClientRect();
-        if (rect.width < 270) {
-          setShowRightLabel(false);
-        } else {
-          setShowRightLabel(true);
-        }
-      }
-    }
-
-    showRightLabel();
-
-    window.addEventListener("resize", showRightLabel);
-    window.addEventListener("scroll", showRightLabel);
-
-    return () => {
-      window.removeEventListener("resize", showRightLabel);
-      window.removeEventListener("scroll", showRightLabel);
-    };
-  }, []);
 
   const colorStyles: StylesConfig<string | T, boolean, GroupBase<T>> = {
     control: (styles: CSSObject, { isFocused, isDisabled }) => ({
@@ -78,7 +55,7 @@ const SelectField = <T,>({
       },
 
       "&:focus": {
-        outline: "none", 
+        outline: "none",
         boxShadow: "none",
       },
       color: "#35495e",
@@ -96,6 +73,8 @@ const SelectField = <T,>({
       fontSize: "13px",
       border: "none",
       whiteSpace: "nowrap",
+      textTransform: "none", 
+      letterSpacing: "normal"
     }),
     menuList: (styles: CSSObject) => ({
       ...styles,
@@ -127,56 +106,30 @@ const SelectField = <T,>({
     }),
 
     option: (styles, { isFocused, isSelected }) => {
-      let rightLabel = "";
-      if (isSelected && isFocused && showRightLabel && removeSelectedOptions)
-        rightLabel = "Press enter to remove";
-      else if (isSelected && showRightLabel && removeSelectedOptions)
-        rightLabel = "Selected";
-      else if (isFocused && showRightLabel && removeSelectedOptions)
-        rightLabel = "Press enter to select";
-
       return {
         ...styles,
         backgroundColor:
-          isFocused && isSelected && removeSelectedOptions
+          isFocused && isSelected
             ? "#671945"
-            : isSelected && removeSelectedOptions
+            : isSelected
             ? "#671945"
             : isFocused
-            ? "#671945"
+            ? "#67194526"
             : "white",
         color:
-          isFocused && isSelected
-            ? "white"
-            : isSelected
-            ? "#35495e"
-            : isFocused
-            ? "white"
-            : "#35495e",
-        fontSize: "15px",
+          isFocused && isSelected ? "white" : isSelected ? "white" : "#35495e",
+        fontSize: "13px",
+        textTransform: "uppercase",
+        letterSpacing: "0.05em",
         padding: "5px 15px",
-        fontWeight: isSelected ? "700" : "400",
+        fontWeight: isSelected ? "500" : "400",
         cursor: "pointer",
         position: "relative",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        "::after": {
-          content: `"${rightLabel}"`,
-          fontSize: "12px",
-          color: isSelected && !isFocused ? "#c0c0c0" : "white",
-          opacity: rightLabel ? 1 : 0,
-          transition: "opacity 0.2s",
-          position: "absolute",
-          right: "15px",
-          top: "50%",
-          transform: "translateY(-50%)",
-          pointerEvents: "none",
-          padding: "0px 0px 0px 20px",
-        },
         ":hover": {
-          backgroundColor: "#671945",
-          color: "white",
+          backgroundColor: isSelected ? "#671945" : "#67194526",
           transitionDuration: "0.2s",
         },
       };
@@ -359,7 +312,7 @@ const SelectField = <T,>({
           menuPlacement={menuPlacement}
           hideSelectedOptions={false}
           noOptionsMessage={() => `List is empty.`}
-          className="w-full"
+          className="w-full uppercase tracking-wider"
         />
         {error && (
           <div

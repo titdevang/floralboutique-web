@@ -6,14 +6,12 @@ import SvgIcon from "../SvgIcon";
 import ImageWithFallback from "../fields/ImageWithFallback";
 
 interface CartItemCardProps {
-  location: string;
   item: Product;
   onRemove: (id: number) => void;
   onMakeSpecial?: (id: number) => void;
 }
 
 export default function CartItemCard({
-  location,
   item,
   onRemove,
   onMakeSpecial,
@@ -29,7 +27,9 @@ export default function CartItemCard({
           fill={"currentColor"}
           localImage={"location.svg"}
         />
-        <span>{location}</span>
+        <span>
+          {item.pincode}, {item.city}
+        </span>
       </div>
 
       {/* Product Info */}
@@ -49,7 +49,11 @@ export default function CartItemCard({
             {item.quantity} x ₹{item.finalPrice}
           </p>
         </div>
-        <button type="button" className="text-peach" onClick={() => onRemove(item.cart_id)}>
+        <button
+          type="button"
+          className="text-peach"
+          onClick={() => onRemove(item.cart_id)}
+        >
           <SvgIcon
             name={"delete.svg"}
             width={22}
@@ -77,7 +81,7 @@ export default function CartItemCard({
             />
             <div className="text-[14px] text-neutral-600 font-[500] leading-tight">
               <p>
-                {item?.deliverySlot?.date}, {item?.deliverySlot?.time}
+                {item?.deliveryDate}, {item?.deliveryTimeSlot}
               </p>
               <p className="text-[13px]">
                 {item?.deliverySlot?.type} – ₹{item?.deliverySlot?.cost}

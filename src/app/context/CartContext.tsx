@@ -15,19 +15,15 @@ import { useAuth } from "./AuthContext";
 
 interface CartItem extends Product {
   quantity: number;
-  productData?: Product
-  id: number
+  productData?: Product;
+  id: number;
 }
 
 interface CartContextType {
   cartData: CartItem[];
   setCartData: React.Dispatch<React.SetStateAction<CartItem[]>>;
   addToCart: (product: Product) => void;
-  updateQuantity: (
-    productId: number,
-    newQuantity: number,
-    cartId: number
-  ) => void;
+  updateQuantity: (product: Product, newQuantity: number) => void;
   removeFromCart: (cartId: number) => void;
   clearCart: () => void;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -83,84 +79,96 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const addToCart = async (product: Product) => {
-          //  setLoading(true);
-           const existingProduct = cartData.find((p) => p.id === product.id);
-            setMenuOpen(true);
-           if (existingProduct) {
-             updateQuantity(
-               existingProduct.id,
-               existingProduct.quantity + 1,
-               existingProduct
-             .cart_id);
-           } else {
-            setLoading(true);
-            
-             try {
-               const response = await apiRequest<ApiResponse>(
-                 "POST",
-                 "/cart",
-                 { product_id: product.id },
-                 {
-                   headers: userAuthenticated
-                     ? {}
-                     : { "X-Guest-Token": getGuestToken() },
-                 }
-               );
+    //  setLoading(true);
+    const existingProduct = cartData.find((p) => p.id === product.id);
+    setMenuOpen(true);
+    if (existingProduct) {
+      updateQuantity(existingProduct, existingProduct.quantity + 1);
+    } else {
+      setLoading(true);
 
-               if (
-                 response?.status === 201 &&
-                 (response.data?.data as unknown as { guest_token: "string" })
-                   ?.guest_token &&
-                 !userAuthenticated
-               ) {
-                 localStorage.setItem(
-                   "guest_token",
-                   (response.data?.data as unknown as { guest_token: "string" })
-                     ?.guest_token
-                 );
-               }
-                 setCartData((prevCart) => {
-                   return [
-                     ...prevCart,
-                     {
-                       ...product,
-                       quantity: 1,
-                       deliverySlot: {
-                         date: "17th Nov",
-                         time: "09:00 - 21:00 Hrs",
-                         type: "Courier",
-                         cost: 19,
-                       },
-                       cart_id: (
-                         response?.data.data as unknown as { cart_id: {id: number} }
-                       ).cart_id.id,
-                     },
-                   ];
-                 });
-              
-             } catch (error) {
-               console.error("Error adding to cart:", error);
-             }
-            }
+      const payload = {
+        product_id: product.id,
+        city_id: product.city_id,
+        pin_code: product.pincode,
+        date: product.deliveryDate,
+        delivery_id: product.deliveryTypeId,
+        time_slot_id: product.deliveryTimeSlotId,
+      };
 
-            setMenuOpen(true);
-            setLoading(false);
+      try {
+        const response = await apiRequest<ApiResponse>(
+          "POST",
+          "/cart",
+          payload,
+          {
+            headers: userAuthenticated
+              ? {}
+              : { "X-Guest-Token": getGuestToken() },
+          }
+        );
+
+        if (
+          response?.status === 201 &&
+          (response.data?.data as unknown as { guest_token: "string" })
+            ?.guest_token &&
+          !userAuthenticated
+        ) {
+          localStorage.setItem(
+            "guest_token",
+            (response.data?.data as unknown as { guest_token: "string" })
+              ?.guest_token
+          );
+        }
+        const newProduct = response?.data.data as unknown as Product
+        if(newProduct) {
+        setCartData((prevCart) => {
+          return [
+            ...prevCart,
+            {
+              ...product,
+              quantity: 1,
+              tax: newProduct.tax,
+              city: newProduct.city,
+              deliveryDate: newProduct.deliveryDate,
+              deliveryTypeId: newProduct.deliveryTypeId || null,
+              deliveryTimeSlotId: newProduct.deliveryTimeSlotId,
+              deliveryTimeSlot: newProduct.deliveryTimeSlot,
+              cutoff_time: newProduct.cutoff_time,
+              delivery_type: newProduct.delivery_type,
+              delivery_price: newProduct.delivery_price,
+              cart_id: newProduct.cart_id,
+            },
+          ];
+        });
+      }
+      } catch (error) {
+        console.error("Error adding to cart:", error);
+      }
+    }
+
+    setMenuOpen(true);
+    setLoading(false);
   };
 
-  const updateQuantity = (productId: number, newQuantity: number, cartId: number) => {
-    apiRequest(
-      "PUT",
-      `/cart/${cartId}`,
-      { product_id: productId, quantity: newQuantity },
-      {
-        headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
-      }
-    );
+  const updateQuantity = (product: Product, newQuantity: number) => {
+    const payload = {
+      product_id: product.id,
+      city_id: product.city_id,
+      pin_code: product.pincode,
+      date: product.deliveryDate,
+      delivery_id: product.deliveryTypeId,
+      time_slot_id: product.deliveryTimeSlotId,
+      quantity: newQuantity,
+    };
+    apiRequest("PUT", `/cart/${product.cart_id}`, payload, {
+      headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
+    });
 
     setCartData((prev) =>
       prev
         .map((item) =>
-          item.id === productId
+          item.id === product.id
             ? { ...item, quantity: Math.max(0, newQuantity) }
             : item
         )

@@ -100,6 +100,10 @@ body {
   font-family: var(--font-josefin-sans), sans-serif;
 }
 
+.deliveryCard {
+  @apply flex flex-col hover:border-primary duration-300 cursor-pointer rounded-lg items-center justify-center w-full border border-gray-light p-2 font-[500] text-[12px] bg-[#615227]/[0.1] text-[#615227]
+}
+
 .desc {
   @apply text-[#919199] text-[18px] mb-0
 }
@@ -173,4 +177,31 @@ input[type="range"] {
 
 .product-card-shadow {
     box-shadow: -4px 4px 32px -6px rgba(36,36,36,0.59);
+}
+
+.rdp-today {
+  color: inherit !important;
+}
+
+.rdp-selected .rdp-day_button {
+  background: #67194526 !important;
+  color: #671945 !important;
+  border-radius: 999px;
+  font-weight: 500 !important;
+  border: 1px solid #67194576 !important;
+  font-size: 15px !important;
+}
+
+.rdp-day_button:hover {
+  background: #67194526 !important;
+  color: #671945 !important;
+  border-radius: 999px;
+  font-weight: 500 !important;
+  border: 1px solid #67194576 !important;
+  font-size: 14px !important;
+  transition-duration: "0.3s",
+}
+
+.rdp-chevron {
+  fill: #671945 !important
 }
