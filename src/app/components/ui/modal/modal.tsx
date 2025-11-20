@@ -11,6 +11,7 @@ interface ModalProps {
   className?: string;
   hideCloseButton?: boolean;
   titleClassName?: string;
+  childrenClassName?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -21,6 +22,7 @@ const Modal: React.FC<ModalProps> = ({
   className = "",
   hideCloseButton = false,
   titleClassName,
+  childrenClassName,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [animate, setAnimate] = useState(false);
@@ -96,7 +98,11 @@ const Modal: React.FC<ModalProps> = ({
               title ? "justify-between" : "justify-end"
             } p-3 `}
           >
-            {title && <h3 className={`${titleClassName} font-[500] text-[15px]`}>{title}</h3>}
+            {title && (
+              <h3 className={`${titleClassName} font-[500] text-[15px]`}>
+                {title}
+              </h3>
+            )}
             {!hideCloseButton && (
               <button
                 onClick={(e) => {
@@ -117,7 +123,9 @@ const Modal: React.FC<ModalProps> = ({
           </div>
         )}
 
-        <div className="p-5 overflow-y-auto max-h-[80vh] custom-scrollbar">
+        <div
+          className={`${childrenClassName} p-5 overflow-y-auto max-h-[80vh] custom-scrollbar`}
+        >
           {children}
         </div>
       </div>

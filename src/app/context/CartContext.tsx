@@ -12,6 +12,7 @@ import { apiRequest } from "@/app/utils/apiRequest";
 import { getGuestToken } from "@/app/utils/cartToken";
 import { ApiResponse } from "../types/ApiRequest";
 import { useAuth } from "./AuthContext";
+import { Cities } from "../types/Types";
 
 interface CartItem extends Product {
   quantity: number;
@@ -56,15 +57,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       const result =
         (response?.data?.data as unknown as CartItem[])?.map((item) => ({
-          ...item.productData,
-          quantity: item.quantity,
-          cart_id: item.id,
-          deliverySlot: {
-            date: "17th Nov",
-            time: "09:00 - 21:00 Hrs",
-            type: "Courier",
-            cost: 19,
-          },
+          ...item,
         })) || [];
 
       setCartData(result as unknown as CartItem[]);
@@ -78,90 +71,83 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     getCartData();
   }, []);
 
-  const addToCart = async (product: Product) => {
-    //  setLoading(true);
+  const addToCart = async (product: Product): Promise<number | null> => {
+
+    // CASE 1: Product already exists in cart
     const existingProduct = cartData.find((p) => p.id === product.id);
-    setMenuOpen(true);
     if (existingProduct) {
       updateQuantity(existingProduct, existingProduct.quantity + 1);
-    } else {
-      setLoading(true);
-
-      const payload = {
-        product_id: product.id,
-        city_id: product.city_id,
-        pin_code: product.pincode,
-        date: product.deliveryDate,
-        delivery_id: product.deliveryTypeId,
-        time_slot_id: product.deliveryTimeSlotId,
-      };
-
-      try {
-        const response = await apiRequest<ApiResponse>(
-          "POST",
-          "/cart",
-          payload,
-          {
-            headers: userAuthenticated
-              ? {}
-              : { "X-Guest-Token": getGuestToken() },
-          }
-        );
-
-        if (
-          response?.status === 201 &&
-          (response.data?.data as unknown as { guest_token: "string" })
-            ?.guest_token &&
-          !userAuthenticated
-        ) {
-          localStorage.setItem(
-            "guest_token",
-            (response.data?.data as unknown as { guest_token: "string" })
-              ?.guest_token
-          );
-        }
-        const newProduct = response?.data.data as unknown as Product
-        if(newProduct) {
-        setCartData((prevCart) => {
-          return [
-            ...prevCart,
-            {
-              ...product,
-              quantity: 1,
-              tax: newProduct.tax,
-              city: newProduct.city,
-              deliveryDate: newProduct.deliveryDate,
-              deliveryTypeId: newProduct.deliveryTypeId || null,
-              deliveryTimeSlotId: newProduct.deliveryTimeSlotId,
-              deliveryTimeSlot: newProduct.deliveryTimeSlot,
-              cutoff_time: newProduct.cutoff_time,
-              delivery_type: newProduct.delivery_type,
-              delivery_price: newProduct.delivery_price,
-              cart_id: newProduct.cart_id,
-            },
-          ];
-        });
-      }
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-      }
+      return existingProduct.id ?? null; // return existing cart id
     }
 
-    setMenuOpen(true);
-    setLoading(false);
+    // CASE 2: New product
+    setLoading(true);
+
+    const payload = {
+      product_id: product.id,
+      price: product.finalPrice,
+      tax: product.taxes[0].tax,
+      pincode: product.pincode,
+      city_id: product.city_id,
+      deliveryDate: product.deliveryDate,
+      deliveryTypeId: product.deliveryType?.id,
+      deliveryTimeSlot: product.deliveryTimeSlot.time_slots,
+      cutoff_time: product.deliveryTimeSlot.start_time,
+      delivery_type: product.deliveryType?.name,
+      delivery_price: product.deliveryType?.price,
+    };
+
+    try {
+      const response = await apiRequest<ApiResponse>("POST", "/cart", payload, {
+        headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
+      });
+
+      // Save guest token
+      if (
+        response?.status === 201 &&
+        (response.data?.data as any)?.guest_token &&
+        !userAuthenticated
+      ) {
+        localStorage.setItem(
+          "guest_token",
+          (response.data?.data as any).guest_token
+        );
+      }
+
+      const newProduct = response?.data.data as unknown as Product;
+
+      if (newProduct) {
+        setCartData((prevCart) => [...prevCart, { ...newProduct }]);
+
+        // 🔥 RETURN NEW CART ID HERE
+        return newProduct.id ?? null;
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+       setLoading(false);
+    }
+
+    return null; // fallback
   };
 
   const updateQuantity = (product: Product, newQuantity: number) => {
     const payload = {
-      product_id: product.id,
-      city_id: product.city_id,
-      pin_code: product.pincode,
-      date: product.deliveryDate,
-      delivery_id: product.deliveryTypeId,
-      time_slot_id: product.deliveryTimeSlotId,
       quantity: newQuantity,
+      product_id: product.id,
+      price: product.finalPrice,
+      tax: product.taxes[0].tax,
+      pincode: product.pincode,
+      city_id: product.city_id,
+      deliveryDate: product.deliveryDate,
+      deliveryTypeId: product.deliveryType?.id,
+      deliveryTimeSlot: product.deliveryTimeSlot.time_slots,
+      cutoff_time: product.deliveryTimeSlot.start_time,
+      delivery_type: product.deliveryType?.name,
+      delivery_price: product.deliveryType?.price,
     };
-    apiRequest("PUT", `/cart/${product.cart_id}`, payload, {
+
+    apiRequest("PUT", `/cart/${product.id}`, payload, {
       headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
     });
 
@@ -186,7 +172,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    setCartData((prev) => prev.filter((item) => item.cart_id !== cartId));
+    setCartData((prev) => prev.filter((item) => item.id !== cartId));
   };
 
   const clearCart = () => setCartData([]);

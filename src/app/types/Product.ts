@@ -1,3 +1,5 @@
+import { Cities } from "./Types";
+
 export interface ProductCardProps {
   product: Product;
   categoryName: string;
@@ -86,13 +88,17 @@ export interface Product {
   pincode: string;
   deliveryDate: string;
   deliveryTypeId: number | null;
-  deliveryTimeSlot: string;
+  deliveryTimeSlot: DeliveryTimeSlot;
   cutoff_time: string;
   delivery_type: string;
   delivery_price: number;
-  city: string;
-  deliveryTimeSlotId: number;
+  city: Cities | string;
   isPanIndia: number;
+  deliveryType?: DeliveryMethod;
+  pinCode: string;
+  deliveryPrice: string;
+  state: Cities | string;
+  productData?: Product;
 }
 
 export interface DeliveryMethod {

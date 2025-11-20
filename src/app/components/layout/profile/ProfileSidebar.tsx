@@ -29,7 +29,6 @@ const ProfileSidebar = () => {
 
   const handleToggle = () => setMobileOpen(!mobileOpen);
   const handleClose = () => setMobileOpen(false);
-console.log(pathname);
 
   return (
     <>

@@ -9,6 +9,7 @@ import CartItemCardSkeleton from "./loader/CartItemCardSkeleton";
 import BottomToUpModal from "./modal/BottomToUpModal";
 import { Product } from "@/app/types/Product";
 import ImageWithFallback from "./fields/ImageWithFallback";
+import DatePickerPopup from "../common/fields/DatePickerPopup";
 
 export interface MenuItem {
     name: string;
@@ -36,6 +37,8 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
     const [removeCartItemModal, setRemoveCartItemModal] = useState(false);
     const [removeCartItem, setRemoveCartItem] = useState<Product>();
+    const [changeDeliveryDateScreen, setChangeDeliveryDateScreen] = useState(false)
+    const [changeDeliveryDateCartId, setChangeDeliveryDateCartId] = useState<number>();
     const { cartData, removeFromCart, setMenuOpen, menuOpen, loading } = useCart();
     const contentEl = useRef<HTMLDivElement>(null);
     const priceDetailsRef = useRef <HTMLDivElement | null>(null);
@@ -116,7 +119,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     };
 
     const subtotal = cartData.reduce(
-        (total, item) => total + item.finalPrice * item.quantity,
+        (total, item) => total + Number(item?.productData?.finalPrice) * item.quantity,
         0
     ).toFixed(2);
 
@@ -179,18 +182,19 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
               {/* Product Block */}
               <div className="flex items-center gap-4 mt-5 p-3">
                 <ImageWithFallback
-                  src={`${removeCartItem?.imageUrl}`}
-                  alt={removeCartItem?.name || ""}
+                  src={`${removeCartItem?.productData?.imageUrl}`}
+                  alt={removeCartItem?.productData?.name || ""}
                   width={50}
                   height={50}
                   className="h-16 w-16 object-cover rounded-md group-hover:scale-105 duration-300"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {removeCartItem?.name}
+                    {removeCartItem?.productData?.name}
                   </p>
                   <p className="font-semibold text-[16px] text-primary mt-1">
-                    {removeCartItem?.quantity} x ₹{removeCartItem?.finalPrice}
+                    {removeCartItem?.quantity} x ₹
+                    {removeCartItem?.productData?.finalPrice}
                   </p>
                 </div>
               </div>
@@ -198,9 +202,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
               {/* Actions */}
               <div className="mt-6">
                 <button
-                  onClick={() =>
-                    handleRemoveItem(removeCartItem?.cart_id as number)
-                  }
+                  onClick={() => handleRemoveItem(removeCartItem?.id as number)}
                   className="w-full bg-primary text-white py-3 rounded font-semibold hover:bg-hov-primary duration-300"
                 >
                   Yes, Remove
@@ -209,118 +211,273 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
             </div>
           </BottomToUpModal>
           <div className=" w-full max-w-md md:w-[420px] h-full rounded-l-sm bg-white flex flex-col text-gray-extra-dark">
-            <div
-              id="cart-drawer-title"
-              className="px-4 py-3 font-semibold text-[16px] border-b border-peach-light flex items-center justify-between"
-            >
-              <h3 className="text-lg">Cart</h3>
-              <button
-                type="button"
-                onClick={() => setMenuOpen(false)}
-                aria-label="cart menu"
-                className="p-1.5 rounded-full bg-gray text-white hover:bg-primary transition-colors duration-500"
+            {!changeDeliveryDateScreen && (
+              <div
+                id="cart-drawer-title"
+                className="px-4 py-3 font-semibold text-[16px] border-b border-peach-light flex items-center justify-between"
               >
-                <SvgIcon
-                  name={"close.svg"}
-                  width={15}
-                  height={15}
-                  localImage="close.svg"
-                  fill="currentColor"
-                />
-              </button>
-            </div>
+                <h3 className="text-lg">Cart</h3>
+                <button
+                  type="button"
+                  onClick={() => setMenuOpen(false)}
+                  aria-label="cart menu"
+                  className="p-1.5 rounded-full bg-gray text-white hover:bg-primary transition-colors duration-500"
+                >
+                  <SvgIcon
+                    name={"close.svg"}
+                    width={15}
+                    height={15}
+                    localImage="close.svg"
+                    fill="currentColor"
+                  />
+                </button>
+              </div>
+            )}
 
             {loading && (
               <div className="px-4">
                 <CartItemCardSkeleton />
               </div>
             )}
-            {cartData.length ? (
-              <>
-                <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
-                  {cartData.map((item, index) => (
-                    <div
-                      key={index}
-                      role="none"
-                      className="flex items-start justify-between gap-3 bg-white px-4 py-1 first:pt-4 "
-                    >
-                      <CartItemCard
-                        key={item.id}
-                        item={item}
-                        onRemove={() => {
-                          setRemoveCartItem(item);
-                          setRemoveCartItemModal(true);
-                        }}
-                        // onMakeSpecial={handleMakeSpecial}
+            {!changeDeliveryDateScreen ? (
+              <div className="h-full overflow-y-auto">
+                {cartData.length ? (
+                  <>
+                    <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
+                      {cartData.map((item, index) => (
+                        <div
+                          key={index}
+                          role="none"
+                          className="flex items-start justify-between gap-3 bg-white px-4 py-1 first:pt-4 "
+                        >
+                          <CartItemCard
+                            key={item.id}
+                            item={item}
+                            onRemove={() => {
+                              setRemoveCartItem(item);
+                              setRemoveCartItemModal(true);
+                            }}
+                            onChangeDeliveryDate={(cartId) => {
+                              setChangeDeliveryDateScreen(true);
+                              setChangeDeliveryDateCartId(cartId);
+                            }}
+                            // onMakeSpecial={handleMakeSpecial}
+                          />
+                        </div>
+                      ))}
+                      <div ref={priceDetailsRef} className="py-4 bg-white px-4">
+                        <h4 className="text-[15px] font-semibold pb-2">
+                          Price Details
+                        </h4>
+                        <div className=" space-y-1 text-neutral-600 text-[13px] font-[500]">
+                          <p className="flex items-center justify-between">
+                            <span>Total Product Price</span>
+                            <span>₹{subtotal}</span>
+                          </p>
+                          <p className="flex items-center justify-between">
+                            <span>Delivery Charges</span>
+                            <span>₹99</span>
+                          </p>
+                          <p className="flex items-center justify-between">
+                            <span>Convenience Charge</span>
+                            <span>₹99</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Subtotal & Actions */}
+                    <div className="px-4 py-4 bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
+                      <div className="flex flex-col h-full items-start justify-center text-sm font-medium w-fit ">
+                        <span className="text-dark text-[16px] font-semibold">
+                          ₹{subtotal}
+                        </span>
+                        <span
+                          onClick={scrollToPriceDetails}
+                          className="text-peach text-xs truncate"
+                        >{`View price details >`}</span>
+                      </div>
+
+                      <Link href={"/checkout"} className="w-full">
+                        <button
+                          onClick={() => handleItemClick()}
+                          className="w-full text-[15px] bg-primary hover:bg-hov-primary duration-300 text-white py-3 rounded-full font-[500] transition"
+                        >
+                          Proceed to Pay
+                        </button>
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <div className="px-4 py-4 h-full flex flex-col items-center justify-between">
+                    <div className=" h-full flex items-center justify-center flex-col text-center">
+                      <SvgIcon
+                        name="empty-cart.svg"
+                        width={120}
+                        height={100}
+                        localImage="empty-cart.svg"
+                        fill="currentColor"
                       />
+                      <h3 className="font-semibold text-md mt-2">
+                        Your cart is empty
+                      </h3>
+                      <p>Let's fill it up, shall we?</p>
                     </div>
-                  ))}
-                  <div ref={priceDetailsRef} className="py-4 bg-white px-4">
-                    <h4 className="text-[16px] font-semibold pb-2">
-                      Price Details
-                    </h4>
-                    <div className=" space-y-1 text-neutral-600 text-[14px] font-[500]">
-                      <p className="flex items-center justify-between">
-                        <span>Total Product Price</span>
-                        <span>₹{subtotal}</span>
-                      </p>
-                      <p className="flex items-center justify-between">
-                        <span>Delivery Charges</span>
-                        <span>₹99</span>
-                      </p>
-                      <p className="flex items-center justify-between">
-                        <span>Convenience Charge</span>
-                        <span>₹99</span>
-                      </p>
+                    <div className="w-full">
+                      <button
+                        type="button"
+                        onClick={() => setMenuOpen(false)}
+                        className="bg-primary w-full text-white py-3 hover:bg-hov-primary duration-300 rounded-full text-sm "
+                      >
+                        Continue Shopping
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                {/* Subtotal & Actions */}
-                <div className="px-4 py-4 bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
-                  <div className="flex flex-col h-full items-start justify-center text-sm font-medium w-fit ">
-                    <span className="text-dark text-[16px] font-semibold">
-                      ₹{subtotal}
-                    </span>
-                    <span
-                      onClick={scrollToPriceDetails}
-                      className="text-peach text-xs truncate"
-                    >{`View price details >`}</span>
-                  </div>
-
-                  <Link href={"/checkout"} className="w-full">
-                    <button
-                      onClick={() => handleItemClick()}
-                      className="w-full text-[15px] bg-primary hover:bg-hov-primary duration-300 text-white py-3 rounded-full font-[500] transition"
-                    >
-                      Proceed to Pay
-                    </button>
-                  </Link>
-                </div>
-              </>
+                )}
+              </div>
             ) : (
-              <div className="px-4 py-4 h-full flex flex-col items-center justify-between">
-                <div className=" h-full flex items-center justify-center flex-col text-center">
-                  <SvgIcon
-                    name="empty-cart.svg"
-                    width={120}
-                    height={100}
-                    localImage="empty-cart.svg"
-                    fill="currentColor"
-                  />
-                  <h3 className="font-semibold text-md mt-2">
-                    Your cart is empty
-                  </h3>
-                  <p>Let's fill it up, shall we?</p>
-                </div>
-                <div className="w-full">
+              <div>
+                <div className="px-4 py-3 font-[500] text-[15px] border-b border-peach-light flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => setMenuOpen(false)}
-                    className="bg-primary w-full text-white py-3 hover:bg-hov-primary duration-300 rounded-full text-sm "
+                    onClick={() => setChangeDeliveryDateScreen(false)}
                   >
-                    Continue Shopping
+                    <SvgIcon
+                      name={"back.svg"}
+                      width={25}
+                      height={25}
+                      localImage="back.svg"
+                      fill="currentColor"
+                    />
                   </button>
+                  <h3>Select Delivery Date</h3>
+                </div>
+                <div className={`p-6`}>
+                  <div className="space-y-10">
+                    {/*--------------- start Schedule your delivery----------------- */}
+                    {
+                      <div>
+                        <div className={"grid grid-cols-3 gap-2"}>
+                          <button
+                            type="button"
+                            className="deliveryCard"
+                            // onClick={() => {
+                            //   setSelectDate(getDate("today", "full"));
+                            //   fetchDeliveryMethods(getDate("today", "full"));
+                            // }}
+                            // className={`deliveryCard ${
+                            //   selecteDate == getDate("today", "full")
+                            //     ? "!border-primary"
+                            //     : ""
+                            // }`}
+                          >
+                            <span>Today</span>
+                            {/* <span>{getDate("today")}</span> */}
+                          </button>
+                          <button
+                            type="button"
+                            className="deliveryCard"
+                            // onClick={() => {
+                            //   setSelectDate(getDate("tomorrow", "full"));
+                            //   fetchDeliveryMethods(getDate("tomorrow", "full"));
+                            // }}
+                            // className={`deliveryCard ${
+                            //   selecteDate == getDate("tomorrow", "full")
+                            //     ? "!border-primary"
+                            //     : ""
+                            // } `}
+                          >
+                            <span>Tomorrow</span>
+                            {/* <span>{getDate("tomorrow")}</span> */}
+                          </button>
+
+                          <div
+                            className="deliveryCard"
+                            // className={`h-full deliveryCard !p-0 w-full text-center ${
+                            //   ![
+                            //     getDate("tomorrow", "full"),
+                            //     getDate("today", "full"),
+                            //     "",
+                            //   ].includes(selecteDate)
+                            //     ? "!border-primary"
+                            //     : ""
+                            // }`}
+                          >
+                            <DatePickerPopup
+                              onChange={(date) => {
+                                // setSelectDate(date);
+                                // fetchDeliveryMethods(date);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    {/*--------------- End Schedule your delivery----------------- */}
+
+                    {/*------------- start deliveryMethods------------------ */}
+                    {
+                      <div className={``}>
+                        <div>
+                          <h3
+                          // className={`heading-2 !text-[18px] mb-2 !font-light w-fit ${
+                          //   !deliveryId ? "animate-shadow-blink" : ""
+                          // }`}
+                          >
+                            Preffred time slot
+                          </h3>
+                        </div>
+                        {/* <div className="grid grid-cols-3 gap-2">
+                                    {deliveryMethods.map((method, index) => (
+                                      <div key={index} className={"h-full"}>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setDeliveryId(method.id);
+                                            fetchDeliveryTimeSlots(method.id);
+                                          }}
+                                          className={`deliveryCard ${
+                                            deliveryId == method.id ? "!border-primary" : ""
+                                          } `}
+                                        >
+                                          <span>{method.name}</span>
+                                          <span>₹{method.price}</span>
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div> */}
+                      </div>
+                    }
+
+                    {/* {!!deliveryTimeSlots.length && deliveryId && (
+                                <div className={``}>
+                                  <div>
+                                    <h3
+                                      className={`heading-2 !text-[18px] mb-2 !font-light w-fit`}
+                                    >
+                                      Time slot
+                                    </h3>
+                                  </div>
+                                  <div
+                                    className={`${
+                                      !deliveryTimeSlotId ? "animate-shadow-blink" : ""
+                                    }`}
+                                  >
+                                    <SelectField
+                                      label="time slot"
+                                      name="time_slot"
+                                      value={deliveryTimeSlotId as unknown as string}
+                                      onChange={(e) =>
+                                        setDeliveryTimeSlotId(e.target.value as unknown as number)
+                                      }
+                                      options={deliveryTimeSlots}
+                                      getOptionLabel={(option) => option.time_slots}
+                                      getOptionValue={(option) => option.id}
+                                    />
+                                  </div>
+                                </div>
+                              )} */}
+                  </div>
                 </div>
               </div>
             )}

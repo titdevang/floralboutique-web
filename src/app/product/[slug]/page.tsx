@@ -17,11 +17,12 @@ import Modal from "@/app/components/ui/modal/modal";
 import Image from "next/image";
 import CitiesDropdown from "@/app/components/ui/fields/CitiesDropdown";
 import { useLocation } from "@/app/context/LocationContext";
-import { Cities } from "@/app/types/Types";
+import { AddonCategory, Cities } from "@/app/types/Types";
 import { getDate } from "@/app/lib/getDate";
 import DatePickerPopup from "@/app/components/common/fields/DatePickerPopup";
 import { ApiResponse } from "@/app/types/ApiRequest";
 import SelectField from "@/app/components/common/fields/SelectField";
+import AddonsUI from "@/app/components/ui/modal/AddonsUI";
 
 interface ProductProps {
   params: Promise<{ slug: string }>;
@@ -41,20 +42,24 @@ export default function ProductDetail({ params }: ProductProps) {
   const [deliveryTimeSlots, setDeliveryTimeSlots] = useState<
     DeliveryTimeSlot[]
   >([]);
-  const [deliveryId, setDeliveryId] = useState<number | null>(null);
-  const [deliveryTimeSlotId, setDeliveryTimeSlotId] = useState<number | null>(
-    null
+  const [deliveryType, setDeliveryType] = useState<DeliveryMethod | undefined>(
+    undefined
   );
-  const { addToCart } = useCart();
+  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<DeliveryTimeSlot | undefined>();
+  const [addOnData, setAddOnData] = useState<AddonCategory[]>([]);
+  const [openAddOnModal, setOpenAddOnModal] = useState(false);
+  const [newProductCartId, setNewProductCartId] = useState<number | null>(null);
+  const { addToCart, setMenuOpen } = useCart();
   const { selectCities, selectPincode, selectCitieName } = useLocation();
 
   useEffect(() => {
-    setDeliveryId(null);
+    setDeliveryType(undefined);
     setDeliveryMethods([]);
-    setDeliveryTimeSlotId(null);
+    setDeliveryTimeSlot(undefined);
     setDeliveryTimeSlots([]);
     setSelectDate("");
   }, [selectPincode]);
+  
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -114,21 +119,36 @@ export default function ProductDetail({ params }: ProductProps) {
     }
   };
 
-  const handleAddToCart = (product: Product) => {
-    if (!deliveryTimeSlotId) {
+      const fetchAddOnData = async () => {
+        try {
+          const response = await apiRequest("GET", "/products/addons");
+          if (response?.status == 200 && response.data) {
+            setAddOnData((response.data as { data: AddonCategory[] }).data);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+  const handleAddToCart = async (product: Product) => {
+    if (!deliveryTimeSlot) {
       toast.warning("Please Select Delivery Time Slot");
       return;
     }
+
+    setOpenAddOnModal(true);
+    fetchAddOnData();
     const productPayload = {
       ...product,
       city_id: selectCities,
       city: selectCitieName,
       pincode: selectPincode,
       deliveryDate: String(selecteDate),
-      deliveryTypeId: deliveryId,
-      deliveryTimeSlotId: deliveryTimeSlotId,
+      deliveryType: deliveryType,
+      deliveryTimeSlot: deliveryTimeSlot,
     };
-    addToCart(productPayload);
+    const cartId = await addToCart(productPayload);
+    setNewProductCartId(cartId as unknown as number)
   };
 
   if (!product) {
@@ -169,6 +189,18 @@ export default function ProductDetail({ params }: ProductProps) {
         </div>
       </Modal>
 
+      <Modal
+        isOpen={openAddOnModal}
+        onClose={() => {setOpenAddOnModal(false); setMenuOpen(true)}}
+        childrenClassName="!p-0"
+        className="!max-w-6xl"
+      >
+        <AddonsUI
+          data={addOnData}
+          setOpenAddOnModal={setOpenAddOnModal}
+          cartId={newProductCartId}
+        />
+      </Modal>
       <div className="w-full flex flex-col lg:flex-row gap-8 bg-white">
         <div className="flex flex-col lg:flex-row gap-4 flex-1">
           <div className="lg:order-1 order-2 flex lg:flex-col justify-center lg:justify-normal gap-3">
@@ -405,7 +437,7 @@ export default function ProductDetail({ params }: ProductProps) {
                 <div>
                   <h3
                     className={`heading-2 !text-[18px] mb-2 !font-light w-fit ${
-                      !deliveryId ? "animate-shadow-blink" : ""
+                      !deliveryType ? "animate-shadow-blink" : ""
                     }`}
                   >
                     Preffred time slot
@@ -417,11 +449,11 @@ export default function ProductDetail({ params }: ProductProps) {
                       <button
                         type="button"
                         onClick={() => {
-                          setDeliveryId(method.id);
+                          setDeliveryType(method);
                           fetchDeliveryTimeSlots(method.id);
                         }}
                         className={`deliveryCard ${
-                          deliveryId == method.id ? "!border-primary" : ""
+                          deliveryType?.id == method.id ? "!border-primary" : ""
                         } `}
                       >
                         <span>{method.name}</span>
@@ -433,7 +465,7 @@ export default function ProductDetail({ params }: ProductProps) {
               </div>
             )}
 
-            {!!deliveryTimeSlots.length && deliveryId && (
+            {!!deliveryTimeSlots.length && deliveryType && (
               <div className={``}>
                 <div>
                   <h3
@@ -444,35 +476,24 @@ export default function ProductDetail({ params }: ProductProps) {
                 </div>
                 <div
                   className={`${
-                    !deliveryTimeSlotId ? "animate-shadow-blink" : ""
+                    !deliveryTimeSlot ? "animate-shadow-blink" : ""
                   }`}
                 >
                   <SelectField
                     label="time slot"
                     name="time_slot"
-                    value={deliveryTimeSlotId as unknown as string}
+                    value={deliveryTimeSlot as unknown as string}
                     onChange={(e) =>
-                      setDeliveryTimeSlotId(e.target.value as unknown as number)
+                      setDeliveryTimeSlot(
+                        deliveryTimeSlots.find(
+                          (timeslot) => timeslot.id == Number(e.target.value)
+                        )
+                      )
                     }
                     options={deliveryTimeSlots}
                     getOptionLabel={(option) => option.time_slots}
                     getOptionValue={(option) => option.id}
                   />
-                  {/* {deliveryTimeSlots.map((time, index) => (
-                    <div key={index} className={"h-full"}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setDeliveryTimeSlotId(time.id);
-                        }}
-                        className={`deliveryCard ${
-                          deliveryTimeSlotId == time.id ? "!border-primary" : ""
-                        } `}
-                      >
-                        <span>{time.time_slots}</span>
-                      </button>
-                    </div>
-                  ))} */}
                 </div>
               </div>
             )}
@@ -519,6 +540,9 @@ export default function ProductDetail({ params }: ProductProps) {
             <button className="bg-primary w-full rounded-full text-white px-6 py-3 transition">
               Buy Now
             </button>
+          </div>
+          <div className={"w-full lg:hidden flex"}>
+            <ProductTabs product={product} />
           </div>
         </div>
       </div>
