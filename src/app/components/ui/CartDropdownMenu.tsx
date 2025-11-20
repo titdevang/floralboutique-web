@@ -287,7 +287,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                     </div>
 
                     {/* Subtotal & Actions */}
-                    <div className="px-4 py-4 bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
+                    <div className="px-4 py-3 sticky w-full bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
                       <div className="flex flex-col h-full items-start justify-center text-sm font-medium w-fit ">
                         <span className="text-dark text-[16px] font-semibold">
                           ₹{subtotal}
