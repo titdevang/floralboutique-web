@@ -23,6 +23,7 @@ import DatePickerPopup from "@/app/components/common/fields/DatePickerPopup";
 import { ApiResponse } from "@/app/types/ApiRequest";
 import SelectField from "@/app/components/common/fields/SelectField";
 import AddonsUI from "@/app/components/ui/modal/AddonsUI";
+import { AddonsSkeleton } from "@/app/components/ui/loader/AddonsSkeleton";
 
 interface ProductProps {
   params: Promise<{ slug: string }>;
@@ -191,15 +192,22 @@ export default function ProductDetail({ params }: ProductProps) {
 
       <Modal
         isOpen={openAddOnModal}
-        onClose={() => {setOpenAddOnModal(false); setMenuOpen(true)}}
+        onClose={() => {
+          setOpenAddOnModal(false);
+          setMenuOpen(true);
+        }}
         childrenClassName="!p-0"
         className="!max-w-6xl"
       >
-        <AddonsUI
-          data={addOnData}
-          setOpenAddOnModal={setOpenAddOnModal}
-          cartId={newProductCartId}
-        />
+        {!addOnData.length ? (
+          <AddonsSkeleton />
+        ) : (
+          <AddonsUI
+            data={addOnData}
+            setOpenAddOnModal={setOpenAddOnModal}
+            cartId={newProductCartId}
+          />
+        )}
       </Modal>
       <div className="w-full flex flex-col lg:flex-row gap-8 bg-white">
         <div className="flex flex-col lg:flex-row gap-4 flex-1">
