@@ -10,6 +10,7 @@ import React, {
 import Cookies from "js-cookie";
 import {useRouter} from "next/navigation";
 
+
 type AuthContextType = {
   userAuthenticated: boolean;
   setUserAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,6 +42,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setAuthUserName('')
     }
   }, []);
+
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type === "GoogleAuth") {
+        const token = event.data.token;
+        const name = event.data.name;
+
+        if (token) {
+          login(token, name);
+          router.push("/");
+        }
+      }
+    };
+
+    window.addEventListener("message", handler);
+
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
 
   const login = (token: string, user: string) => {
     setUserAuthenticated(true);

@@ -70,7 +70,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     getCartData();
-  }, []);
+  }, [userAuthenticated]);
 
   const addToCart = async (product: Product): Promise<number | null> => {    
 

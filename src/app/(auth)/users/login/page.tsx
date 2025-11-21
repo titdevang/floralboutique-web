@@ -12,6 +12,7 @@ import {ApiResponse} from "@/app/types/ApiRequest";
 import OTPVerify from "@/app/components/common/fields/OTPVerify";
 import PhoneInput from "@/app/components/common/fields/PhoneInput";
 import SvgIcon from "@/app/components/ui/SvgIcon";
+import { getGuestToken } from "@/app/utils/cartToken";
 
 export default function LoginPage() {
     const [phone, setPhone] = useState("");
@@ -20,7 +21,7 @@ export default function LoginPage() {
     const [showVerifyFlag, setShowVerifyFlag] = useState<boolean>(false)
     const [guestUser, setGuestUser] = useState<boolean>(false)
     const router = useRouter();
-    const {login} = useAuth();
+    const { login, userAuthenticated } = useAuth();
 
     const handleRequestCode = async () => {
         setMessage("");
@@ -60,9 +61,14 @@ export default function LoginPage() {
 
         try {
             const response = await apiRequest<ApiResponse>(
-                "POST",
-                "/login/verify",
-                {phone: '+' + phone, code}
+              "POST",
+              "/login/verify",
+              { phone: "+" + phone, code },
+              {
+                headers: userAuthenticated
+                  ? {}
+                  : { "X-Guest-Token": getGuestToken() },
+              }
             );
 
             if (response?.status === 201) {
@@ -87,6 +93,34 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
+
+const handleGoogleRedirect = async (e?: React.MouseEvent) => {
+  e?.preventDefault(); // stops page reload if inside form
+
+  try {
+    const response = await apiRequest("GET", "/google/redirect", {},  {
+            headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
+          });
+
+    if (response?.status === 200) {
+      const redirectUrl = (response.data as {data: {url: string}})?.data.url;
+       const width = 500;
+       const height = 600;
+       const left = (window.innerWidth - width) / 2;
+       const top = (window.innerHeight - height) / 2;
+
+       window.open(
+         redirectUrl,
+         "GoogleAuth",
+         `width=${width},height=${height},top=${top},left=${left}`
+       );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return false; // extra safety
+};
 
 
     return (
@@ -156,7 +190,7 @@ export default function LoginPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    setGuestUser(true)
+                                                    handleGoogleRedirect();
                                                 }}
                                                 className="w-full uppercase p-2 flex items-center justify-center gap-2 font-semibold border border-primary text-primary transition duration-500"
                                             >

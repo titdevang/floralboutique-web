@@ -16,6 +16,7 @@ export default function MainLayout({
     "/users/login",
     "/users/registration",
     "/password/reset",
+    "/auth-success",
   ];
   const isAuthenticated = !publicPaths.includes(pathname);
 
