@@ -156,8 +156,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
       }
     );
+setCartData((prev) =>
+  prev
+    // 1. Remove main item if item.id === cartId
+    .filter((item) => item.id !== cartId)
+    // 2. Remove addon products inside each remaining item
+    .map((item) => ({
+      ...item,
+      addonProducts: item.addonProducts?.filter(
+        (addon) => addon.cart_id !== cartId
+      ),
+    }))
+);
 
-    setCartData((prev) => prev.filter((item) => item.id !== cartId));
+
+
   };
 
   const clearCart = () => setCartData([]);

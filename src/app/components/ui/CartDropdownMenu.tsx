@@ -190,19 +190,27 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
               {/* Product Block */}
               <div className="flex items-center gap-4 mt-5 p-3">
                 <ImageWithFallback
-                  src={`${removeCartItem?.productData?.imageUrl}`}
-                  alt={removeCartItem?.productData?.name || ""}
+                  src={`${
+                    removeCartItem?.productData?.imageUrl ||
+                    removeCartItem?.imageUrl
+                  }`}
+                  alt={
+                    removeCartItem?.productData?.name ||
+                    removeCartItem?.name ||
+                    ""
+                  }
                   width={50}
                   height={50}
                   className="h-16 w-16 object-cover rounded-md group-hover:scale-105 duration-300"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">
-                    {removeCartItem?.productData?.name}
+                    {removeCartItem?.productData?.name || removeCartItem?.name}
                   </p>
                   <p className="font-semibold text-[16px] text-primary mt-1">
                     {removeCartItem?.quantity} x ₹
-                    {removeCartItem?.productData?.finalPrice}
+                    {removeCartItem?.productData?.finalPrice ||
+                      removeCartItem?.finalPrice}
                   </p>
                 </div>
               </div>
@@ -210,7 +218,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
               {/* Actions */}
               <div className="mt-6">
                 <button
-                  onClick={() => handleRemoveItem(removeCartItem?.id as number)}
+                  onClick={() => handleRemoveItem(removeCartItem?.cart_id ? removeCartItem?.cart_id as number : removeCartItem?.id as number)}
                   className="w-full bg-primary text-white py-3 rounded font-semibold hover:bg-hov-primary duration-300"
                 >
                   Yes, Remove
@@ -261,8 +269,8 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                           <CartItemCard
                             key={item.id}
                             item={item}
-                            onRemove={() => {
-                              setRemoveCartItem(item);
+                            onRemove={(product) => {
+                              setRemoveCartItem(product);
                               setRemoveCartItemModal(true);
                             }}
                             onChangeDeliveryDate={(cartId) => {

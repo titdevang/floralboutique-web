@@ -7,7 +7,7 @@ import { Cities } from "@/app/types/Types";
 
 interface CartItemCardProps {
   item: Product;
-  onRemove: (id: number) => void;
+  onRemove: (product: Product) => void;
   onMakeSpecial?: (id: number) => void;
   onChangeDeliveryDate: (cartId: number) => void;
 }
@@ -56,7 +56,7 @@ export default function CartItemCard({
         <button
           type="button"
           className="text-peach"
-          onClick={() => onRemove(item.id)}
+          onClick={() => onRemove(item)}
         >
           <SvgIcon
             name={"delete.svg"}
@@ -88,7 +88,7 @@ export default function CartItemCard({
           <button
             type="button"
             className="text-peach"
-            onClick={() => onRemove(item.id)}
+            onClick={() => onRemove(addonProduct)}
           >
             <SvgIcon
               name={"delete.svg"}
