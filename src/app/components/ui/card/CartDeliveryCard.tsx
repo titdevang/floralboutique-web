@@ -1,7 +1,6 @@
 "use client";
 
 import { Product } from "@/app/types/Product";
-import Image from "next/image";
 import SvgIcon from "../SvgIcon";
 import ImageWithFallback from "../fields/ImageWithFallback";
 import { Cities } from "@/app/types/Types";
@@ -68,6 +67,39 @@ export default function CartItemCard({
           />
         </button>
       </div>
+
+      {item.addonProducts?.map((addonProduct, index) => (
+        <div key={index} className="flex items-start justify-between gap-3 p-4">
+          <ImageWithFallback
+            src={`${addonProduct?.imageUrl}`}
+            alt={addonProduct?.name || ""}
+            width={50}
+            height={50}
+            className="h-16 w-16 object-cover rounded-md group-hover:scale-105 duration-300"
+          />
+          <div className="flex-1">
+            <p className="text-[13.5px] text-dark font-medium leading-tight line-clamp-2">
+              {addonProduct?.name}
+            </p>
+            <p className="font-semibold text-[15px] text-primary mt-1">
+              {addonProduct?.quantity} x ₹{addonProduct?.finalPrice}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="text-peach"
+            onClick={() => onRemove(item.id)}
+          >
+            <SvgIcon
+              name={"delete.svg"}
+              width={22}
+              height={22}
+              fill={"currentColor"}
+              localImage={"delete.svg"}
+            />
+          </button>
+        </div>
+      ))}
 
       {/* Delivery Slot */}
       <button

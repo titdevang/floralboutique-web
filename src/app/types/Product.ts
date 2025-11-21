@@ -99,6 +99,7 @@ export interface Product {
   deliveryPrice: string;
   state: Cities | string;
   productData?: Product;
+  addonProducts?: Product[];
 }
 
 export interface DeliveryMethod {

@@ -123,6 +123,14 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
         0
     ).toFixed(2);
 
+      const deliveryChargestotal = cartData
+        .reduce(
+          (total, item) =>
+            total + Number(item?.deliveryPrice),
+          0
+        )
+        .toFixed(2);
+
     return (
       <div
         className="relative inline-block"
@@ -276,12 +284,12 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                           </p>
                           <p className="flex items-center justify-between">
                             <span>Delivery Charges</span>
-                            <span>₹99</span>
+                            <span>₹{deliveryChargestotal}</span>
                           </p>
-                          <p className="flex items-center justify-between">
+                          {/* <p className="flex items-center justify-between">
                             <span>Convenience Charge</span>
                             <span>₹99</span>
-                          </p>
+                          </p> */}
                         </div>
                       </div>
                     </div>
@@ -290,7 +298,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                     <div className="px-4 py-3 sticky w-full bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
                       <div className="flex flex-col h-full items-start justify-center text-sm font-medium w-fit ">
                         <span className="text-dark text-[16px] font-semibold">
-                          ₹{subtotal}
+                          ₹{Number(subtotal) + Number(deliveryChargestotal)}
                         </span>
                         <span
                           onClick={scrollToPriceDetails}

@@ -1,7 +1,9 @@
+import { useAuth } from "@/app/context/AuthContext";
 import { useCart } from "@/app/context/CartContext";
 import { Product } from "@/app/types/Product";
 import { AddonCategory } from "@/app/types/Types";
 import { apiRequest } from "@/app/utils/apiRequest";
+import { getGuestToken } from "@/app/utils/cartToken";
 import { Dispatch, SetStateAction, useState } from "react";
 
 interface AddonsProps {
@@ -20,7 +22,8 @@ export default function AddonsUI({
     { id: number; price: number; quantity: number }[]
   >([]);
 
-  const {setCartData, setMenuOpen} = useCart()
+  const { setCartData, setMenuOpen, getCartData } = useCart();
+  const { userAuthenticated } = useAuth();
 
   const addAddon = (id: number, price: number) => {
     setSelectedAddons((prev) => {
@@ -62,14 +65,13 @@ export default function AddonsUI({
           quantity: item.quantity,
         })),
       };
-      const response = await apiRequest("POST", "/cart/add-addons", payload);
-      const addOnProductResponse = (response?.data as {data: Product})?.data;
+      const response = await apiRequest("POST", "/cart/add-addons", payload,{
+              headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
+            });
+      // const addOnProductResponse = (response?.data as {data: Product})?.data;
       if(response?.status == 201) {
         setOpenAddOnModal(false);
-        setCartData((prev) => ({
-          ...prev,
-          ...addOnProductResponse,
-        }));
+        getCartData(); 
         setMenuOpen(true);
       }
 

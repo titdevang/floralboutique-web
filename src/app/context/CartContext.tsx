@@ -27,6 +27,7 @@ interface CartContextType {
   updateQuantity: (product: Product, newQuantity: number) => void;
   removeFromCart: (cartId: number) => void;
   clearCart: () => void;
+  getCartData: ()=> void;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
   loading: boolean;
@@ -71,14 +72,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     getCartData();
   }, []);
 
-  const addToCart = async (product: Product): Promise<number | null> => {
-
-    // CASE 1: Product already exists in cart
-    const existingProduct = cartData.find((p) => p.id === product.id);
-    if (existingProduct) {
-      updateQuantity(existingProduct, existingProduct.quantity + 1);
-      return existingProduct.id ?? null; // return existing cart id
-    }
+  const addToCart = async (product: Product): Promise<number | null> => {    
 
     // CASE 2: New product
     setLoading(true);
@@ -117,9 +111,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       const newProduct = response?.data.data as unknown as Product;
 
       if (newProduct) {
-        setCartData((prevCart) => [...prevCart, { ...newProduct }]);
+        getCartData();
 
-        // 🔥 RETURN NEW CART ID HERE
         return newProduct.id ?? null;
       }
     } catch (error) {
@@ -128,7 +121,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
        setLoading(false);
     }
 
-    return null; // fallback
+    return null;
   };
 
   const updateQuantity = (product: Product, newQuantity: number) => {
@@ -151,15 +144,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
     });
 
-    setCartData((prev) =>
-      prev
-        .map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: Math.max(0, newQuantity) }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
+    getCartData();
   };
 
   const removeFromCart = (cartId: number) => {
@@ -187,6 +172,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         clearCart,
         setMenuOpen,
+        getCartData,
         menuOpen,
         loading,
       }}

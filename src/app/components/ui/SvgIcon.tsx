@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useId, useState} from "react";
 
 interface SvgIconProps {
     name: string;
@@ -22,7 +22,8 @@ const SvgIcon: React.FC<SvgIconProps> = ({
                                              fill = "currentColor",
                                          }) => {
 
-    const maskId = `${name}-mask`;
+       const uniqueId = useId();
+       const maskId = `${name}-mask-${uniqueId}`;
     return (
         <svg
             className={`img-fluid  ${className}`}
