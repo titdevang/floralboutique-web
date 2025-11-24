@@ -10,6 +10,11 @@ import BottomToUpModal from "./modal/BottomToUpModal";
 import { Product } from "@/app/types/Product";
 import ImageWithFallback from "./fields/ImageWithFallback";
 import DatePickerPopup from "../common/fields/DatePickerPopup";
+import { useBodyLock } from "@/app/lib/useBodyLock";
+import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
+import ChangeTimeSlot from "../section/cart/ChangeTimeSlot";
+import { Cities } from "@/app/types/Types";
 
 export interface MenuItem {
     name: string;
@@ -32,31 +37,28 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                                                                align = "right",
                                                            }) => {
     const [focusedIndex, setFocusedIndex] = useState(-1);
-    const menuRef = useRef<HTMLDivElement>(null);
-    const triggerRef = useRef<HTMLDivElement>(null);
-    const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>([]);
     const [removeCartItemModal, setRemoveCartItemModal] = useState(false);
     const [removeCartItem, setRemoveCartItem] = useState<Product>();
     const [changeDeliveryDateScreen, setChangeDeliveryDateScreen] = useState(false)
-    const [changeDeliveryDateCartId, setChangeDeliveryDateCartId] = useState<number>();
+    const [changeDeliveryDateCartItem, setChangeDeliveryDateCartItem] = useState<Product>();
+
     const { cartData, removeFromCart, setMenuOpen, menuOpen, loading } = useCart();
+    const { userAuthenticated, setLoginModal } = useAuth();
+
+    const menuRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLDivElement>(null);
+    const itemsRef = useRef<(HTMLButtonElement | HTMLAnchorElement | null)[]>(
+      []
+    );
     const contentEl = useRef<HTMLDivElement>(null);
     const priceDetailsRef = useRef <HTMLDivElement | null>(null);
+    const router = useRouter();
 
     const id = useId();
     const menuId = `menu-${id}`;
 
-    useEffect(() => {
-        if (menuOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
-
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [menuOpen]);
+ 
+    useBodyLock(menuOpen);
 
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -99,11 +101,13 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
         }
     };
 
-    const handleItemClick = (itemAction?: () => void) => {
+    const handleProccesToPay = () => {
         setMenuOpen(false);
-        setFocusedIndex(-1);
-        itemAction?.();
-        (triggerRef.current?.firstElementChild as HTMLElement)?.focus();
+        if(userAuthenticated) {
+          router.push("/checkout")
+        } else {
+          setLoginModal(true);
+        }
     };
 
     const handleRemoveItem = (id: number) => {
@@ -218,7 +222,13 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
               {/* Actions */}
               <div className="mt-6">
                 <button
-                  onClick={() => handleRemoveItem(removeCartItem?.cart_id ? removeCartItem?.cart_id as number : removeCartItem?.id as number)}
+                  onClick={() =>
+                    handleRemoveItem(
+                      removeCartItem?.cart_id
+                        ? (removeCartItem?.cart_id as number)
+                        : (removeCartItem?.id as number)
+                    )
+                  }
                   className="w-full bg-primary text-white py-3 rounded font-semibold hover:bg-hov-primary duration-300"
                 >
                   Yes, Remove
@@ -275,7 +285,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                             }}
                             onChangeDeliveryDate={(cartId) => {
                               setChangeDeliveryDateScreen(true);
-                              setChangeDeliveryDateCartId(cartId);
+                              setChangeDeliveryDateCartItem(cartId);
                             }}
                             // onMakeSpecial={handleMakeSpecial}
                           />
@@ -314,14 +324,14 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                         >{`View price details >`}</span>
                       </div>
 
-                      <Link href={"/checkout"} className="w-full">
-                        <button
-                          onClick={() => handleItemClick()}
-                          className="w-full text-[15px] bg-primary hover:bg-hov-primary duration-300 text-white py-3 rounded-full font-[500] transition"
-                        >
-                          Proceed to Pay
-                        </button>
-                      </Link>
+                      {/* <Link href={"/checkout"} className="w-full"> */}
+                      <button
+                        onClick={() => handleProccesToPay()}
+                        className="w-full text-[15px] bg-primary hover:bg-hov-primary duration-300 text-white py-3 rounded-full font-[500] transition"
+                      >
+                        Proceed to Pay
+                      </button>
+                      {/* </Link> */}
                     </div>
                   </>
                 ) : (
@@ -352,6 +362,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                 )}
               </div>
             ) : (
+              // --------------Start Change time-slot----------------
               <div>
                 <div className="px-4 py-3 font-[500] text-[15px] border-b border-peach-light flex items-center gap-2">
                   <button
@@ -368,133 +379,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                   </button>
                   <h3>Select Delivery Date</h3>
                 </div>
-                <div className={`p-6`}>
-                  <div className="space-y-10">
-                    {/*--------------- start Schedule your delivery----------------- */}
-                    {
-                      <div>
-                        <div className={"grid grid-cols-3 gap-2"}>
-                          <button
-                            type="button"
-                            className="deliveryCard"
-                            // onClick={() => {
-                            //   setSelectDate(getDate("today", "full"));
-                            //   fetchDeliveryMethods(getDate("today", "full"));
-                            // }}
-                            // className={`deliveryCard ${
-                            //   selecteDate == getDate("today", "full")
-                            //     ? "!border-primary"
-                            //     : ""
-                            // }`}
-                          >
-                            <span>Today</span>
-                            {/* <span>{getDate("today")}</span> */}
-                          </button>
-                          <button
-                            type="button"
-                            className="deliveryCard"
-                            // onClick={() => {
-                            //   setSelectDate(getDate("tomorrow", "full"));
-                            //   fetchDeliveryMethods(getDate("tomorrow", "full"));
-                            // }}
-                            // className={`deliveryCard ${
-                            //   selecteDate == getDate("tomorrow", "full")
-                            //     ? "!border-primary"
-                            //     : ""
-                            // } `}
-                          >
-                            <span>Tomorrow</span>
-                            {/* <span>{getDate("tomorrow")}</span> */}
-                          </button>
-
-                          <div
-                            className="deliveryCard"
-                            // className={`h-full deliveryCard !p-0 w-full text-center ${
-                            //   ![
-                            //     getDate("tomorrow", "full"),
-                            //     getDate("today", "full"),
-                            //     "",
-                            //   ].includes(selecteDate)
-                            //     ? "!border-primary"
-                            //     : ""
-                            // }`}
-                          >
-                            <DatePickerPopup
-                              onChange={(date) => {
-                                // setSelectDate(date);
-                                // fetchDeliveryMethods(date);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    }
-                    {/*--------------- End Schedule your delivery----------------- */}
-
-                    {/*------------- start deliveryMethods------------------ */}
-                    {
-                      <div className={``}>
-                        <div>
-                          <h3
-                          // className={`heading-2 !text-[18px] mb-2 !font-light w-fit ${
-                          //   !deliveryId ? "animate-shadow-blink" : ""
-                          // }`}
-                          >
-                            Preffred time slot
-                          </h3>
-                        </div>
-                        {/* <div className="grid grid-cols-3 gap-2">
-                                    {deliveryMethods.map((method, index) => (
-                                      <div key={index} className={"h-full"}>
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setDeliveryId(method.id);
-                                            fetchDeliveryTimeSlots(method.id);
-                                          }}
-                                          className={`deliveryCard ${
-                                            deliveryId == method.id ? "!border-primary" : ""
-                                          } `}
-                                        >
-                                          <span>{method.name}</span>
-                                          <span>₹{method.price}</span>
-                                        </button>
-                                      </div>
-                                    ))}
-                                  </div> */}
-                      </div>
-                    }
-
-                    {/* {!!deliveryTimeSlots.length && deliveryId && (
-                                <div className={``}>
-                                  <div>
-                                    <h3
-                                      className={`heading-2 !text-[18px] mb-2 !font-light w-fit`}
-                                    >
-                                      Time slot
-                                    </h3>
-                                  </div>
-                                  <div
-                                    className={`${
-                                      !deliveryTimeSlotId ? "animate-shadow-blink" : ""
-                                    }`}
-                                  >
-                                    <SelectField
-                                      label="time slot"
-                                      name="time_slot"
-                                      value={deliveryTimeSlotId as unknown as string}
-                                      onChange={(e) =>
-                                        setDeliveryTimeSlotId(e.target.value as unknown as number)
-                                      }
-                                      options={deliveryTimeSlots}
-                                      getOptionLabel={(option) => option.time_slots}
-                                      getOptionValue={(option) => option.id}
-                                    />
-                                  </div>
-                                </div>
-                              )} */}
-                  </div>
-                </div>
+                <ChangeTimeSlot product={changeDeliveryDateCartItem} />
               </div>
             )}
           </div>

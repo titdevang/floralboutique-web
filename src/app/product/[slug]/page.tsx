@@ -84,11 +84,11 @@ export default function ProductDetail({ params }: ProductProps) {
     if (pathname) fetchProduct();
   }, [pathname]);
 
-  const fetchDeliveryMethods = async (data: string | undefined) => {
+  const fetchDeliveryMethods = async (date: string | undefined) => {
     try {
       const response = await apiRequest<ApiResponse>(
         "GET",
-        `/products/${pathname}/delivery-methods?city_id=${selectCities}&pin_code=${selectPincode}&date=${data}`
+        `/products/${pathname}/delivery-methods?city_id=${selectCities}&pin_code=${selectPincode}&date=${date}`
       );
       if (response?.status === 200 && response.data) {
         setDeliveryMethods((response.data as unknown as { data: DeliveryMethod[] }).data);

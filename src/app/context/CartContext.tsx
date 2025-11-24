@@ -123,21 +123,54 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     return null;
   };
-
+// {
+//     "id": 5389,
+//     "productData": {
+//         "id": 184,
+//         "name": "Tropical Sunshine In-Box: Lilies & Sunflowers",
+//         "slug": "tropical-sunshine-in-box",
+//         "imageUrl": "https://floralboutique.in/images/products/tropical-sunshine-in-box-lilies-and-sunflowers-front-view-2.webp",
+//         "unitPrice": 1299,
+//         "finalPrice": 1299,
+//         "discount": {
+//             "discount_type": "amount",
+//             "discount": 0,
+//             "discount_start_date": "1720117800",
+//             "discount_end_date": "1722450540"
+//         },
+//         "rating": 4.6,
+//         "totalReviews": null
+//     },
+//     "deliveryDate": "2025-11-24",
+//     "deliveryTimeSlot": "7pm - 8pm",
+//     "deliveryType": "Fixed Time Delivery",
+//     "deliveryPrice": "149",
+//     "pinCode": "110003",
+//     "quantity": 1,
+//     "city": {
+//         "id": 48411,
+//         "name": "Delhi"
+//     },
+//     "state": {
+//         "id": 4124,
+//         "name": "Delhi"
+//     },
+// }
   const updateQuantity = (product: Product, newQuantity: number) => {
+    
     const payload = {
       quantity: newQuantity,
-      product_id: product.id,
-      price: product.finalPrice,
-      tax: product.taxes[0].tax,
-      pincode: product.pincode,
-      city_id: product.city_id,
+      product_id: product.productData?.id,
+      price: product.productData?.finalPrice,
+      tax: product.taxes?.[0]?.tax || 0,
+      pincode: product.pinCode,
+      city_id: (product.city as {id: number}).id,
       deliveryDate: product.deliveryDate,
       deliveryTypeId: product.deliveryType?.id,
-      deliveryTimeSlot: product.deliveryTimeSlot.time_slots,
+      deliveryTimeSlot: product.deliveryTimeSlot,
       cutoff_time: product.deliveryTimeSlot.start_time,
-      delivery_type: product.deliveryType?.name,
-      delivery_price: product.deliveryType?.price,
+      delivery_type: product.deliveryType,
+      delivery_price: product.deliveryPrice,
     };
 
     apiRequest("PUT", `/cart/${product.id}`, payload, {

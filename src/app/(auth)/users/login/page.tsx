@@ -26,7 +26,7 @@ export default function LoginPage() {
     const handleRequestCode = async () => {
         setMessage("");
         if (!phone) {
-            toast.error("Phone Number is required.");
+            toast.error("Mobile number is required.");
             return;
         }
         if (phone.length != 12) {

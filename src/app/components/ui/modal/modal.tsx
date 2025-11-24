@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import SvgIcon from "@/app/components/ui/SvgIcon";
+import { useBodyLock } from "@/app/lib/useBodyLock";
 
 interface ModalProps {
   isOpen: boolean;
@@ -40,14 +41,7 @@ const Modal: React.FC<ModalProps> = ({
     if (!animate && !isOpen) setIsMounted(false);
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = isOpen ? "hidden" : "";
-      return () => {
-        document.body.style.overflow = "";
-      };
-    }
-  }, [isOpen]);
+  useBodyLock(isOpen);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

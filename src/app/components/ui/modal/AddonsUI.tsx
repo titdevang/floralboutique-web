@@ -22,7 +22,7 @@ export default function AddonsUI({
     { id: number; price: number; quantity: number }[]
   >([]);
 
-  const { setCartData, setMenuOpen, getCartData } = useCart();
+  const { setMenuOpen, getCartData } = useCart();
   const { userAuthenticated } = useAuth();
 
   const addAddon = (id: number, price: number) => {

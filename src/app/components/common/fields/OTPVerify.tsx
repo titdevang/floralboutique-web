@@ -156,7 +156,7 @@ export default function OTPVerify({
     };
 
     return (
-        <div className="max-w-md w-full mx-auto p-6 bg-white rounded-2xl shadow-md">
+        <div className="max-w-md w-full mx-auto p-6 ">
 
             <div className="flex flex-col items-center gap-4">
                 <div className="flex gap-2">
@@ -175,7 +175,7 @@ export default function OTPVerify({
                             onKeyDown={(e) => handleKeyDown(e, i)}
                             onPaste={(e) => handlePaste(e, i)}
                             aria-label={`Digit ${i + 1}`}
-                            className=""
+                            className="text-center"
                         />
                     ))}
                 </div>

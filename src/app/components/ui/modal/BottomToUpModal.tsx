@@ -2,6 +2,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 import SvgIcon from "@/app/components/ui/SvgIcon";
+import { useBodyLock } from "@/app/lib/useBodyLock";
 
 interface BottomToUpModalProps {
   isOpen: boolean;
@@ -34,14 +35,7 @@ const BottomToUpModal: React.FC<BottomToUpModalProps> = ({
     if (!animate && !isOpen) setIsMounted(false);
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = isOpen ? "hidden" : "";
-      return () => {
-        document.body.style.overflow = "";
-      };
-    }
-  }, [isOpen]);
+ useBodyLock(isOpen);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -60,11 +54,11 @@ const BottomToUpModal: React.FC<BottomToUpModalProps> = ({
   if (!isMounted) return null;
 
   const portalTarget =
-    document.getElementById(portalId || "cart-modal-root") || document.body;
+    document.getElementById(String(portalId)) || document.body;
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-end bg-black/40 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-[99] flex flex-col items-center justify-end bg-black/40 transition-opacity duration-300 ${
         isOpen ? "opacity-100" : "opacity-0"
       }`}
       aria-modal="true"

@@ -112,6 +112,7 @@ const MobileFilterModal: React.FC<MobileFilterModalProps> = ({ filtersConfig }) 
     const applyFilters = () => {
         setOpenModal(false);
     };
+console.log(openModal);
 
     return (
         <>

@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LocationProvider } from "./context/LocationContext";
 import { CategoryListCacheProvider } from "./context/CategoryListCacheContext";
 import AuthProviderWrapper from "./context/AuthProviderWrapper";
+import LoginModal from "./components/ui/modal/LoginModal";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -50,6 +51,7 @@ export default function RootLayout({
                 <HeaderMenuItemProvider>
                   <CategoryListCacheProvider>
                     <MainLayout>
+                      <LoginModal/>
                       {children}
                       <SpeedInsights />
                     </MainLayout>

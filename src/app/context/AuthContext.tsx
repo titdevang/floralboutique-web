@@ -18,6 +18,8 @@ type AuthContextType = {
   logout: () => void;
   authUserName: string;
   setAuthUserName: React.Dispatch<React.SetStateAction<string>>;
+  setLoginModal: React.Dispatch<React.SetStateAction<boolean>>;
+  loginModal: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userAuthenticated, setUserAuthenticated] = useState<boolean>(false);
   const [authUserName, setAuthUserName] = useState("");
+  const [loginModal, setLoginModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -85,7 +88,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         authUserName,
-        setAuthUserName
+        setAuthUserName,
+        setLoginModal,
+        loginModal
       }}
     >
       {children}

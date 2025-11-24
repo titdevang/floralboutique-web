@@ -3,24 +3,65 @@
 import { Product } from "@/app/types/Product";
 import SvgIcon from "../SvgIcon";
 import ImageWithFallback from "../fields/ImageWithFallback";
-import { Cities } from "@/app/types/Types";
+import { AddonCategory, Cities } from "@/app/types/Types";
+import { useState } from "react";
+import Modal from "../modal/modal";
+import { apiRequest } from "@/app/utils/apiRequest";
+import { AddonsSkeleton } from "../loader/AddonsSkeleton";
+import AddonsUI from "../modal/AddonsUI";
+import { useCart } from "@/app/context/CartContext";
 
 interface CartItemCardProps {
   item: Product;
   onRemove: (product: Product) => void;
-  onMakeSpecial?: (id: number) => void;
-  onChangeDeliveryDate: (cartId: number) => void;
+  // onMakeSpecial?: (id: number) => void;
+  onChangeDeliveryDate: (cartItem: Product) => void;
 }
 
 export default function CartItemCard({
   item,
   onRemove,
-  onMakeSpecial,
+  // onMakeSpecial,
   onChangeDeliveryDate,
 }: CartItemCardProps) {
+  const [openAddOnModal, setOpenAddOnModal] = useState(false);
+  const [addOnData, setAddOnData] = useState<AddonCategory[]>([]);
+  const { setMenuOpen } = useCart()
   
+  const onMakeSpecial = async() => {
+    setOpenAddOnModal(true);
+    setMenuOpen(false);
+    try {
+      const response = await apiRequest("GET", "/products/addons");
+      if (response?.status == 200 && response.data) {
+        setAddOnData((response.data as { data: AddonCategory[] }).data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="w-full rounded-xl overflow-hidden border border-soft-peach shadow-sm transition bg-white ">
+      <Modal
+        isOpen={openAddOnModal}
+        onClose={() => {
+          setOpenAddOnModal(false);
+          setMenuOpen(true);
+        }}
+        childrenClassName="!p-0"
+        className="!max-w-6xl"
+      >
+        {!addOnData.length ? (
+          <AddonsSkeleton />
+        ) : (
+          <AddonsUI
+            data={addOnData}
+            setOpenAddOnModal={setOpenAddOnModal}
+            cartId={item.id}
+          />
+        )}
+      </Modal>
       {/* Address */}
       <div className="text-dark p-2 py-3 flex items-center gap-2 text-[12px] font-medium bg-gradient-to-b from-[#F3D0C3] to-[#fff]">
         <SvgIcon
@@ -104,7 +145,7 @@ export default function CartItemCard({
       {/* Delivery Slot */}
       <button
         type="button"
-        onClick={() => onChangeDeliveryDate(item.id)}
+        onClick={() => onChangeDeliveryDate(item)}
         className="px-4 py-1.5 relative w-full text-start"
       >
         <div className="  flex items-center justify-between border border-soft-primary rounded-lg p-3">
@@ -138,7 +179,7 @@ export default function CartItemCard({
       <div className="px-4 pb-4">
         <button
           className="w-full mt-4 flex items-center hover:bg-peach-light duration-300  text-[13px] justify-center gap-2 border border-peach text-peach font-semibold rounded-lg py-2.5 transition"
-          onClick={() => onMakeSpecial?.(item.id as number)}
+          onClick={() => onMakeSpecial?.()}
         >
           <SvgIcon
             name={"gift.svg"}
