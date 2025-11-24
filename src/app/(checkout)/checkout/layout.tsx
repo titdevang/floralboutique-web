@@ -26,7 +26,7 @@ export default function Layout({
         <div className="w-full h-full col-span-2">{children}</div>
         <div className={"col-span-1 w-full"}>
           {/* Order Summary */}
-          <div className="bg-white p-6 rounded-[40px] ">
+          <div className="bg-white p-6 rounded-[40px] sticky top-10 w-full ">
             <h2 className="text-lg font-semibold mb-4">Price Details</h2>
             {cartData.length === 0 ? (
               <p className="text-gray-600">Your cart is empty.</p>

@@ -22,9 +22,6 @@ const OrderDeliveryDetails = () => {
             <div>
                 <OrderDetails/>
             </div>
-            <div>
-                <OrderDeliveryAddress/>
-            </div>
         </div>
     );
 };

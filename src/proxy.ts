@@ -18,7 +18,8 @@ export function proxy(request: NextRequest) {
     "/wishlists",
     "/wallet",
     "/profile",
-  ]
+    "/checkout",
+  ];
 
   const isPublicPath =
     publicPaths.some((path) => pathname.startsWith(path)) ||

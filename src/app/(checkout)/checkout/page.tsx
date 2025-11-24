@@ -4,6 +4,7 @@ import React from "react";
 
 import UserContactInfo from "@/app/components/checkout/UserContactInfo";
 import OrderDeliveryDetails from "@/app/components/checkout/OrderDeliveryDetails";
+import Message from "@/app/components/checkout/Message";
 
 export default function CheckoutPage() {
 
@@ -19,6 +20,8 @@ export default function CheckoutPage() {
         <OrderDeliveryDetails/>
         {/*--------- end Shipping info-----------*/}
 
+        {/* ---------------Message--------- */}
+        <Message/>
     </div>
   );
 }

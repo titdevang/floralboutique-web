@@ -16,22 +16,28 @@ export interface Address {
 }
 
 export interface DeliveryAddress {
-    id?: number | null;
-    title: "Mr." | "Ms." | "Mrs." | "Dr." | "Mx." | string;
-    recipientName: string;
-    recipientMobile: string;
-    recipientAltMobile?: string;
-    recipientEmail?: string;
+  id?: number | null;
+  flatOrHouseNo: string;
+  streetOrArea: string;
+  landmark?: string;
+  googleMapLink?: string;
 
-    flatOrHouseNo: string;
-    streetOrArea: string;
-    landmark?: string;
-    pinCode: string;
-    googleMapLink?: string;
+  dontCallRecipient: boolean;
 
-    dontCallRecipient: boolean;
-    addressType: "Home" | "Office" | "Other";
+  addressType: "Home" | "Office" | "Other";
+  address?: string;
+  city?: string;
+  country?: string;
+  postalCode: string;
+  receiverName: string;
+  receiverEmail: string;
+  receiverAltMobile: string;
+  senderName?: string;
+  senderPhone?: string;
+  state?: string;
+  receiverMobile: string;
 }
+
 export interface UserProfileData {
   address: Address[];
   name: string;

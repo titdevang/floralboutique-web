@@ -1,12 +1,16 @@
 "use client";
 import React from "react";
 import CheckoutAddressList from "@/app/components/ui/card/CheckoutAddressCard";
+import { Product } from "@/app/types/Product";
 
-const OrderDeliveryAddress = () => {
+interface OrderDeliveryAddressProps {
+    product: Product;
+}
+const OrderDeliveryAddress: React.FC<OrderDeliveryAddressProps> = ({product}) => {
     return (
-        <div className={"pt-6 border-gray-light border-t"}>
-            <CheckoutAddressList/>
-        </div>
+      <div className={"pt-6"}>
+        <CheckoutAddressList product ={product}/>
+      </div>
     );
 };
 

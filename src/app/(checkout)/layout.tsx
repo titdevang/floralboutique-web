@@ -1,5 +1,6 @@
 "use client"
 import React from "react";
+import { AddressProvider } from "../context/AddressContext";
 
 export default function Layout({
                                    children,
@@ -8,8 +9,10 @@ export default function Layout({
 }>) {
 
     return (
+      <AddressProvider>
         <div className={"bg-[#efefef] p-6"}>
-            <div>{children}</div>
+          <div>{children}</div>
         </div>
+      </AddressProvider>
     );
 }

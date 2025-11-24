@@ -12,7 +12,7 @@ const UserContactInfo = () => {
           "bg-white rounded-[40px] md:space-y-0 space-y-4 md:flex items-center justify-between py-10 px-6"
         }
       >
-        <div className={"flex items-center gap-4"}>
+        <div className={"flex items-center gap-4 w-full"}>
           <div className={"bg-primary w-10 h-10"}>
             <p
               className={

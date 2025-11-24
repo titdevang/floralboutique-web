@@ -26,11 +26,11 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
     };
 
     const handleRemoveProduct = () => {
-        removeFromCart(product.cart_id);
+        removeFromCart(product.id);
     };
 
     return (
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-start gap-6 md:p-5 py-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-start gap-6 py-4">
         {/* Left Section */}
         <div className="flex items-start gap-4 w-full md:w-1/2">
           <div className={"flex items-center flex-col gap-2"}>
