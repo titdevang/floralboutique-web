@@ -80,7 +80,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const payload = {
       product_id: product.id,
       price: product.finalPrice,
-      tax: product.taxes[0].tax,
+      tax: product.taxes[0].tax || "0",
       pincode: product.pincode,
       city_id: product.city_id,
       deliveryDate: product.deliveryDate,

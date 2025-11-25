@@ -11,9 +11,13 @@ import { useCart } from '@/app/context/CartContext';
 
 interface ChangeTimeSlotProps {
   product?: Product;
+  setChangeDeliveryDateScreen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({ product }) => {
+const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({
+  product,
+  setChangeDeliveryDateScreen,
+}) => {
   const [selecteDate, setSelectDate] = useState<string | undefined>("");
   const [deliveryMethods, setDeliveryMethods] = useState<DeliveryMethod[]>([]);
   const [deliveryTimeSlots, setDeliveryTimeSlots] = useState<
@@ -33,7 +37,9 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({ product }) => {
     try {
       const response = await apiRequest<ApiResponse>(
         "GET",
-        `/products/${product?.productData?.slug}/delivery-methods?city_id=${(product?.city as {id: number})?.id}&pin_code=${product?.pinCode}&date=${date}`
+        `/products/${product?.productData?.slug}/delivery-methods?city_id=${
+          (product?.city as { id: number })?.id
+        }&pin_code=${product?.pinCode}&date=${date}`
       );
       if (response?.status === 200 && response.data) {
         setDeliveryMethods(
@@ -72,18 +78,21 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({ product }) => {
       toast.warning("Please Select Delivery Time Slot");
       return;
     }
-
+    setChangeDeliveryDateScreen(false);
     const productPayload = {
       ...product,
-      city_id: (product?.city as {id: number}).id,
-      city: (product?.city as {name: string})?.name,
-      pincode: product?.pincode,
+      city_id: (product?.city as { id: number }).id,
+      city: (product?.city as { name: string })?.name,
+      pincode: product?.pinCode,
       deliveryDate: String(selecteDate),
       deliveryType: deliveryType,
       deliveryTimeSlot: deliveryTimeSlot,
+      taxes: product?.productData?.taxes,
+      id: product?.productData?.id,
+      finalPrice: product?.productData?.finalPrice,
     };
 
-     await addToCart(productPayload as unknown as Product);
+    await addToCart(productPayload as unknown as Product);
   };
   return (
     <div className={`p-6`}>
@@ -209,10 +218,14 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({ product }) => {
           </div>
         )}
       </div>
-      <div className='text-center mt-6'>
-      <button type="button" onClick={handleSaveInfoToAddToCart} className='bg-primary hover:bg-hov-primary duration-300 px-6 py-1.5 text-white rounded-sm '>
-        Save
-      </button>
+      <div className="text-center mt-6">
+        <button
+          type="button"
+          onClick={handleSaveInfoToAddToCart}
+          className="bg-primary hover:bg-hov-primary duration-300 px-6 py-1.5 text-white rounded-sm "
+        >
+          Save
+        </button>
       </div>
     </div>
   );

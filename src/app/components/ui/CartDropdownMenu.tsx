@@ -268,7 +268,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
             {!changeDeliveryDateScreen ? (
               <div className="h-full overflow-y-auto">
                 {cartData.length ? (
-                  <>
+                  <div className=" flex flex-col justify-between h-full">
                     <div className="flex flex-col gap-2 flex-1 overflow-y-auto">
                       {cartData.map((item, index) => (
                         <div
@@ -333,7 +333,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                       </button>
                       {/* </Link> */}
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <div className="px-4 py-4 h-full flex flex-col items-center justify-between">
                     <div className=" h-full flex items-center justify-center flex-col text-center">
@@ -379,7 +379,10 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                   </button>
                   <h3>Select Delivery Date</h3>
                 </div>
-                <ChangeTimeSlot product={changeDeliveryDateCartItem} />
+                <ChangeTimeSlot
+                  product={changeDeliveryDateCartItem}
+                  setChangeDeliveryDateScreen={setChangeDeliveryDateScreen}
+                />
               </div>
             )}
           </div>
