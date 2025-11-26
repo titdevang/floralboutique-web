@@ -31,4 +31,5 @@ export interface ApiResponse {
   trendingCollections: TrendingCollections[];
   sayItWithFlower: SayItWithFlower[];
   last_page: number;
+  coverImage: string;
 }

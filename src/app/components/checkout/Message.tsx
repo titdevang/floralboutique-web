@@ -1,48 +1,234 @@
-'use client'
-import { useState } from 'react'
+"use client";
+
+import { useEffect, useState } from "react";
+import { apiRequest } from "@/app/utils/apiRequest";
+import Checkbox from "../common/fields/Checkbox";
+
+interface Category {
+  id: number;
+  name: string;
+  subcategories_exists: boolean;
+}
+
+interface SubCategory {
+  id: number;
+  name: string;
+}
+
+interface MessageItem {
+  id: number;
+  message: string;
+}
 
 const Message = () => {
-    const messages = [
-      "The only reason you need to express your best wishes is a heart full of love. So here’s sending...",
-      "For being such a wonderful and understanding person, you deserve only the best. Here’s a token...",
-    ];
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
+  const [messages, setMessages] = useState<MessageItem[]>([]);
 
-    const [selected, setSelected] = useState<string | null>(null);
-    const [customMessage, setCustomMessage] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<
+    number | null
+  >(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<number | null>(
+    null
+  );
+
+  const [customMessage, setCustomMessage] = useState("");
+  const [personalizeMssage, setPersonalizeMssage] = useState(true);
+
+  // -------------------------
+  // Load Categories
+  // -------------------------
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await apiRequest<{ data: Category[] }>(
+          "GET",
+          "/message/category"
+        );
+
+        if (res?.status === 200) {
+          const list: Category[] = res.data.data || [];
+          setCategories(list);
+
+          if (list.length > 0) {
+            setSelectedCategory(list[0]);
+            loadData(list[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Category error:", error);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // -------------------------
+  // Load Data When Category Changes
+  // -------------------------
+  const loadData = async (category: Category) => {
+    try {
+      if (category.subcategories_exists) {
+        const subRes = await apiRequest<{ data: SubCategory[] }>(
+          "GET",
+          `/message/sub-category/${category.id}`
+        );
+
+        if (subRes?.status === 200) {
+          const list: SubCategory[] = subRes.data?.data || [];
+          setSubCategories(list);
+
+          if (list.length > 0) {
+            const firstID = list[0].id;
+            setSelectedSubCategoryId(firstID);
+            await loadMessages(category.id, firstID);
+          }
+        }
+      } else {
+        setSubCategories([]);
+        setSelectedSubCategoryId(0);
+
+        const msgRes = await apiRequest<{ data: MessageItem[] }>(
+          "GET",
+          `/message/category/${category.id}/sub-category/0`
+        );
+
+        if (msgRes?.status === 200) {
+          setMessages(msgRes.data.data || []);
+        }
+      }
+    } catch (error) {
+      console.error("Category load error:", error);
+    }
+  };
+
+  // -------------------------
+  // Load Messages by Subcategory
+  // -------------------------
+  const loadMessages = async (categoryId: number, subCategoryId: number) => {
+    try {
+      const res = await apiRequest<{ data: MessageItem[] }>(
+        "GET",
+        `/message/category/${categoryId}/sub-category/${subCategoryId}`
+      );
+
+      if (res?.status === 200) {
+        setMessages(res.data.data || []);
+      }
+    } catch (error) {
+      console.error("Subcategory Messages error:", error);
+    }
+  };
+
   return (
     <div className="p-6 bg-white rounded-[40px]">
+      {/* Category Buttons */}
+      <div className="mb-5 space-y-6">
+        <div className="flex flex-wrap gap-2">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => {
+                setSelectedCategory(cat);
+                loadData(cat);
+              }}
+              className={`px-3 py-1.5 ${
+                selectedCategory?.id === cat.id
+                  ? "bg-hov-primary"
+                  : "bg-primary"
+              } hover:bg-hov-primary duration-300 text-white rounded-full`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="border-b border-gray-light pb-4">
+          <Checkbox
+            id="personalize_message"
+            name="personalize_message"
+            type="checkbox"
+            label="Personalize your greeting message(Optional)"
+            checked={personalizeMssage}
+            onChange={(e) => {
+              setPersonalizeMssage(e.target.checked);
+              setSelectedMessageId(null);
+              setCustomMessage("");
+            }}
+          />
+        </div>
+
+        {!!subCategories.length && (
+          <div className="flex flex-wrap gap-2">
+            {subCategories.map((sub) => (
+              <button
+                key={sub.id}
+                type="button"
+                onClick={() => {
+                  if (selectedCategory) {
+                    loadMessages(selectedCategory.id, sub.id);
+                  }
+                  setSelectedSubCategoryId(sub.id);
+                }}
+                className={`px-3 py-1.5 ${
+                  selectedSubCategoryId === sub.id
+                    ? "bg-hov-primary"
+                    : "bg-primary"
+                } hover:bg-hov-primary duration-300 text-white rounded-full`}
+              >
+                {sub.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Messages + Compose */}
       <div className="flex gap-4">
         <div className="w-1/2">
           <h3 className="text-sm mb-3">Select a message</h3>
+
           <div className="flex flex-col gap-3">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
+            {messages.length === 0 && (
+              <p className="text-xs text-gray-500 italic">No messages found.</p>
+            )}
+
+            {messages.map((msg) => (
+              <button
+                key={msg.id}
                 onClick={() => {
-                  setSelected(msg);
-                  setCustomMessage(msg);
+                  setCustomMessage(msg.message);
+                  setSelectedMessageId(msg.id);
                 }}
-                className={`border text-gray-extra-dark font-light italic rounded-sm p-3 text-sm cursor-pointer transition-all duration-300 hover:border-primary
-${selected === msg ? "border-primary" : "border-gray-light"}`}
+                disabled={!personalizeMssage}
+                className={`border text-start rounded-sm p-3 text-sm cursor-pointer italic text-gray-extra-dark font-light transition-all duration-300 ${
+                  selectedMessageId === msg.id
+                    ? "border-primary"
+                    : "border-gray-light"
+                } hover:border-primary`}
               >
-                {msg.substring(0, 80)}...
-              </div>
+                {msg.message?.substring(0, 80)}...
+              </button>
             ))}
           </div>
         </div>
 
-        {/* Right: Compose a message */}
         <div className="w-1/2">
           <h3 className="text-sm mb-3">Compose a message</h3>
+
           <textarea
             value={customMessage}
             onChange={(e) => setCustomMessage(e.target.value)}
-            placeholder="Write a message or choose and edit any of the suggestions."
-            className="w-full h-32 p-3 border border-gray-light text-gray-extra-dark font-light italic rounded-sm text-sm focus:outline-none focus:ring-0"
+            placeholder="Write a message..."
+            className="w-full h-32 p-3 border border-gray-light text-gray-extra-dark font-light italic rounded-sm text-sm focus:outline-none"
           />
 
           <div className="text-end">
-            <button className="mt-4 px-6 py-2 bg-primary hover:bg-hov-primary text-white rounded-sm text-sm transition-all">
+            <button className="mt-4 px-6 py-2 bg-primary text-white rounded-sm text-sm hover:bg-hov-primary transition-all">
               Save
             </button>
           </div>
@@ -50,6 +236,6 @@ ${selected === msg ? "border-primary" : "border-gray-light"}`}
       </div>
     </div>
   );
-}
+};
 
-export default Message
+export default Message;

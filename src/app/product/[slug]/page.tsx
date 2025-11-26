@@ -172,7 +172,7 @@ export default function ProductDetail({ params }: ProductProps) {
               <ZoomImage src={`${mainImage}`} alt={product.name} />
             </div>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-2 gap-3 h-fit overflow-y-auto ">
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-2 gap-3 h-fit overflow-y-auto flex-1 ">
             {product.photos.map((photo, index) => (
               <ImageWithFallback
                 key={index}

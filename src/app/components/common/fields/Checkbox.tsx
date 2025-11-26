@@ -18,7 +18,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             <div className="flex flex-col gap-1">
                 <label
                     className={cn(
-                        "flex items-center gap-2.5 cursor-pointer select-none touch-manipulation"
+                        "flex items-center gap-2.5 cursor-pointer select-none touch-manipulation w-fit"
                     )}
                 >
                     <input

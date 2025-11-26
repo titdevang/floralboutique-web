@@ -13,7 +13,8 @@ interface CheckoutAddressListProps {
  product: Product;
 }
 const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({product}) => {
-    const { addresses, setAddresses } = useAddress()
+    const { addresses, setAddresses } = useAddress();
+    const { addToCart } = useCart();
 
     const [selectedId, setSelectedId] = useState<number>(1);
     const [editAddress, setEditAddress] = useState<DeliveryAddress | null>()
@@ -30,8 +31,6 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({product}) => {
       dontCallRecipient: false,
       addressType: "Home",
     });
-
-    const { addToCart } = useCart();
 
     const handleSelect = async(id: number | null) => {
         setSelectedId(id || 1);

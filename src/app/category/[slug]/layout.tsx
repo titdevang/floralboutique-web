@@ -25,6 +25,7 @@ export default function Layout({
     const [filterConfig, setFilterConfig] = useState<FilterConfigItem[]>([]);
     const [metaDescription, setMetaDescription] = useState<string>("")
     const [catDescription, setCatDescription] = useState<string>("")
+    const [coverImage, setCoverImage] = useState("")
     const [faqs, setFaqs] = useState<accordionItem[]>([])
 
     useEffect(() => {
@@ -39,6 +40,7 @@ export default function Layout({
                     setMetaDescription(data.metaDescription || "")
                     setCatDescription(data.catDescription || "")
                     setFaqs(data.faqs || [])
+                    setCoverImage(data.coverImage || "");
                     const groupedFilters: FilterConfigItem[] = data.subCategory.map((group) => ({
                         key: group.slug,
                         label: group.name,
@@ -66,76 +68,90 @@ export default function Layout({
     }, [slug]);
 
     return (
+      <div>
         <div>
-            <div>
-                <ImageWithFallback
-                    src={"https://floralboutique.in/uploads/all/IAhKAFq9j2vtIdh0CHsEv2cbbspBppp6hURO7RnI.png"}
-                    alt={"Floral Background"}
-                    className={"w-full h-64 relative object-cover"}
-                    width={1920}
-                    height={200}
-                />
-                <div className={"container py-4"}>
-                    <h4 className={"heading-2 !text-[22px]"}>{categoryName}</h4>
-                    <p className={" text-primary  !text-[14px] font-light"} dangerouslySetInnerHTML={{__html: catDescription}}/>
-                </div>
-            </div>
-            <div className={"container pb-10"}>
-                <div className="flex flex-row gap-6">
-                    <div
-                        className="lg:block hidden w-[28%] sticky top-10 h-full max-h-[calc(100vh-5rem)] overflow-y-auto">
-                        {filterConfig.length > 0 ? (
-                            <div className=" h-full ">
-                                <SidebarFilter
-                                    filtersConfig={filterConfig}
-                                />
-                            </div>
-                        ) : (
-                            <div className={"w-full"}>
-                                <SidebarFilterSkeleton/>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="w-full scroll-auto">
-                        <div className={"lg:flex lg:items-center lg:justify-between lg:w-full hidden border-b border-gray-light pb-3"}>
-                            <h3 className={"text-xl font-semibold"}>{categoryName}</h3>
-                            <SortFilterBar/>
-                        </div>
-                        <main className="flex-1">{children}</main>
-                    </div>
-                </div>
-                <div className={"container mt-10 space-y-10"}>
-
-                    <div>
-                        {categoryName ? <Breadcrumb pathname={categoryName}/> :
-                            <div className={"h-5 bg-gray rounded animate-pulse w-[150px] mb-5"}/>}
-                        <p className={" text-primary  !text-[15px]"}
-                           dangerouslySetInnerHTML={{__html: metaDescription}}/>
-                    </div>
-
-                    <div className={"space-y-2"}>
-                        <div>
-                            <h2 className={"text-primary !text-[25px]"}>FAQ</h2>
-                        </div>
-                        <SmoothAccordion items={faqs} cardClasses={"border border-primary rounded-2xl md:max-w-[50%]"} titleClasses={"!font-[500] text-primary text-sm"} contentClasses={"font-light"}/>
-                    </div>
-                </div>
-            </div>
-
-            {/*    ----------------Mobile category filter----------------*/}
-            <div className={"lg:hidden block"}>
-                <div className={"fixed flex items-center w-full z-10 bottom-0"}>
-                    <div className={"w-full"}>
-                        <MobileSortFilter/>
-                    </div>
-                    <div className={"w-full"}>
-                        {/*<MobileSortFilter/>*/}
-                        <MobileFilterModal filtersConfig={filterConfig}/>
-                    </div>
-
-                </div>
-            </div>
+          <ImageWithFallback
+            src={coverImage}
+            alt={"Floral Background"}
+            className={"w-full h-64 relative object-cover"}
+            width={1920}
+            height={200}
+          />
+          <div className={"container py-4"}>
+            <h4 className={"heading-2 !text-[22px]"}>{categoryName}</h4>
+            <p
+              className={" text-primary  !text-[14px] font-light"}
+              dangerouslySetInnerHTML={{ __html: catDescription }}
+            />
+          </div>
         </div>
+        <div className={"container pb-10"}>
+          <div className="flex flex-row gap-6">
+            <div className="lg:block hidden w-[28%] sticky top-10 h-full max-h-[calc(100vh-5rem)] overflow-y-auto">
+              {filterConfig.length > 0 ? (
+                <div className=" h-full ">
+                  <SidebarFilter filtersConfig={filterConfig} />
+                </div>
+              ) : (
+                <div className={"w-full"}>
+                  <SidebarFilterSkeleton />
+                </div>
+              )}
+            </div>
+
+            <div className="w-full scroll-auto">
+              <div
+                className={
+                  "lg:flex lg:items-center lg:justify-between lg:w-full hidden border-b border-gray-light pb-3"
+                }
+              >
+                <h3 className={"text-xl font-semibold"}>{categoryName}</h3>
+                <SortFilterBar />
+              </div>
+              <main className="flex-1">{children}</main>
+            </div>
+          </div>
+          <div className={"container mt-10 space-y-10"}>
+            <div>
+              {categoryName ? (
+                <Breadcrumb pathname={categoryName} />
+              ) : (
+                <div
+                  className={"h-5 bg-gray rounded animate-pulse w-[150px] mb-5"}
+                />
+              )}
+              <p
+                className={" text-primary  !text-[15px]"}
+                dangerouslySetInnerHTML={{ __html: metaDescription }}
+              />
+            </div>
+
+            <div className={"space-y-2"}>
+              <div>
+                <h2 className={"text-primary !text-[25px]"}>FAQ</h2>
+              </div>
+              <SmoothAccordion
+                items={faqs}
+                cardClasses={"border border-primary rounded-2xl md:max-w-[50%]"}
+                titleClasses={"!font-[500] text-primary text-sm"}
+                contentClasses={"font-light"}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/*    ----------------Mobile category filter----------------*/}
+        <div className={"lg:hidden block"}>
+          <div className={"fixed flex items-center w-full z-10 bottom-0"}>
+            <div className={"w-full"}>
+              <MobileSortFilter />
+            </div>
+            <div className={"w-full"}>
+              {/*<MobileSortFilter/>*/}
+              <MobileFilterModal filtersConfig={filterConfig} />
+            </div>
+          </div>
+        </div>
+      </div>
     );
 }
