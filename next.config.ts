@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    // cacheComponents: true,
+  // cacheComponents: true,
   images: {
     remotePatterns: [
       {
@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
         hostname: "192.168.88.70",
       },
     ],
+    // Vercel Hobby (free) plan
+    unoptimized: true,
+    
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
