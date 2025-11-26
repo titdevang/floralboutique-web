@@ -192,7 +192,7 @@ const Message = () => {
         <div className="w-1/2">
           <h3 className="text-sm mb-3">Select a message</h3>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 h-full max-h-72 overflow-y-auto pr-1">
             {messages.length === 0 && (
               <p className="text-xs text-gray-500 italic">No messages found.</p>
             )}
@@ -205,7 +205,7 @@ const Message = () => {
                   setSelectedMessageId(msg.id);
                 }}
                 disabled={!personalizeMssage}
-                className={`border text-start rounded-sm p-3 text-sm cursor-pointer italic text-gray-extra-dark font-light transition-all duration-300 ${
+                className={`border text-start disabled:cursor-default rounded-sm p-3 text-sm cursor-pointer italic text-gray-extra-dark font-light transition-all duration-300 ${
                   selectedMessageId === msg.id
                     ? "border-primary"
                     : "border-gray-light"
@@ -223,8 +223,9 @@ const Message = () => {
           <textarea
             value={customMessage}
             onChange={(e) => setCustomMessage(e.target.value)}
+            disabled={!personalizeMssage}
             placeholder="Write a message..."
-            className="w-full h-32 p-3 border border-gray-light text-gray-extra-dark font-light italic rounded-sm text-sm focus:outline-none"
+            className="w-full h-52 p-3 border border-gray-light text-gray-extra-dark font-light italic rounded-sm text-sm focus:outline-none"
           />
 
           <div className="text-end">

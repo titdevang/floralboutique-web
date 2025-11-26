@@ -14,7 +14,7 @@ import { ApiResponse } from "../types/ApiRequest";
 import { useAuth } from "./AuthContext";
 import { Cities } from "../types/Types";
 
-interface CartItem extends Product {
+export interface CartItem extends Product {
   quantity: number;
   productData?: Product;
   id: number;
@@ -27,16 +27,18 @@ interface CartContextType {
   updateQuantity: (product: Product, newQuantity: number) => void;
   removeFromCart: (cartId: number) => void;
   clearCart: () => void;
-  getCartData: ()=> void;
+  getCartData: () => void;
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   menuOpen: boolean;
   loading: boolean;
+  calculateTotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartData, setCartData] = useState<CartItem[]>([]);
+  const [calculateTotal, setCalculateTotal] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -123,39 +125,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     return null;
   };
-// {
-//     "id": 5389,
-//     "productData": {
-//         "id": 184,
-//         "name": "Tropical Sunshine In-Box: Lilies & Sunflowers",
-//         "slug": "tropical-sunshine-in-box",
-//         "imageUrl": "https://floralboutique.in/images/products/tropical-sunshine-in-box-lilies-and-sunflowers-front-view-2.webp",
-//         "unitPrice": 1299,
-//         "finalPrice": 1299,
-//         "discount": {
-//             "discount_type": "amount",
-//             "discount": 0,
-//             "discount_start_date": "1720117800",
-//             "discount_end_date": "1722450540"
-//         },
-//         "rating": 4.6,
-//         "totalReviews": null
-//     },
-//     "deliveryDate": "2025-11-24",
-//     "deliveryTimeSlot": "7pm - 8pm",
-//     "deliveryType": "Fixed Time Delivery",
-//     "deliveryPrice": "149",
-//     "pinCode": "110003",
-//     "quantity": 1,
-//     "city": {
-//         "id": 48411,
-//         "name": "Delhi"
-//     },
-//     "state": {
-//         "id": 4124,
-//         "name": "Delhi"
-//     },
-// }
+
   const updateQuantity = (product: Product, newQuantity: number) => {
     
     const payload = {
@@ -208,6 +178,24 @@ setCartData((prev) =>
 
   const clearCart = () => setCartData([]);
 
+  const calculateCartTotal = (cart: CartItem[]) => {
+    return cart.reduce((total, item) => {
+      const productTotal =
+        (item.productData?.finalPrice || 0) * (item.quantity || 0);
+
+      const addonsTotal = (item.addonProducts || []).reduce((sum, addon) => {
+        return sum + (addon.finalPrice || 0) * (addon.quantity || 0);
+      }, 0);
+
+      return total + productTotal + addonsTotal;
+    }, 0);
+  };
+
+  useEffect(()=>{
+    const total = calculateCartTotal(cartData);
+    setCalculateTotal(total)
+  },[cartData])
+
   return (
     <CartContext.Provider
       value={{
@@ -221,6 +209,7 @@ setCartData((prev) =>
         getCartData,
         menuOpen,
         loading,
+        calculateTotal,
       }}
     >
       {children}

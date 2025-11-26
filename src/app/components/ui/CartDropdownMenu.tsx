@@ -42,7 +42,14 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
     const [changeDeliveryDateScreen, setChangeDeliveryDateScreen] = useState(false)
     const [changeDeliveryDateCartItem, setChangeDeliveryDateCartItem] = useState<Product>();
 
-    const { cartData, removeFromCart, setMenuOpen, menuOpen, loading } = useCart();
+    const {
+      cartData,
+      removeFromCart,
+      setMenuOpen,
+      menuOpen,
+      loading,
+      calculateTotal,
+    } = useCart();
     const { userAuthenticated, setLoginModal } = useAuth();
 
     const menuRef = useRef<HTMLDivElement>(null);
@@ -298,7 +305,7 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                         <div className=" space-y-1 text-neutral-600 text-[13px] font-[500]">
                           <p className="flex items-center justify-between">
                             <span>Total Product Price</span>
-                            <span>₹{subtotal}</span>
+                            <span>₹{calculateTotal}</span>
                           </p>
                           <p className="flex items-center justify-between">
                             <span>Delivery Charges</span>
@@ -316,7 +323,9 @@ const CartDropdownMenu: React.FC<CartDropdownMenuProps> = ({
                     <div className="px-4 py-3 sticky w-full bottom-0 border-t border-peach-light bg-white flex items-center gap-6">
                       <div className="flex flex-col h-full items-start justify-center text-sm font-medium w-fit ">
                         <span className="text-dark text-[16px] font-semibold">
-                          ₹{Number(subtotal) + Number(deliveryChargestotal)}
+                          ₹
+                          {Number(calculateTotal) +
+                            Number(deliveryChargestotal)}
                         </span>
                         <span
                           onClick={scrollToPriceDetails}
