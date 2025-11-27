@@ -32,6 +32,7 @@ interface CartContextType {
   menuOpen: boolean;
   loading: boolean;
   calculateTotal: number;
+  deliveryChargeTotal: number
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -39,6 +40,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartData, setCartData] = useState<CartItem[]>([]);
   const [calculateTotal, setCalculateTotal] = useState(0);
+  const [deliveryChargeTotal, setDeliveryChargeTotal] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -159,27 +161,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
       }
     );
-setCartData((prev) =>
-  prev
-    // 1. Remove main item if item.id === cartId
-    .filter((item) => item.id !== cartId)
-    // 2. Remove addon products inside each remaining item
-    .map((item) => ({
-      ...item,
-      addonProducts: item.addonProducts?.filter(
-        (addon) => addon.cart_id !== cartId
-      ),
-    }))
-);
 
-
-
+    setCartData((prev) =>
+      prev
+        // 1. Remove main item if item.id === cartId
+        .filter((item) => item.id !== cartId)
+        // 2. Remove addon products inside each remaining item
+        .map((item) => ({
+          ...item,
+          addonProducts: item.addonProducts?.filter(
+            (addon) => addon.cart_id !== cartId
+          ),
+        }))
+    );
   };
 
   const clearCart = () => setCartData([]);
 
   const calculateCartTotal = (cart: CartItem[]) => {
-    return cart.reduce((total, item) => {
+    return Number(cart.reduce((total, item) => {
       const productTotal =
         (item.productData?.finalPrice || 0) * (item.quantity || 0);
 
@@ -188,13 +188,21 @@ setCartData((prev) =>
       }, 0);
 
       return total + productTotal + addonsTotal;
-    }, 0);
+    }, 0).toFixed(2));
   };
 
-  useEffect(()=>{
-    const total = calculateCartTotal(cartData);
-    setCalculateTotal(total)
-  },[cartData])
+
+    const getDeliveryChargestotal = (cart: CartItem[]) => {
+      return Number(cart
+        .reduce((total, item) => total + Number(item?.deliveryPrice), 0).toFixed(2))
+    }
+
+    useEffect(()=>{
+      const total = calculateCartTotal(cartData);
+      const deliverytotal = getDeliveryChargestotal(cartData);
+      setDeliveryChargeTotal(deliverytotal);
+      setCalculateTotal(total)
+    },[cartData])
 
   return (
     <CartContext.Provider
@@ -210,6 +218,7 @@ setCartData((prev) =>
         menuOpen,
         loading,
         calculateTotal,
+        deliveryChargeTotal,
       }}
     >
       {children}

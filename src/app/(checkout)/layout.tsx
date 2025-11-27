@@ -11,7 +11,7 @@ export default function Layout({
     return (
       <AddressProvider>
         <div className={"bg-[#efefef] p-6"}>
-          <div>{children}</div>
+          <div className=" container">{children}</div>
         </div>
       </AddressProvider>
     );

@@ -2,6 +2,7 @@
 import React from "react";
 import OrderDetails from "@/app/components/checkout/OrderDetails";
 import OrderDeliveryAddress from "@/app/components/checkout/OrderDeliveryAddress";
+import SenderDetails from "./SenderDetails";
 
 const OrderDeliveryDetails = () => {
 
@@ -21,6 +22,9 @@ const OrderDeliveryDetails = () => {
             </div>
             <div>
                 <OrderDetails/>
+            </div>
+            <div>
+                <SenderDetails/>
             </div>
         </div>
     );

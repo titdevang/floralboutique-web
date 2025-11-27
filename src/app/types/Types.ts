@@ -21,3 +21,10 @@ export interface AddonCategory {
   addon_type: string;
   products: AddonItem[][];
 }
+
+export interface SenderDetail {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  location: string;
+}

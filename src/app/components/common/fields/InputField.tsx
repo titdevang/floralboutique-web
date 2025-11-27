@@ -23,7 +23,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           ref={ref}
           {...props}
           className={cn(
-            "w-full placeholder:text-primary border border-gray-light px-3 py-3 focus:border-1 focus:border-primary focus:ring-0 focus:outline-none transition duration-500",
+            "w-full disabled:opacity-85 disabled:cursor-default placeholder:text-primary border border-gray-light px-3 py-3 focus:border-1 focus:border-primary focus:ring-0 focus:outline-none transition duration-500",
             error
               ? "border-hov-primary focus:border-hov-primary"
               : "border-gray",

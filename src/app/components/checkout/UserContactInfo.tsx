@@ -22,9 +22,13 @@ const UserContactInfo = () => {
               1
             </p>
           </div>
-          <div>
-            <p className={"text-md"}>{authUserName}</p>
-          </div>
+          {authUserName ? (
+            <div>
+              <p className={"text-md"}>{authUserName}</p>
+            </div>
+          ) : (
+            <p className={"h-6 w-24 bg-gray rounded-sm"}></p>
+          )}
         </div>
         <div
           className={

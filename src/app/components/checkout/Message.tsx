@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "@/app/utils/apiRequest";
 import Checkbox from "../common/fields/Checkbox";
+import { useCheckout } from "@/app/context/CheckoutContext";
+import MessageSkeleton from "../ui/loader/MessageSkeleton";
 
 interface Category {
   id: number;
@@ -24,6 +26,7 @@ const Message = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [subCategories, setSubCategories] = useState<SubCategory[]>([]);
   const [messages, setMessages] = useState<MessageItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
@@ -35,13 +38,15 @@ const Message = () => {
     null
   );
 
-  const [customMessage, setCustomMessage] = useState("");
   const [personalizeMssage, setPersonalizeMssage] = useState(true);
+
+  const { setMessage, message } = useCheckout()
 
   // -------------------------
   // Load Categories
   // -------------------------
   useEffect(() => {
+    setLoading(true);
     const loadCategories = async () => {
       try {
         const res = await apiRequest<{ data: Category[] }>(
@@ -60,6 +65,8 @@ const Message = () => {
         }
       } catch (error) {
         console.error("Category error:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -125,8 +132,23 @@ const Message = () => {
 
   return (
     <div className="p-6 bg-white rounded-[40px]">
+      <div className={"flex items-center gap-4"}>
+        <div className={"bg-primary w-10 h-10"}>
+          <p
+            className={
+              "text-white flex items-center justify-center h-full text-md"
+            }
+          >
+            3
+          </p>
+        </div>
+        <div>
+          <p className={"text-md"}>Message</p>
+        </div>
+      </div>
+      {loading || !categories.length ? <MessageSkeleton/> : <div>
       {/* Category Buttons */}
-      <div className="mb-5 space-y-6">
+      <div className="py-10 space-y-6">
         <div className="flex flex-wrap gap-2">
           {categories.map((cat) => (
             <button
@@ -157,7 +179,7 @@ const Message = () => {
             onChange={(e) => {
               setPersonalizeMssage(e.target.checked);
               setSelectedMessageId(null);
-              setCustomMessage("");
+              setMessage("");
             }}
           />
         </div>
@@ -201,7 +223,7 @@ const Message = () => {
               <button
                 key={msg.id}
                 onClick={() => {
-                  setCustomMessage(msg.message);
+                  setMessage(msg.message);
                   setSelectedMessageId(msg.id);
                 }}
                 disabled={!personalizeMssage}
@@ -221,8 +243,8 @@ const Message = () => {
           <h3 className="text-sm mb-3">Compose a message</h3>
 
           <textarea
-            value={customMessage}
-            onChange={(e) => setCustomMessage(e.target.value)}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             disabled={!personalizeMssage}
             placeholder="Write a message..."
             className="w-full h-52 p-3 border border-gray-light text-gray-extra-dark font-light italic rounded-sm text-sm focus:outline-none"
@@ -235,6 +257,7 @@ const Message = () => {
           </div>
         </div>
       </div>
+      </div>}
     </div>
   );
 };

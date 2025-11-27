@@ -4,9 +4,20 @@ import DeliveryCard from "@/app/components/checkout/DeliveryCard";
 import {useCart} from "@/app/context/CartContext";
 import OrderDeliveryAddress from "./OrderDeliveryAddress";
 import SvgIcon from "../ui/SvgIcon";
+import DeliveryCardSkeleton from "../ui/loader/DeliveryCardSkeleton";
 
 const OrderDetails = () => {
-    const {cartData} = useCart()
+    const {cartData, loading} = useCart()
+
+        if (!cartData.length || loading) {
+          return (
+            <div>
+              <DeliveryCardSkeleton />
+              <DeliveryCardSkeleton />
+            </div>
+          );
+        }
+
     return (
         <div className={"w-full divide-y divide-gray-light py-4"}>
             {
