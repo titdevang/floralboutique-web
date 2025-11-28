@@ -117,7 +117,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
       if (response?.status === 201) {
         toast.success(response.data?.message);
 
-        const newAddress = response.data.data as unknown as DeliveryAddress;
+        const newAddress = response.data as unknown as DeliveryAddress;
 
         setAddresses((prev) => [...prev, newAddress]);
         setAddNewAddress(false);
@@ -248,7 +248,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                   <Radio
                     type="radio"
                     name="address"
-                    checked={Number(selectedId) == Number(addr.id)}
+                    checked={Number(selectedId) == Number(addr?.id)}
                     onChange={() => handleSelect(addr)}
                     className="!w-4 !h-4 cursor-pointer mt-1"
                   />

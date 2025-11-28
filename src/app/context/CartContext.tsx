@@ -137,7 +137,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateQuantity = async(product: Product, newQuantity?: number) => {
-    console.log(product);
     
     const payload = {
       quantity: newQuantity ? newQuantity : product.quantity,
