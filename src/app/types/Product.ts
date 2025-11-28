@@ -1,4 +1,5 @@
 import { Cities } from "./Types";
+import { DeliveryAddress } from "./user";
 
 export interface ProductCardProps {
   product: Product;
@@ -100,6 +101,8 @@ export interface Product {
   state: Cities | string;
   productData?: Product;
   addonProducts?: Product[];
+  startTime: string;
+  address: DeliveryAddress;
 }
 
 export interface DeliveryMethod {

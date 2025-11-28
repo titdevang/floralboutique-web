@@ -2,7 +2,7 @@
 
 const MessageSkeleton = () => {
   return (
-    <div className="">
+    <div className=" animate-pulse">
       {/* Categories */}
       <div className="py-10 space-y-6">
         <div className="flex flex-wrap gap-2">

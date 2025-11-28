@@ -1,6 +1,6 @@
 "use client";
 
-import {Slide, ToastContainer} from "react-toastify";
+import {Slide, toast, ToastContainer} from "react-toastify";
 import Navbar from "../common/Navbar";
 import Footer from "../common/Footer";
 import { usePathname } from "next/navigation";

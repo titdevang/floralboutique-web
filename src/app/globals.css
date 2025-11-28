@@ -205,3 +205,15 @@ input[type="range"] {
 .rdp-chevron {
   fill: #671945 !important
 }
+
+
+/* --------------toast message------------ */
+.Toastify__toast--success {
+  background-color: #85b567 !important;
+  /* example: indigo */
+}
+
+.Toastify__toast--error {
+  background-color: #ef486a !important;
+  /* example: indigo */
+}

@@ -17,25 +17,28 @@ export interface Address {
 
 export interface DeliveryAddress {
   id?: number | null;
-  flatOrHouseNo: string;
-  streetOrArea: string;
-  landmark?: string;
+  address_1: string;
+  address_2: string;
+  address_3?: string;
   googleMapLink?: string;
 
   dontCallRecipient: boolean;
 
   addressType: "Home" | "Office" | "Other";
   address?: string;
-  city?: string;
-  country?: string;
+  city_id?: string;
+  country_id?: string;
   postalCode: string;
   receiverName: string;
   receiverEmail: string;
-  receiverAltMobile: string;
+  receiverAltPhone: string;
   senderName?: string;
   senderPhone?: string;
+  state_id?: string;
+  receiverPhone: string;
+  city?: string;
   state?: string;
-  receiverMobile: string;
+  country?: string;
 }
 
 export interface UserProfileData {

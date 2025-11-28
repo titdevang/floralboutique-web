@@ -5,6 +5,7 @@ import SvgIcon from "@/app/components/ui/SvgIcon";
 import {useCart} from "@/app/context/CartContext";
 import {Product} from "@/app/types/Product";
 import DeliveryCardSkeleton from "../ui/loader/DeliveryCardSkeleton";
+import ChangeDeliveryModal from "./ChangeDeliveryModal";
 
 interface DeliveryCardProps {
     product: Product;
@@ -13,17 +14,14 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
 
     const {updateQuantity, removeFromCart} = useCart();
 
-    const handleIncrement = () => {
-        updateQuantity(
-          product,
-          (product.quantity || 0) + 1,
-        );
+    const handleIncrement = (cartId: number) => {
+        updateQuantity({ ...product, id: cartId }, (product.quantity || 0) + 1);
     };
 
-    const handleDecrement = () => {
-        if ((product.quantity || 0) > 1) {
-            updateQuantity(product, (product.quantity || 0) - 1);
-        }
+    const handleDecrement = (cartId: number) => {
+      if ((product.quantity || 0) > 1) {
+        updateQuantity({ ...product, id: cartId }, (product.quantity || 0) - 1);
+      }
     };
 
     const handleRemoveProduct = (id: number) => {
@@ -70,14 +68,14 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
                 <div className="flex items-center gap-3 text-primary">
                   <button
                     type={"button"}
-                    onClick={handleDecrement}
+                    onClick={() => handleDecrement(product.id)}
                     className="text-3xl font-medium"
                   >
                     −
                   </button>
                   <button
                     type={"button"}
-                    onClick={handleIncrement}
+                    onClick={() => handleIncrement(product.id)}
                     className="text-3xl font-medium"
                   >
                     +
@@ -124,14 +122,14 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
                     <div className="flex items-center gap-3 text-primary">
                       <button
                         type={"button"}
-                        onClick={handleDecrement}
+                        onClick={() => handleDecrement(addonProduct.cart_id)}
                         className="text-3xl font-medium"
                       >
                         −
                       </button>
                       <button
                         type={"button"}
-                        onClick={handleIncrement}
+                        onClick={() => handleIncrement(addonProduct.cart_id)}
                         className="text-3xl font-medium"
                       >
                         +
@@ -162,10 +160,7 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
               {product?.deliveryTimeSlot as unknown as string}
             </p>
           </div>
-
-          <button className=" px-5 py-2 text-primary border border-gray text-sm font-medium rounded-full transition">
-            CHANGE
-          </button>
+          <ChangeDeliveryModal product={product} />
         </div>
       </div>
     );

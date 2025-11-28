@@ -12,8 +12,8 @@ import {useRouter} from "next/navigation";
 
 
 type AuthContextType = {
-  userAuthenticated: boolean;
-  setUserAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  userAuthenticated: boolean | undefined;
+  setUserAuthenticated: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   login: (token: string, user: string) => void;
   logout: () => void;
   authUserName: string;
@@ -25,7 +25,9 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [userAuthenticated, setUserAuthenticated] = useState<boolean>(false);
+  const [userAuthenticated, setUserAuthenticated] = useState<
+    boolean | undefined
+  >(undefined);
   const [authUserName, setAuthUserName] = useState("");
   const [loginModal, setLoginModal] = useState(false);
   const router = useRouter();

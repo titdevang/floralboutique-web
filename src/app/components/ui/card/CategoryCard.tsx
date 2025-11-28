@@ -3,21 +3,21 @@ import Link from "next/link";
 import React, {memo, useState} from "react";
 import ImageWithFallback from "../fields/ImageWithFallback";
 // import AddToCart from "@/app/components/ui/button/AddToCart";
-import Modal from "@/app/components/ui/modal/modal";
-import ProductDetail from "@/app/components/section/ProductDetailComponent";
+// import Modal from "@/app/components/ui/modal/modal";
+// import ProductDetail from "@/app/components/section/ProductDetailComponent";
 
 const CategoryCard: React.FC<ProductCardProps> = memo(({ product, onClick }) => {
-    const [addedProduct, setAddedProduct] = useState<null | Product>(null);
+    // const [addedProduct, setAddedProduct] = useState<null | Product>(null);
 
   return (
     <div className="select-none p-1 h-full">
-      <Modal
+      {/* <Modal
         isOpen={!!addedProduct}
         onClose={() => setAddedProduct(null)}
         title="Added to your cart"
       >
         <ProductDetail slug={addedProduct?.slug || ""} />
-      </Modal>
+      </Modal> */}
       <Link
         href={"/product/" + product.slug}
         className="group  h-full duration-300 select-none flex flex-col justify-between"

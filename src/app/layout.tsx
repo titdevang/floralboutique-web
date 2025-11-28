@@ -4,13 +4,13 @@ import "./globals.css";
 import { HeaderMenuItemProvider } from "./context/HeaderMenuItemContext";
 import { AppProvider } from "./context/AppContext";
 import { CartProvider } from "./context/CartContext";
-import { AuthProvider } from "./context/AuthContext";
 import MainLayout from "./components/layout/MainLayout";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { LocationProvider } from "./context/LocationContext";
 import { CategoryListCacheProvider } from "./context/CategoryListCacheContext";
 import AuthProviderWrapper from "./context/AuthProviderWrapper";
 import LoginModal from "./components/ui/modal/LoginModal";
+import { LocationHierarchyProvider } from "./context/LocationHierarchyContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -44,23 +44,25 @@ export default function RootLayout({
       <body
         className={`${montserrat.className} ${josefinSans.variable} antialiased`}
       >
-        <LocationProvider>
-          <AuthProviderWrapper>
-            <AppProvider>
-              <CartProvider>
-                <HeaderMenuItemProvider>
-                  <CategoryListCacheProvider>
-                    <MainLayout>
-                      <LoginModal/>
-                      {children}
-                      <SpeedInsights />
-                    </MainLayout>
-                  </CategoryListCacheProvider>
-                </HeaderMenuItemProvider>
-              </CartProvider>
-            </AppProvider>
-          </AuthProviderWrapper>
-        </LocationProvider>
+        <LocationHierarchyProvider>
+          <LocationProvider>
+            <AuthProviderWrapper>
+              <AppProvider>
+                <CartProvider>
+                  <HeaderMenuItemProvider>
+                    <CategoryListCacheProvider>
+                      <MainLayout>
+                        <LoginModal />
+                        {children}
+                        <SpeedInsights />
+                      </MainLayout>
+                    </CategoryListCacheProvider>
+                  </HeaderMenuItemProvider>
+                </CartProvider>
+              </AppProvider>
+            </AuthProviderWrapper>
+          </LocationProvider>
+        </LocationHierarchyProvider>
       </body>
     </html>
   );

@@ -38,7 +38,7 @@ export default function ProductDetail({ params }: ProductProps) {
   const [mainImage, setMainImage] = useState<string>("");
   const [productGalleryOpen, setProductGalleryOpen] = useState(false);
   const [cities, setCities] = useState<Cities[]>([]);
-  const [selecteDate, setSelectDate] = useState<string | undefined>("");
+  const [selecteDate, setSelectDate] = useState<string | undefined>();
   const [deliveryMethods, setDeliveryMethods] = useState<DeliveryMethod[]>([]);
   const [deliveryTimeSlots, setDeliveryTimeSlots] = useState<
     DeliveryTimeSlot[]
@@ -59,6 +59,14 @@ export default function ProductDetail({ params }: ProductProps) {
     setDeliveryTimeSlot(undefined);
     setDeliveryTimeSlots([]);
     setSelectDate("");
+  }, [selectPincode]);
+
+  useEffect(() => {
+
+    if (selectPincode) {
+      fetchDeliveryMethods(getDate("today", "full"));
+    }
+
   }, [selectPincode]);
   
   useEffect(() => {
@@ -91,7 +99,12 @@ export default function ProductDetail({ params }: ProductProps) {
         `/products/${pathname}/delivery-methods?city_id=${selectCities}&pin_code=${selectPincode}&date=${date}`
       );
       if (response?.status === 200 && response.data) {
+        setSelectDate(date);
         setDeliveryMethods((response.data as unknown as { data: DeliveryMethod[] }).data);
+        setDeliveryType(response.data.data[0] as unknown as DeliveryMethod);
+        if (response.data.data[0]) {
+          fetchDeliveryTimeSlots(response.data.data[0]?.id, date);
+        }
       } else {
         toast.warn(response?.data?.message);
       }
@@ -101,16 +114,22 @@ export default function ProductDetail({ params }: ProductProps) {
     }
   };
 
-  const fetchDeliveryTimeSlots = async (id: number) => {
+  const fetchDeliveryTimeSlots = async (id: number, date?: string) => {
+
     try {
       const response = await apiRequest<ApiResponse>(
         "GET",
-        `/products/${pathname}/delivery-time-slots?delivery_id=${id}&date=${selecteDate}`
+        `/products/${pathname}/delivery-time-slots?delivery_id=${id}&date=${
+          selecteDate || date
+        }`
       );
       if (response?.status === 200 && response.data) {
         setDeliveryTimeSlots(
           (response.data as unknown as { data: DeliveryTimeSlot[] }).data
-        );
+        )
+        
+          setDeliveryTimeSlot(response.data.data[0] as unknown as DeliveryTimeSlot);
+      
       } else {
         toast.warn(response?.data?.message);
       }
@@ -490,7 +509,7 @@ export default function ProductDetail({ params }: ProductProps) {
                   <SelectField
                     label="time slot"
                     name="time_slot"
-                    value={deliveryTimeSlot as unknown as string}
+                    value={deliveryTimeSlot?.id as unknown as string}
                     onChange={(e) =>
                       setDeliveryTimeSlot(
                         deliveryTimeSlots.find(

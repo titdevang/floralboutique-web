@@ -24,7 +24,7 @@ interface CartContextType {
   cartData: CartItem[];
   setCartData: React.Dispatch<React.SetStateAction<CartItem[]>>;
   addToCart: (product: Product) => void;
-  updateQuantity: (product: Product, newQuantity: number) => void;
+  updateQuantity: (product: Product, newQuantity?: number) => void;
   removeFromCart: (cartId: number) => void;
   clearCart: () => void;
   getCartData: () => void;
@@ -47,33 +47,41 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { userAuthenticated } = useAuth();
 
   const getCartData = async () => {
-    try {
-      setLoading(true);
-      const response = await apiRequest<ApiResponse>(
-        "GET",
-        "/cart",
-        {},
-        {
-          headers: userAuthenticated
-            ? {}
-            : { "X-Guest-Token": getGuestToken() },
-        }
-      );
+    
+    if (!userAuthenticated && !getGuestToken()) {
+      setCartData([])
+      return;
+    };
 
-      const result =
-        (response?.data?.data as unknown as CartItem[])?.map((item) => ({
-          ...item,
-        })) || [];
+      try {
+        // setLoading(true);
+        const response = await apiRequest<ApiResponse>(
+          "GET",
+          "/cart",
+          {},
+          {
+            headers: userAuthenticated
+              ? {}
+              : { "X-Guest-Token": getGuestToken() },
+          }
+        );
 
-      setCartData(result as unknown as CartItem[]);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-    }
+        const result =
+          (response?.data?.data as unknown as CartItem[])?.map((item) => ({
+            ...item,
+          })) || [];
+
+        setCartData(result as unknown as CartItem[]);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
   };
 
   useEffect(() => {
-    getCartData();
+    if (userAuthenticated !== undefined) {
+      getCartData();
+    }
   }, [userAuthenticated]);
 
   const addToCart = async (product: Product): Promise<number | null> => {    
@@ -128,28 +136,39 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return null;
   };
 
-  const updateQuantity = (product: Product, newQuantity: number) => {
+  const updateQuantity = async(product: Product, newQuantity?: number) => {
+    console.log(product);
     
     const payload = {
-      quantity: newQuantity,
+      quantity: newQuantity ? newQuantity : product.quantity,
       product_id: product.productData?.id,
       price: product.productData?.finalPrice,
-      tax: product.taxes?.[0]?.tax || 0,
+      tax: product.productData?.taxes?.[0]?.tax || 0,
       pincode: product.pinCode,
-      city_id: (product.city as {id: number}).id,
+      city_id: (product.city as { id: number }).id,
       deliveryDate: product.deliveryDate,
-      deliveryTypeId: product.deliveryType?.id,
+      deliveryTypeId: product.deliveryTypeId,
       deliveryTimeSlot: product.deliveryTimeSlot,
-      cutoff_time: product.deliveryTimeSlot.start_time,
+      cutoff_time: product.startTime,
       delivery_type: product.deliveryType,
       delivery_price: product.deliveryPrice,
+      address_id: product.address?.id,
     };
 
-    apiRequest("PUT", `/cart/${product.id}`, payload, {
+   const response = await apiRequest("PUT", `/cart/${product.id}`, payload, {
       headers: userAuthenticated ? {} : { "X-Guest-Token": getGuestToken() },
     });
-
-    getCartData();
+    
+    if (response?.status == 200) {
+      const responseCartItem = (response.data as {data: Product})?.data;
+       setCartData((prev) =>
+         prev.map((item) =>
+           item.id == responseCartItem.id
+             ? { ...item, ...responseCartItem }
+             : item
+         )
+       );
+      }
   };
 
   const removeFromCart = (cartId: number) => {

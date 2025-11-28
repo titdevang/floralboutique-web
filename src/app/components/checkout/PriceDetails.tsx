@@ -4,6 +4,7 @@ import ButtonLoder from "../ui/loader/ButtonLoder";
 import { useCheckout } from "@/app/context/CheckoutContext";
 import PriceDetailsSkeleton from "../ui/loader/PriceDetailsSkeleton";
 import InputField from "../common/fields/InputField";
+import SvgIcon from "../ui/SvgIcon";
 
 const PriceDetails = () => {
     const [loading] = useState(false);
@@ -20,6 +21,7 @@ const PriceDetails = () => {
     paymentMethod: paymentMethod,
     senderDetail: senderDetails,
   };
+
 
     return (
       <div className="bg-white p-6 rounded-[40px] sticky top-10 w-full ">
@@ -43,7 +45,7 @@ const PriceDetails = () => {
               </div>
               <div className={"border-y border-gray-light py-4 text-center"}>
                 {showCouponApply ? (
-                  <div>
+                  <div className="flex items-center gap-2">
                     <InputField
                       type="text"
                       // label="coupon"
@@ -52,19 +54,25 @@ const PriceDetails = () => {
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value)}
                     />
-                    <div className="mt-4 space-x-6">
+                    <div className="flex gap-2">
                       <button
                         type="button"
-                        onClick={() => setShowCouponApply(false)}
-                        className="bg-gray px-3 py-2 hover:bg-hov-primary rounded-sm text-white duration-300"
+                        className="bg-primary px-3 py-2 h-11 hover:bg-hov-secondary-base rounded-sm text-white duration-300"
                       >
-                        Cancel
+                        Apply
                       </button>
                       <button
                         type="button"
-                        className="bg-primary px-3 py-2 hover:bg-hov-secondary-base rounded-sm text-white duration-300"
+                        onClick={() => setShowCouponApply(false)}
+                        className="bg-gray px-3 py-2 h-11 hover:bg-hov-primary rounded-sm text-white duration-300"
                       >
-                        Apply
+                        <SvgIcon
+                          name={"close.svg"}
+                          width={15}
+                          height={15}
+                          localImage="close.svg"
+                          fill="currentColor"
+                        />
                       </button>
                     </div>
                   </div>

@@ -7,10 +7,11 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   helperText?: string;
   className?: string;
+  value: string;
 }
 
 const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ label, error, helperText, className, ...props }, ref) => {
+  ({ label, error, helperText, className, value,...props }, ref) => {
     return (
       <div className="w-full flex flex-col gap-1">
         {label && (
@@ -21,6 +22,7 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
         <input
           ref={ref}
+          value={value ?? ""}
           {...props}
           className={cn(
             "w-full disabled:opacity-85 disabled:cursor-default placeholder:text-primary border border-gray-light px-3 py-3 focus:border-1 focus:border-primary focus:ring-0 focus:outline-none transition duration-500",

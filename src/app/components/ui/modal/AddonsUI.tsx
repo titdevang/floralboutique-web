@@ -100,7 +100,7 @@ export default function AddonsUI({
       </div>
 
       {/* Products Grid */}
-      <div className="px-5 grid grid-cols-3 md:grid-cols-5 gap-4">
+      <div className="px-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {data[activeTab]?.products[0].map((item) => {
           const exist = selectedAddons.find((x) => x.id === item.id);
 
@@ -164,10 +164,12 @@ export default function AddonsUI({
 
         <button
           onClick={handleSaveAddOnProduct}
-          disabled={selectedAddons.reduce(
-            (total, item) => total + item.quantity,
+          disabled={
+            selectedAddons.reduce((total, item) => total + item.quantity, 0) ==
             0
-          ) == 0 ? true : false}
+              ? true
+              : false
+          }
           className="w-full disabled:opacity-85 disabled:cursor-not-allowed py-4 bg-primary text-white rounded-sm font-semibold hover:bg-hov-primary duration-500"
         >
           Continue with (

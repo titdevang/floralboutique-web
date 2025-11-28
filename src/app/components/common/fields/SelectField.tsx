@@ -48,19 +48,18 @@ const SelectField = <T,>({
       ...styles,
       backgroundColor: isDisabled ? "#e9ecef" : "white",
       opacity: isDisabled ? 1 : styles.opacity,
-      border: "1px solid #ddd",
-      boxShadow: "none",
+      // border: isFocused ? "1px solid #671945" : "1px solid #ddd",
+      border: "1px solid",
+      borderColor: isFocused ? "#671945 !important" : "#ddd !important",
+
+      // FIX: remove default blue outline completely
+      boxShadow: "none !important",
       "&:hover": {
         borderColor: "#ddd",
       },
-
-      "&:focus": {
-        outline: "none",
-        boxShadow: "none",
-      },
       color: "#35495e",
       fontSize: "13px",
-      minHeight: "40px",
+      minHeight: "44px",
       borderRadius: "2px",
     }),
     input: (styles: CSSObject) => ({
@@ -71,10 +70,11 @@ const SelectField = <T,>({
     placeholder: (styles: CSSObject) => ({
       ...styles,
       fontSize: "13px",
-      border: "none",
+      // border: "none",
       whiteSpace: "nowrap",
-      textTransform: "none", 
-      letterSpacing: "normal"
+      textTransform: "none",
+      letterSpacing: "normal",
+      color: "#671945",
     }),
     menuList: (styles: CSSObject) => ({
       ...styles,
@@ -156,7 +156,8 @@ const SelectField = <T,>({
     }),
     noOptionsMessage: (styles: CSSObject) => ({
       ...styles,
-      color: "#7c91a8",
+      color: "#671945",
+      opacity: "60%"
     }),
   };
 
@@ -254,7 +255,7 @@ const SelectField = <T,>({
   );
 
   return (
-    <div className={`${className} ${error ? "mb-2" : "mb-4"} `} ref={selectRef}>
+    <div className={`${className}`} ref={selectRef}>
       <div
         className={`flex group  ${error ? "border border-orange rounded" : ""}`}
       >

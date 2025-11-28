@@ -25,7 +25,6 @@ export const AddressProvider = ({ children }: { children: ReactNode }) => {
               try {
                   const response = await apiRequest('GET', '/address')
                   if(response?.status == 200) {
-                    console.log(response.data);
                     
                       setAddresses(response.data as DeliveryAddress[])
                   }
