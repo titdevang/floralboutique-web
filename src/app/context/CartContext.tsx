@@ -13,6 +13,7 @@ import { getGuestToken } from "@/app/utils/cartToken";
 import { ApiResponse } from "../types/ApiRequest";
 import { useAuth } from "./AuthContext";
 import { Cities } from "../types/Types";
+import Cookies from "js-cookie";
 
 export interface CartItem extends Product {
   quantity: number;
@@ -114,7 +115,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         (response.data?.data as any)?.guest_token &&
         !userAuthenticated
       ) {
-        localStorage.setItem(
+        Cookies.set(
           "guest_token",
           (response.data?.data as any).guest_token
         );

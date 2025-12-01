@@ -1,4 +1,5 @@
+import Cookies from "js-cookie";
 export function getGuestToken() {
-    let token = localStorage.getItem('guest_token') || undefined;
+    let token = Cookies.get('guest_token') || undefined;
     return token;
 }
