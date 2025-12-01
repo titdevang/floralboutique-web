@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
-import { AddressProvider } from "../context/AddressContext";
+import {AddressProvider} from "../context/AddressContext";
+import {LocationHierarchyProvider} from "@/app/context/LocationHierarchyContext";
 
 export default function Layout({
                                    children,
@@ -9,10 +10,12 @@ export default function Layout({
 }>) {
 
     return (
-      <AddressProvider>
-        <div className={"bg-[#efefef] p-6"}>
-          <div className=" container">{children}</div>
-        </div>
-      </AddressProvider>
+        <LocationHierarchyProvider>
+            <AddressProvider>
+                <div className={"bg-[#efefef] p-6"}>
+                    <div className=" container">{children}</div>
+                </div>
+            </AddressProvider>
+        </LocationHierarchyProvider>
     );
 }

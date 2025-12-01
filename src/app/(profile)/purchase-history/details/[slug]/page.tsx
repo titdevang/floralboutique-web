@@ -19,7 +19,7 @@ export default function OrderDetail({ params }: OrderDetailProps) {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await apiRequest("GET", `/order/${pathname}`);
+        const response = await apiRequest("GET", `/orders/${pathname}`);
         if (response?.status === 200) {
           setOrderDetail(response.data);
         }

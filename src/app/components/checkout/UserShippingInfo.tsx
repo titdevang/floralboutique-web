@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "@/app/components/common/fields/InputField";
 import SelectField from "../common/fields/SelectField";
 import { DeliveryAddress } from "@/app/types/user";
@@ -9,12 +9,16 @@ interface UsershippingInfoProps {
   formData: DeliveryAddress;
   setFormData: React.Dispatch<React.SetStateAction<DeliveryAddress>>;
   handleUpdateFormData?: (id: number) => Promise<void>;
+  handleSaveFormData?: () => Promise<void>;
+  setAddNewAddress?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
   setFormData,
   formData,
   handleUpdateFormData,
+  handleSaveFormData,
+  setAddNewAddress,
 }) => {
   const { countries, states, cities, selectCountry, selectState } =
     useLocationHierarchy();
@@ -35,6 +39,62 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
     }
   }, [formData.state_id]);
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = (name: string, value: any) => {
+    console.log({ formData });
+    
+    switch (name) {
+      case "receiverName":
+        if (!value) return "*Recipient name is required";
+        break;
+      case "receiverEmail":
+        if (!value) return "*Recipient email is required";
+        break;
+      case "receiverPhone":
+        if (!value) return "*Mobile is required";
+        if (!/^\d{10}$/.test(value))
+          return "Enter valid 10-digit mobile number";
+        break;
+      case "address_1":
+        if (!value) return "*Address Line 1 required";
+        break;
+      case "address_2":
+        if (!value) return "*Address Line 2 required";
+        break;
+      case "postalCode":
+        if (!value) return "*Pincode required";
+        if (!/^\d{6}$/.test(value)) return "Enter valid 6-digit pincode";
+        break;
+      case "country_id":
+        if (!value) return "*Please select country";
+        break;
+      case "state_id":
+        if (!value) return "*Please select state";
+        break;
+      case "city_id":
+        if (!value) return "*Please select city";
+        break;
+    }
+    return "";
+  };
+
+  // -----------------------------
+  // VALIDATE ALL FIELDS ON SUBMIT
+  // -----------------------------
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    console.log({ formData });
+
+    Object.keys(formData).forEach((key) => {
+      const msg = validateField(key, (formData as any)[key]);
+      if (msg) newErrors[key] = msg;
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // true = valid
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -51,7 +111,22 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
     if (name === "state") {
       setFormData((prev) => ({ ...prev, city_id: "" }));
     }
+    const errorMessage = validateField(name, value);
+    setErrors((prev) => ({ ...prev, [name]: errorMessage }));
   };
+
+  const handleSubmit = () => {
+    const isValid = validateForm();
+    if (!isValid) return;
+
+    if (handleSaveFormData) {
+      handleSaveFormData();
+    } else if (handleUpdateFormData) {
+      
+      handleUpdateFormData?.(Number(formData.id));
+    }
+  };
+console.log(errors);
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
@@ -67,7 +142,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
                 value={formData.receiverName}
                 onChange={handleInputChange}
                 placeholder="*Recipient Name"
-                required
+                error={errors.receiverName}
               />
               <InputField
                 name="receiverEmail"
@@ -75,7 +150,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
                 value={formData.receiverEmail}
                 onChange={handleInputChange}
                 placeholder="Recipient Email"
-                required
+                error={errors.receiverEmail}
               />
             </div>
             <div className="flex gap-4">
@@ -85,7 +160,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
                 value={formData.receiverPhone}
                 onChange={handleInputChange}
                 placeholder="Recipient Mobile"
-                required
+                error={errors.receiverPhone}
               />
               <InputField
                 name="receiverAltPhone"
@@ -93,6 +168,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
                 value={formData.receiverAltPhone}
                 onChange={handleInputChange}
                 placeholder="Recipient Alt Mobile"
+                error={errors.receiverAltPhone}
               />
             </div>
           </div>
@@ -107,7 +183,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
               value={formData.address_1}
               onChange={handleInputChange}
               placeholder="*Flat No, Tower No, House No"
-              required
+              error={errors.address_1}
             />
             <InputField
               type="text"
@@ -115,7 +191,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
               value={formData.address_2}
               onChange={handleInputChange}
               placeholder="*Apartment, Street, Area, Sector"
-              required
+              error={errors.address_2}
             />
             <InputField
               type="text"
@@ -132,6 +208,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
               options={countries}
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.id}
+              error={errors.country_id}
             />
             <SelectField
               label="State"
@@ -142,6 +219,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.id}
               disabled={!states.length}
+              error={errors.state_id}
             />
             <SelectField
               label="City"
@@ -152,6 +230,7 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.id}
               disabled={!cities.length}
+              error={errors.city_id}
             />
             <InputField
               type="text"
@@ -159,17 +238,33 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
               value={formData.postalCode}
               onChange={handleInputChange}
               placeholder="*Pin Code"
-              required
+              error={errors.postalCode}
             />
           </div>
 
           {handleUpdateFormData && (
             <div className="text-end">
               <button
-                onClick={() => handleUpdateFormData?.(Number(formData.id))}
+                onClick={() => handleSubmit()}
                 className="bg-primary text-white px-3 py-1.5 rounded-sm hover:bg-hov-primary duration-300"
               >
                 Update
+              </button>
+            </div>
+          )}
+          {handleSaveFormData && (
+            <div className="flex items-center justify-between px-6">
+              <button
+                onClick={() => setAddNewAddress?.(false)}
+                className="bg-primary text-white px-3 py-1.5 rounded-sm hover:bg-hov-primary duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="bg-primary text-white px-3 py-1.5 rounded-sm hover:bg-hov-primary duration-300"
+              >
+                Save & Deliver here
               </button>
             </div>
           )}

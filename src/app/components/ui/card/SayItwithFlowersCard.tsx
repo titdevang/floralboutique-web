@@ -12,7 +12,7 @@ const SayItwithFlowersCard: React.FC<SayItwithFlowersCardProps> = ({
 }) => {
   return (
     <Link
-      href={item.link}
+      href={item.link || "/"}
       className="flex flex-col items-center justify-start bg-primary text-white rounded-lg overflow-hidden p-2 md:p-4 text-center"
     >
       <div className="relative w-full aspect-square mb-4 overflow-hidden rounded-md ">

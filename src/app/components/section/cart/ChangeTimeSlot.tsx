@@ -30,7 +30,7 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({
     DeliveryTimeSlot | undefined
   >();
 
-  const { addToCart } = useCart();
+  const { updateQuantity } = useCart();
 
   const fetchDeliveryMethods = async (date: string | undefined) => {
     setDeliveryType(undefined);
@@ -79,21 +79,33 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({
       return;
     }
     setChangeDeliveryDateScreen(false);
+    // const productPayload = {
+    //   ...product,
+    //   city_id: (product?.city as { id: number }).id,
+    //   city: (product?.city as { name: string })?.name,
+    //   pincode: product?.pinCode,
+    //   deliveryDate: String(selecteDate),
+    //   deliveryType: deliveryType,
+    //   deliveryTimeSlot: deliveryTimeSlot,
+    //   taxes: product?.productData?.taxes,
+    //   id: product?.productData?.id,
+    //   finalPrice: product?.productData?.finalPrice,
+    // };
     const productPayload = {
       ...product,
       city_id: (product?.city as { id: number }).id,
       city: (product?.city as { name: string })?.name,
       pincode: product?.pinCode,
       deliveryDate: String(selecteDate),
-      deliveryType: deliveryType,
-      deliveryTimeSlot: deliveryTimeSlot,
-      taxes: product?.productData?.taxes,
-      id: product?.productData?.id,
-      finalPrice: product?.productData?.finalPrice,
+      deliveryType: deliveryType?.name,
+      deliveryTimeSlot: deliveryTimeSlot.time_slots,
+      deliveryPrice: deliveryType?.price,
+      deliveryTypeId: deliveryType?.id,
+      startTime: deliveryTimeSlot.start_time,
     };
-
-    await addToCart(productPayload as unknown as Product);
+     updateQuantity(productPayload as unknown as Product);
   };
+  
   return (
     <div className={`p-6`}>
       <div className="space-y-10">

@@ -106,9 +106,9 @@ export default function ProductDetail({ productData, setOpenModal }: ProductProp
       deliveryDate: String(selecteDate),
       deliveryType: deliveryType?.name,
       deliveryTimeSlot: deliveryTimeSlot.time_slots,
-      delivery_price: deliveryType?.price,
+      deliveryPrice: deliveryType?.price,
       deliveryTypeId: deliveryType?.id,
-      startTime: deliveryTimeSlot.start_time
+      startTime: deliveryTimeSlot.start_time,
     };
     updateQuantity(productPayload as unknown as Product);
     setOpenModal(false);

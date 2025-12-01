@@ -1,10 +1,11 @@
 "use client";
 import { useAuth } from "@/app/context/AuthContext";
+import { useCheckout } from "@/app/context/CheckoutContext";
 import React from "react";
 
 const UserContactInfo = () => {
 
-    const { authUserName } = useAuth()
+    const { senderDetails } = useCheckout()
 
     return (
       <div
@@ -22,12 +23,12 @@ const UserContactInfo = () => {
               1
             </p>
           </div>
-          {authUserName ? (
+          {senderDetails.name ? (
             <div>
-              <p className={"text-md"}>{authUserName}</p>
+              <p className={"text-md"}>{senderDetails.name}</p>
             </div>
           ) : (
-            <p className={"h-6 w-24 bg-gray rounded-sm"}></p>
+            <p className={"h-6 w-24 bg-gray rounded-sm animate-pulse"}></p>
           )}
         </div>
         <div
@@ -35,12 +36,20 @@ const UserContactInfo = () => {
             "flex items-center w-full justify-center md:justify-end gap-4"
           }
         >
-          <div>
-            <p>Hello@gmail.com</p>
-          </div>
-          <div>
-            <p>89857565656</p>
-          </div>
+        {senderDetails.name ? (
+        <div>
+            <p>{senderDetails.email}</p>
+        </div>
+        ) : (
+            <p className={"h-4 w-44 bg-gray rounded-sm animate-pulse"}></p>
+        )}
+          {senderDetails.name ? (
+            <div>
+              <p>{senderDetails.phoneNumber}</p>
+            </div>
+          ) : (
+            <p className={"h-4 w-24 bg-gray rounded-sm animate-pulse"}></p>
+          )}
         </div>
       </div>
     );

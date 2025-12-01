@@ -7,36 +7,28 @@ import SvgIcon from "../ui/SvgIcon";
 import DeliveryCardSkeleton from "../ui/loader/DeliveryCardSkeleton";
 
 const OrderDetails = () => {
-    const {cartData, loading} = useCart()
-
-        if (!cartData.length || loading) {
-          return (
-            <div>
-              <DeliveryCardSkeleton />
-              <DeliveryCardSkeleton />
-            </div>
-          );
-        }
+    const {cartData} = useCart()
 
     return (
         <div className={"w-full divide-y divide-gray-light py-4"}>
             {
                 cartData.map((product, index) => {
                     return (
-                      <div key={index} className={"w-full py-4 pt-10"}>
-                        <div className="flex items-center text-primary gap-1 bg-soft-primary w-fit px-3 py-2 rounded-lg">
-                          <SvgIcon
-                            name={"gift.svg"}
-                            width={20}
-                            height={20}
-                            fill={"currentColor"}
-                            localImage={"gift.svg"}
-                          />
-                          Gift {index + 1}
+                        <div key={index} className={"w-full py-4 pt-10"}>
+                            <div
+                                className="flex items-center text-primary gap-1 bg-soft-primary w-fit px-3 py-2 rounded-lg">
+                                <SvgIcon
+                                    name={"gift.svg"}
+                                    width={20}
+                                    height={20}
+                                    fill={"currentColor"}
+                                    localImage={"gift.svg"}
+                                />
+                                Gift {index + 1}
+                            </div>
+                            <DeliveryCard product={product}/>
+                            <OrderDeliveryAddress product={product}/>
                         </div>
-                        <DeliveryCard product={product} />
-                        <OrderDeliveryAddress product={product} />
-                      </div>
                     );
                 })
             }

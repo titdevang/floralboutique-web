@@ -42,19 +42,19 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [calculateTotal, setCalculateTotal] = useState(0);
   const [deliveryChargeTotal, setDeliveryChargeTotal] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { userAuthenticated } = useAuth();
 
   const getCartData = async () => {
-    
+
     if (!userAuthenticated && !getGuestToken()) {
       setCartData([])
       return;
     };
 
       try {
-        // setLoading(true);
+        setLoading(true);
         const response = await apiRequest<ApiResponse>(
           "GET",
           "/cart",
@@ -97,8 +97,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       city_id: product.city_id,
       deliveryDate: product.deliveryDate,
       deliveryTypeId: product.deliveryType?.id,
-      deliveryTimeSlot: product.deliveryTimeSlot.time_slots,
-      cutoff_time: product.deliveryTimeSlot.start_time,
+      deliveryTimeSlot: product.deliveryTimeSlot?.time_slots,
+      cutoff_time: product.deliveryTimeSlot?.start_time,
       delivery_type: product.deliveryType?.name,
       delivery_price: product.deliveryType?.price,
     };

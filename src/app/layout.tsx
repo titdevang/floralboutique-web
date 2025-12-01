@@ -44,25 +44,23 @@ export default function RootLayout({
       <body
         className={`${montserrat.className} ${josefinSans.variable} antialiased`}
       >
-        <LocationHierarchyProvider>
-          <LocationProvider>
-            <AuthProviderWrapper>
-              <AppProvider>
-                <CartProvider>
-                  <HeaderMenuItemProvider>
-                    <CategoryListCacheProvider>
-                      <MainLayout>
-                        <LoginModal />
-                        {children}
-                        <SpeedInsights />
-                      </MainLayout>
-                    </CategoryListCacheProvider>
-                  </HeaderMenuItemProvider>
-                </CartProvider>
-              </AppProvider>
-            </AuthProviderWrapper>
-          </LocationProvider>
-        </LocationHierarchyProvider>
+      <LocationProvider>
+        <AuthProviderWrapper>
+          <AppProvider>
+            <CartProvider>
+              <HeaderMenuItemProvider>
+                <CategoryListCacheProvider>
+                  <MainLayout>
+                    <LoginModal />
+                    {children}
+                    <SpeedInsights />
+                  </MainLayout>
+                </CategoryListCacheProvider>
+              </HeaderMenuItemProvider>
+            </CartProvider>
+          </AppProvider>
+        </AuthProviderWrapper>
+      </LocationProvider>
       </body>
     </html>
   );

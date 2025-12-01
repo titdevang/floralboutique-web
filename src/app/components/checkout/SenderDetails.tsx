@@ -7,8 +7,14 @@ import { useCheckout } from "@/app/context/CheckoutContext";
 
 const SenderDetails = () => {
   const [editMode, setEditMode] = useState(false);
+    const { setSenderDetails, senderDetails } = useCheckout();
 
-  const { setSenderDetails, senderDetails } = useCheckout();
+  const [formData, setFormData] = useState<SenderDetail>({
+    name: senderDetails.name,
+    email: senderDetails.email,
+    phoneNumber: senderDetails.phoneNumber,
+    location: senderDetails.location,
+  });
 
   // Generic input handler for InputField components
   const handleChange = (
@@ -16,7 +22,7 @@ const SenderDetails = () => {
   ) => {
     const { name, value } = e.target;
 
-    setSenderDetails((prev: SenderDetail) => ({
+      setFormData((prev: SenderDetail) => ({
       ...prev,
       [name]: value,
     }));
@@ -24,11 +30,16 @@ const SenderDetails = () => {
 
   // Phone input handler
   const handlePhoneChange = (value: string) => {
-    setSenderDetails((prev) => ({
+      setFormData((prev) => ({
       ...prev,
       phoneNumber: value,
     }));
   };
+
+  const handleSaveSenderDetails = () => {
+      setSenderDetails(formData);
+      setEditMode(false);
+  }
 
   return (
     <div>
@@ -49,13 +60,17 @@ const SenderDetails = () => {
           <div className="space-x-2">
             <button
               type="button"
-              onClick={() => setEditMode(false)}
+              onClick={() => {
+                  setEditMode(false);
+                  setFormData(senderDetails);
+              }}
               className="border border-gray-dark rounded px-4 py-1 text-gray-dark"
             >
               Cancel
             </button>
             <button
               type="button"
+              onClick={handleSaveSenderDetails}
               className="border border-primary rounded px-4 py-1 text-primary"
             >
               Save
@@ -70,7 +85,7 @@ const SenderDetails = () => {
           // label="Name"
           name="name"
           placeholder="Name"
-          value={senderDetails.name}
+          value={formData.name}
           onChange={handleChange}
           disabled={!editMode}
           className="disabled:border-none"
@@ -81,14 +96,14 @@ const SenderDetails = () => {
           // label="Email"
           name="email"
           placeholder="Email"
-          value={senderDetails.email}
+          value={formData.email}
           onChange={handleChange}
           disabled={!editMode}
           className="disabled:border-none"
         />
 
         <IntlPhoneInput
-          value={senderDetails.phoneNumber}
+          value={formData.phoneNumber}
           onChange={handlePhoneChange}
           disabled={!editMode}
         />
@@ -98,7 +113,7 @@ const SenderDetails = () => {
           // label="Location"
           name="location"
           placeholder="Location"
-          value={senderDetails.location}
+          value={formData.location}
           onChange={handleChange}
           disabled={!editMode}
           className="disabled:border-none"

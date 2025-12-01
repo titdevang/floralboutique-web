@@ -50,7 +50,11 @@ const SelectField = <T,>({
       opacity: isDisabled ? 1 : styles.opacity,
       // border: isFocused ? "1px solid #671945" : "1px solid #ddd",
       border: "1px solid",
-      borderColor: isFocused ? "#671945 !important" : "#ddd !important",
+      borderColor: error
+        ? "#ef4444 !important"
+        : isFocused
+        ? "#671945 !important"
+        : "#ddd !important",
 
       // FIX: remove default blue outline completely
       boxShadow: "none !important",
@@ -157,7 +161,7 @@ const SelectField = <T,>({
     noOptionsMessage: (styles: CSSObject) => ({
       ...styles,
       color: "#671945",
-      opacity: "60%"
+      opacity: "60%",
     }),
   };
 
@@ -257,7 +261,7 @@ const SelectField = <T,>({
   return (
     <div className={`${className}`} ref={selectRef}>
       <div
-        className={`flex group  ${error ? "border border-orange rounded" : ""}`}
+        className={`flex group`}
       >
         <Select
           instanceId={name}
@@ -315,15 +319,8 @@ const SelectField = <T,>({
           noOptionsMessage={() => `List is empty.`}
           className="w-full uppercase tracking-wider"
         />
-        {error && (
-          <div
-            className={`w-fit z-10 mt-3 h-fit bg-[#fda08b] p-1 rounded-full -ml-16 group-focus-within:invisible`}
-          >
-            {/* <MdOutlineSupport className={`text-[#db2d05] text-[10px]`} /> */}
-          </div>
-        )}
       </div>
-      {error && <p className="text-orange text-[14px] mt-2">{error}</p>}
+      {error && <p className="text-red-500 text-[14px] mt-2">{error}</p>}
     </div>
   );
 };
