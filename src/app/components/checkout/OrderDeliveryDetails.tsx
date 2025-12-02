@@ -11,7 +11,7 @@ const OrderDeliveryDetails = () => {
     const {cartData, loading} = useCart()
 
     return (
-        <div className="p-6 bg-white rounded-[40px]">
+        <div className="py-6 md:px-6 px-4 bg-white rounded-[40px]">
             <div className={"flex items-center gap-4"}>
                 <div className={"bg-primary w-10 h-10"}>
                     <p className={"text-white flex items-center justify-center h-full text-md"}>

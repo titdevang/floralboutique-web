@@ -12,7 +12,7 @@ export default function Layout({
     return (
         <LocationHierarchyProvider>
             <AddressProvider>
-                <div className={"bg-[#efefef] p-6"}>
+                <div className={"bg-[#efefef] py-6"}>
                     <div className=" container">{children}</div>
                 </div>
             </AddressProvider>

@@ -6,6 +6,7 @@ import {useCart} from "@/app/context/CartContext";
 import {Product} from "@/app/types/Product";
 import DeliveryCardSkeleton from "../ui/loader/DeliveryCardSkeleton";
 import ChangeDeliveryModal from "./ChangeDeliveryModal";
+import {formatDate} from "@/app/lib/formatDate";
 
 interface DeliveryCardProps {
     product: Product;
@@ -99,6 +100,7 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
                   </div>
                   <button
                     type={"button"}
+                    name={"delete"}
                     onClick={() => handleRemoveProduct(addonProduct.cart_id)}
                     className="flex items-center gap-1 text-[11px] text-muted "
                   >
@@ -116,7 +118,7 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
                 <div className="flex flex-col justify-between">
                   <p className="font-medium">{addonProduct?.name}</p>
                   <div className={"flex items-center gap-6"}>
-                    <p className="text-sm text-gray-dark">
+                    <p className="text-sm text-gray-extra-dark">
                       ₹{addonProduct?.finalPrice} × {addonProduct.quantity}
                     </p>
                     <div className="flex items-center gap-3 text-primary">
@@ -146,7 +148,7 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
           <div className="text-xs text-muted">
             <p className="text-dark text-sm font-medium">Delivery On</p>
             <p className="mt-1">
-              {product.deliveryDate}
+              {formatDate(new Date(product.deliveryDate))}
               {/* Wed,{" "}
               <span className="font-semibold">
                 13<sup>th</sup> Aug, 2025

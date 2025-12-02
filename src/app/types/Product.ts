@@ -93,7 +93,7 @@ export interface Product {
   cutoff_time: string;
   delivery_type: string;
   delivery_price: number;
-  city: Cities | string;
+  city: Cities;
   isPanIndia: number;
   deliveryType?: DeliveryMethod;
   pinCode: string;

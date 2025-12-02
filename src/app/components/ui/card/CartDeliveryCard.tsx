@@ -10,6 +10,7 @@ import { apiRequest } from "@/app/utils/apiRequest";
 import { AddonsSkeleton } from "../loader/AddonsSkeleton";
 import AddonsUI from "../modal/AddonsUI";
 import { useCart } from "@/app/context/CartContext";
+import {formatDate} from "@/app/lib/formatDate";
 
 interface CartItemCardProps {
   item: Product;
@@ -163,7 +164,7 @@ export default function CartItemCard({
             />
             <div className="text-[13px] text-neutral-600 font-[500] leading-tight">
               <p>
-                {item?.deliveryDate},{" "}
+                {formatDate(new Date(item?.deliveryDate))},{" "}
                 {item?.deliveryTimeSlot as unknown as string}
               </p>
               <p className="text-[12px]">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import InputField from "../common/fields/InputField";
 import { SenderDetail } from "@/app/types/Types";
 import PhoneInput from "react-phone-input-2";
@@ -8,13 +8,21 @@ import { useCheckout } from "@/app/context/CheckoutContext";
 const SenderDetails = () => {
   const [editMode, setEditMode] = useState(false);
     const { setSenderDetails, senderDetails } = useCheckout();
-
   const [formData, setFormData] = useState<SenderDetail>({
-    name: senderDetails.name,
-    email: senderDetails.email,
-    phoneNumber: senderDetails.phoneNumber,
-    location: senderDetails.location,
+    name: "",
+    email: "",
+    phoneNumber: "",
+    location: "",
   });
+
+    useEffect(() => {
+        setFormData({
+            name: senderDetails.name,
+            email: senderDetails.email,
+            phoneNumber: senderDetails.phoneNumber,
+            location: senderDetails.location,
+        });
+    }, [senderDetails]);
 
   // Generic input handler for InputField components
   const handleChange = (

@@ -7,7 +7,7 @@ const PaymentOptions = () => {
   return (
     <div
       className={
-        "bg-white rounded-[40px] md:space-y-0 space-y-4 md:flex items-center justify-between py-10 px-6"
+        "bg-white rounded-[40px] md:space-y-0 space-y-4 md:flex items-center justify-between py-6 md:px-6 px-4"
       }
     >
       <div>
@@ -25,7 +25,7 @@ const PaymentOptions = () => {
             <p className={"text-md"}>Payment Options</p>
           </div>
         </div>
-        <div className="pt-10 pb-4 flex flex-wrap gap-6">
+        <div className="pt-10 pb-4 flex flex-wrap justify-center gap-6">
           {/* -------Razorpay--------- */}
           <button
             onClick={() => setPaymentMethod("razorpay")}
@@ -38,7 +38,7 @@ const PaymentOptions = () => {
           >
             <ImageWithFallback
               src={"/assets/images/cards/razorpay.png"}
-              alt="razorpay"
+              alt="Pay with Razorpay"
               width={160}
               height={100}
               className="h-[80px] object-contain"
@@ -59,7 +59,7 @@ const PaymentOptions = () => {
           >
             <ImageWithFallback
               src={"/assets/images/cards/phonepe.png"}
-              alt="phonepe"
+              alt="Pay with Phonepe"
               width={160}
               height={100}
               className="h-[80px] object-contain"

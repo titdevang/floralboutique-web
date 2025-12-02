@@ -131,7 +131,7 @@ const Message = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-[40px]">
+    <div className="py-6 md:px-6 px-4 bg-white rounded-[40px]">
       <div className={"flex items-center gap-4"}>
         <div className={"bg-primary w-10 h-10"}>
           <p
@@ -210,8 +210,8 @@ const Message = () => {
       </div>
 
       {/* Messages + Compose */}
-      <div className="flex gap-4">
-        <div className="w-1/2">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="">
           <h3 className="text-sm mb-3">Select a message</h3>
 
           <div className="flex flex-col gap-3 h-full max-h-72 overflow-y-auto pr-1">
@@ -239,7 +239,7 @@ const Message = () => {
           </div>
         </div>
 
-        <div className="w-1/2">
+        <div className="">
           <h3 className="text-sm mb-3">Compose a message</h3>
 
           <textarea

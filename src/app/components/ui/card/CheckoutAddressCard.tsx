@@ -236,7 +236,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
             {(addNewAddress || !addresses.length) && (
                 <div
                     className={
-                        "rounded-lg my-4 p-4 transition border-[#823c64]/40 border"
+                        "rounded-lg my-4 md:p-4 p-2 transition border-[#823c64]/40 border"
                     }
                 >
                     <UsershippingInfo
@@ -253,7 +253,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                     return (
                         <div
                             key={index}
-                            className={`rounded-lg p-4 transition border-[#823c64]/40 hover:border-primary duration-300 border  ${
+                            className={`rounded-lg p-2 md:p-4 transition border-[#823c64]/40 hover:border-primary duration-300 border  ${
                                 selectedId == addr?.id ? "bg-[#f9efec] shadow-sm" : ""
                             }`}
                         >
@@ -265,6 +265,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                     <Radio
                                         type="radio"
                                         name="address"
+                                        label={" "}
                                         checked={Number(selectedId) == Number(addr?.id)}
                                         onChange={() => handleSelect(addr)}
                                         className="!w-4 !h-4 cursor-pointer mt-1"
@@ -299,6 +300,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                 {/* Icons */}
                                 <div className="flex items-center gap-3">
                                     <button
+                                        name={"edit"}
                                         onClick={(e) => {
                                             handleEdit(addr.id || null);
                                             e.stopPropagation();
@@ -314,6 +316,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                         />
                                     </button>
                                     <button
+                                        name={"delete"}
                                         onClick={(e) => {
                                             setDeleteModal(Number(addr.id));
                                             e.stopPropagation();
@@ -332,9 +335,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                             </div>
                             {editAddress?.id === addr.id && (
                                 <div
-                                    className={`${
-                                        selectedId === addr.id ? "" : "border"
-                                    } border-[#823c64]/40 rounded-lg mt-4`}
+                                    className={` mt-4`}
                                 >
                                     <UsershippingInfo
                                         formData={editAddress as DeliveryAddress}

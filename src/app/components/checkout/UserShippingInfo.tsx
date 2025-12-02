@@ -126,17 +126,15 @@ const UsershippingInfo: React.FC<UsershippingInfoProps> = ({
       handleUpdateFormData?.(Number(formData.id));
     }
   };
-console.log(errors);
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
-      <div className="lg:w-full p-6">
+      <div className="lg:w-full md:p-6 p-2">
         <div className="space-y-4">
           <div>
             <h5 className="font-semibold">Receiver&#39;s Contact</h5>
           </div>
-          <div className="pl-4 space-y-4">
-            <div className="flex gap-4">
+          <div className="pl-4 grid md:grid-cols-2 gap-4">
               <InputField
                 name="receiverName"
                 value={formData.receiverName}
@@ -152,8 +150,6 @@ console.log(errors);
                 placeholder="Recipient Email"
                 error={errors.receiverEmail}
               />
-            </div>
-            <div className="flex gap-4">
               <InputField
                 name="receiverPhone"
                 type="text"
@@ -170,13 +166,12 @@ console.log(errors);
                 placeholder="Recipient Alt Mobile"
                 error={errors.receiverAltPhone}
               />
-            </div>
           </div>
 
           <div>
             <h5 className="font-semibold">Receiver&#39;s Address</h5>
           </div>
-          <div className="pl-4 grid grid-cols-2 gap-4">
+          <div className="pl-4 grid md:grid-cols-2 gap-4">
             <InputField
               type="text"
               name="address_1"

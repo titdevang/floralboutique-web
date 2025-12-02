@@ -37,21 +37,12 @@ export default function ProductDetail({ productData, setOpenModal }: ProductProp
     DeliveryTimeSlot | undefined
   >();
   const { updateQuantity } = useCart();
-  const { selectCities, selectPincode, selectCitieName } = useLocation();
-
-  useEffect(() => {
-    setDeliveryType(undefined);
-    setDeliveryMethods([]);
-    setDeliveryTimeSlot(undefined);
-    setDeliveryTimeSlots([]);
-    setSelectDate("");
-  }, [selectPincode]);
 
   const fetchDeliveryMethods = async (date: string | undefined) => {
     try {
       const response = await apiRequest<ApiResponse>(
         "GET",
-        `/products/${product?.slug}/delivery-methods?city_id=${selectCities}&pin_code=${selectPincode}&date=${date}`
+        `/products/${product?.slug}/delivery-methods?city_id=${productData.city.id}&pin_code=${productData.pinCode}&date=${date}`
       );
       if (response?.status === 200 && response.data) {
         setDeliveryMethods(
@@ -100,9 +91,9 @@ export default function ProductDetail({ productData, setOpenModal }: ProductProp
 
     const productPayload = {
       ...product,
-      city_id: selectCities,
-      city: selectCitieName,
-      pincode: selectPincode,
+      city_id: productData.city.id,
+      city: productData.city.name,
+      pincode: productData.pinCode,
       deliveryDate: String(selecteDate),
       deliveryType: deliveryType?.name,
       deliveryTimeSlot: deliveryTimeSlot.time_slots,
@@ -118,17 +109,9 @@ export default function ProductDetail({ productData, setOpenModal }: ProductProp
     <div>
       <div>
         <div className="space-y-10">
-          {selectCities && (
-            <div className={""}>
-              <PincodeDropdown
-                isBlink={!selectPincode}
-                // dropdownClassName="!absolute"
-              />
-            </div>
-          )}
 
           {/*--------------- start Schedule your delivery----------------- */}
-          {selectPincode && selectCities && (
+          {(productData?.pinCode && productData?.city.id) && (
             <div className={``}>
               <div>
                 <h3

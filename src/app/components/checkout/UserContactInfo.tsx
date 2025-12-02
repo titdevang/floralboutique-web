@@ -10,7 +10,7 @@ const UserContactInfo = () => {
     return (
       <div
         className={
-          "bg-white rounded-[40px] md:space-y-0 space-y-4 md:flex items-center justify-between py-10 px-6"
+          "bg-white rounded-[40px] md:space-y-0 space-y-4 md:flex items-center justify-between py-10 md:px-6 px-4"
         }
       >
         <div className={"flex items-center gap-4 w-full"}>

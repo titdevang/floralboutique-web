@@ -163,7 +163,7 @@ export default function ProductDetail({params}: ProductProps) {
         const productPayload = {
             ...product,
             city_id: selectCities,
-            city: selectCitieName,
+            city: selectCitieName as unknown as Cities,
             pincode: selectPincode,
             deliveryDate: String(selecteDate),
             deliveryType: deliveryType,

@@ -4,19 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import Modal from "../../ui/modal/modal";
+import {formatDate} from "@/app/lib/formatDate";
 
 interface Props {
   onChange?: (date: string) => void;
 }
-
-const formatDate = (date: Date) => {
-  const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
-  const monthName = date.toLocaleDateString("en-US", { month: "short" });
-  const dayNumber = date.getDate();
-
-  return `${dayName}, ${monthName} ${dayNumber}`;
-};
-
 
 export default function DatePickerPopup({ onChange }: Props) {
   const [selected, setSelected] = useState<Date | undefined>();
