@@ -82,6 +82,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (userAuthenticated !== undefined) {
       getCartData();
+    } else {
+      setLoading(false);
     }
   }, [userAuthenticated]);
 
