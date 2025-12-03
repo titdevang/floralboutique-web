@@ -2,7 +2,7 @@
 
 export default function OrderDetailPageSkeleton() {
   return (
-    <div className="space-y-4 animate-pulse">
+    <div className="space-y-4 animate-pulse container">
       {/* Header */}
       <div className="h-6 w-40 bg-gray rounded"></div>
 

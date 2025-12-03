@@ -217,3 +217,77 @@ input[type="range"] {
   background-color: #ef486a !important;
   /* example: indigo */
 }
+
+
+
+.loader-container {
+    visibility: visible;
+    transition: visibility 0s linear 0.33s, opacity 0.33s linear;
+    opacity: 1;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 9;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.loader {
+    margin: 0 auto;
+    width: 50px;
+    height: 40px;
+    text-align: center;
+    font-size: 10px;
+    position: relative;
+    top: 50%;
+    user-select: none;
+}
+
+.loader-img {
+    margin: 0 auto;
+    width: max-content;
+    height: 40px;
+    text-align: center;
+    font-size: 14px;
+    position: relative;
+    top: 50%;
+    user-select: none;
+}
+
+.loader>div {
+    background-color: #030712BF;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.loader .rect2 {
+    animation-delay: -1.1s;
+}
+
+.loader .rect3 {
+    animation-delay: -1.0s;
+}
+
+.loader .rect4 {
+    animation-delay: -0.9s;
+}
+
+.loader .rect5 {
+    animation-delay: -0.8s;
+}
+
+@keyframes sk-stretchdelay {
+
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+    }
+
+    20% {
+        transform: scaleY(1.0);
+    }
+}

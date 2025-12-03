@@ -24,6 +24,7 @@ import {ApiResponse} from "@/app/types/ApiRequest";
 import SelectField from "@/app/components/common/fields/SelectField";
 import AddonsUI from "@/app/components/ui/modal/AddonsUI";
 import {AddonsSkeleton} from "@/app/components/ui/loader/AddonsSkeleton";
+import MobileImageSlider from "@/app/components/ui/ProductDetailMobileImageSlider";
 
 interface ProductProps {
     params: Promise<{ slug: string }>;
@@ -249,7 +250,7 @@ export default function ProductDetail({params}: ProductProps) {
             </Modal>
             <div className="w-full flex flex-col lg:flex-row gap-8 bg-white">
                 <div className="flex flex-col lg:flex-row gap-4 flex-1">
-                    <div className="lg:order-1 order-2 flex lg:flex-col justify-center lg:justify-normal gap-3">
+                    <div className="lg:order-1 lg:flex hidden order-2 lg:flex-col justify-center lg:justify-normal gap-3">
                         {product.photos.map((photo, index) => (
                             <ImageWithFallback
                                 key={index}
@@ -265,7 +266,14 @@ export default function ProductDetail({params}: ProductProps) {
                         ))}
                     </div>
 
-                    <div className="lg:order-2 order-1 flex justify-start items-start flex-col gap-6 flex-1">
+                    <MobileImageSlider
+                        product={product}
+                        mainImage={mainImage}
+                        setMainImage={setMainImage}
+                        setProductGalleryOpen={setProductGalleryOpen}
+                    />
+
+                    <div className="lg:order-2 order-1 hidden lg:flex justify-start items-start flex-col gap-6 flex-1">
                         <div
                             onClick={() => setProductGalleryOpen(true)}
                             className={"w-full cursor-zoom-in"}

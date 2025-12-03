@@ -4,9 +4,10 @@ import ButtonLoder from "../ui/loader/ButtonLoder";
 import {useCheckout} from "@/app/context/CheckoutContext";
 import PriceDetailsSkeleton from "../ui/loader/PriceDetailsSkeleton";
 import InputField from "../common/fields/InputField";
-import SvgIcon from "../ui/SvgIcon";
 import {apiRequest} from "@/app/utils/apiRequest";
 import {toast} from "react-toastify";
+import Cookies from "js-cookie";
+import SvgIcon from "@/app/components/ui/SvgIcon";
 
 const PriceDetails = () => {
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -14,14 +15,17 @@ const PriceDetails = () => {
     const [couponCode, setCouponCode] = useState("")
     const {cartData, calculateTotal, deliveryChargeTotal, loading} = useCart();
     const {message, paymentMethod, senderDetails} = useCheckout()
-
     const varifyCartAddress = cartData.find(item => ((item.address as unknown as []).length == 0) || (!item.address));
-    console.log(cartData)
+
+    const redirectUrl = `${window.location.origin}/payment-status`;
+
     const placeOrderPayload = {
         // cartIds: cartIds,
         message: message,
         paymentMethod: paymentMethod,
         senderDetail: senderDetails,
+        redirectUrl,
+        amount: calculateTotal + deliveryChargeTotal,
     };
 
     const placeOrder = async () => {
@@ -32,8 +36,14 @@ const PriceDetails = () => {
 
         setSubmitLoading(true);
         try {
-            const response = await apiRequest('POST', '/order/place', placeOrderPayload);
+            const response = await apiRequest("POST", "/phonepe/initiate", placeOrderPayload);
             if(response?.status == 200) {
+                const redirect = (response?.data as {redirectUrl: string})?.redirectUrl;
+                console.log({redirect})
+                Cookies.set("orderId", (response.data as {order_id: string}).order_id)
+                if (redirect) {
+                    window.location.href = redirect;
+                }
                 toast.success('Order placed successfully');
             }
         } catch (e) {
@@ -119,10 +129,11 @@ const PriceDetails = () => {
                                 type="button"
                                 onClick={placeOrder}
                                 className={`${submitLoading ? "  disabled:animate-pulse disabled:opacity-75 " : ""} w-full bg-primary text-white h-10 font-semibold text-sm hover:bg-hov-primary transition duration-500 disabled:opacity-50 rounded-[40px]`}
-                                disabled={placeOrderButtonDisable}
+                                // disabled={placeOrderButtonDisable}
                             >
                                 {submitLoading ? <ButtonLoder/> : "Place Order"}
                             </button>
+
                         </div>
                     </div>
                 </>

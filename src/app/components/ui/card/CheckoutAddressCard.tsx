@@ -265,7 +265,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                     <Radio
                                         type="radio"
                                         name="address"
-                                        label={addr.address_1}
+                                        label={""}
                                         checked={Number(selectedId) == Number(addr?.id)}
                                         onChange={() => handleSelect(addr)}
                                         className="!w-4 !h-4 cursor-pointer mt-1"
