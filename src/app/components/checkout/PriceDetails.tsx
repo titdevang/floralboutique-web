@@ -17,14 +17,11 @@ const PriceDetails = () => {
     const {message, paymentMethod, senderDetails} = useCheckout()
     const varifyCartAddress = cartData.find(item => ((item.address as unknown as []).length == 0) || (!item.address));
 
-    const redirectUrl = `${window.location.origin}/payment-status`;
-
     const placeOrderPayload = {
         // cartIds: cartIds,
         message: message,
         paymentMethod: paymentMethod,
         senderDetail: senderDetails,
-        redirectUrl,
         amount: calculateTotal + deliveryChargeTotal,
     };
 
@@ -39,7 +36,6 @@ const PriceDetails = () => {
             const response = await apiRequest("POST", "/phonepe/initiate", placeOrderPayload);
             if(response?.status == 200) {
                 const redirect = (response?.data as {redirectUrl: string})?.redirectUrl;
-                console.log({redirect})
                 Cookies.set("orderId", (response.data as {order_id: string}).order_id)
                 if (redirect) {
                     window.location.href = redirect;
@@ -129,7 +125,7 @@ const PriceDetails = () => {
                                 type="button"
                                 onClick={placeOrder}
                                 className={`${submitLoading ? "  disabled:animate-pulse disabled:opacity-75 " : ""} w-full bg-primary text-white h-10 font-semibold text-sm hover:bg-hov-primary transition duration-500 disabled:opacity-50 rounded-[40px]`}
-                                // disabled={placeOrderButtonDisable}
+                                disabled={placeOrderButtonDisable}
                             >
                                 {submitLoading ? <ButtonLoder/> : "Place Order"}
                             </button>
