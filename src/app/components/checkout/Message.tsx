@@ -160,9 +160,9 @@ const Message = () => {
               }}
               className={`px-3 py-1.5 ${
                 selectedCategory?.id === cat.id
-                  ? "bg-hov-primary"
-                  : "bg-primary"
-              } hover:bg-hov-primary duration-300 text-white rounded-full`}
+                  ? "bg-primary !text-white"
+                  : "text-primary"
+              } hover:bg-primary border-primary border duration-300 hover:text-white rounded-full`}
             >
               {cat.name}
             </button>
@@ -198,9 +198,9 @@ const Message = () => {
                 }}
                 className={`px-3 py-1.5 ${
                   selectedSubCategoryId === sub.id
-                    ? "bg-hov-primary"
-                    : "bg-primary"
-                } hover:bg-hov-primary duration-300 text-white rounded-full`}
+                    ? "bg-primary !text-white"
+                    : "text-primary"
+                } hover:bg-primary border-primary border duration-300 hover:text-white rounded-full`}
               >
                 {sub.name}
               </button>

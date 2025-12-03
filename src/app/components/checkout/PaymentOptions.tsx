@@ -79,7 +79,7 @@ const PaymentOptions = () => {
               <p className="text-[14px] font-light">
                 Or, Your wallet balance :
               </p>
-              <h5 className="text-sm font-semibold">₹ 5828</h5>
+              <h3 className="text-sm font-semibold">₹ 5828</h3>
             </div>
 
             <h4

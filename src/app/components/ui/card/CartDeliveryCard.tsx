@@ -97,6 +97,7 @@ export default function CartItemCard({
         </div>
         <button
           type="button"
+          aria-label="delete"
           className="text-peach"
           onClick={() => onRemove(item)}
         >
@@ -128,6 +129,7 @@ export default function CartItemCard({
             </p>
           </div>
           <button
+            aria-label="delete"
             type="button"
             className="text-peach"
             onClick={() => onRemove(addonProduct)}
@@ -145,6 +147,7 @@ export default function CartItemCard({
 
       {/* Delivery Slot */}
       <button
+        aria-label="change deliviry date"
         type="button"
         onClick={() => onChangeDeliveryDate(item)}
         className="px-4 py-1.5 relative w-full text-start"
@@ -179,6 +182,7 @@ export default function CartItemCard({
       {/* Button */}
       <div className="px-4 pb-4">
         <button
+          aria-label="make apecial"
           className="w-full mt-4 flex items-center hover:bg-peach-light duration-300  text-[13px] justify-center gap-2 border border-peach text-peach font-semibold rounded-lg py-2.5 transition"
           onClick={() => onMakeSpecial?.()}
         >

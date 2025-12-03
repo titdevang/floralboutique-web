@@ -265,7 +265,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                     <Radio
                                         type="radio"
                                         name="address"
-                                        label={" "}
+                                        label={addr.address_1}
                                         checked={Number(selectedId) == Number(addr?.id)}
                                         onChange={() => handleSelect(addr)}
                                         className="!w-4 !h-4 cursor-pointer mt-1"
@@ -300,6 +300,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                 {/* Icons */}
                                 <div className="flex items-center gap-3">
                                     <button
+                                        aria-label="edit"
                                         name={"edit"}
                                         onClick={(e) => {
                                             handleEdit(addr.id || null);
@@ -316,6 +317,7 @@ const CheckoutAddressList: React.FC<CheckoutAddressListProps> = ({
                                         />
                                     </button>
                                     <button
+                                        aria-label="delete"
                                         name={"delete"}
                                         onClick={(e) => {
                                             setDeleteModal(Number(addr.id));

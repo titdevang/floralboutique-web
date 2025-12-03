@@ -52,7 +52,7 @@ const SenderDetails = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-[15px]">Sender's Details</h4>
+        <h3 className="text-[15px]">Sender's Details</h3>
         {!editMode && (
           <div>
             <button

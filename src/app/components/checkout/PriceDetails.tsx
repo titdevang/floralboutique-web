@@ -102,14 +102,14 @@ const PriceDetails = () => {
                                 <button
                                     onClick={() => setShowCouponApply(true)}
                                     type={"button"}
-                                    className={"text-blue "}
+                                    className={"text-[#005bb5d6] "}
                                 >
                                     Have a Discount Coupon?
                                 </button>
                             )}
                         </div>
                         <div>
-                            <span className={"text-gray-dark text-sm"}>
+                            <span className={"text-gray-extra-dark text-sm"}>
                               By continuing you agree to our{" "}
                                 <span className={"text-dark"}>T&C/Disclaimer</span>
                             </span>

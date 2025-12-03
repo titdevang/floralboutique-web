@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef, InputHTMLAttributes, ReactNode } from "react";
+import React, {forwardRef, InputHTMLAttributes, ReactNode, useId} from "react";
 import { cn } from "@/app/lib/utils";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 
@@ -14,14 +14,18 @@ interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     ({ label, error, helperText, className, labelClassName, ...props }, ref) => {
+        const generatedId = useId();
+        const inputId = props.id || generatedId;
         return (
             <div className="flex flex-col gap-1">
                 <label
+                    htmlFor={inputId}
                     className={cn(
                         "flex items-center gap-2.5 cursor-pointer select-none touch-manipulation w-fit"
                     )}
                 >
                     <input
+                        id={inputId}
                         type="checkbox"
                         ref={ref}
                         {...props}

@@ -63,7 +63,7 @@ const DeliveryCard: React.FC<DeliveryCardProps> = ({product}) => {
             <div className="flex flex-col justify-between">
               <p className="font-medium">{product.productData?.name}</p>
               <div className={"flex items-center gap-6"}>
-                <p className="text-sm text-gray-dark">
+                <p className="text-sm text-gray-extra-dark">
                   ₹{product.productData?.finalPrice} × {product.quantity}
                 </p>
                 <div className="flex items-center gap-3 text-primary">
