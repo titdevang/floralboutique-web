@@ -22,7 +22,6 @@ const PriceDetails = () => {
         message: message,
         paymentMethod: paymentMethod,
         senderDetail: senderDetails,
-        amount: calculateTotal + deliveryChargeTotal,
     };
 
     const placeOrder = async () => {
@@ -33,10 +32,10 @@ const PriceDetails = () => {
 
         setSubmitLoading(true);
         try {
-            const response = await apiRequest("POST", "/phonepe/initiate", placeOrderPayload);
+            const response = await apiRequest("POST", "/orders/place", placeOrderPayload);
             if(response?.status == 200) {
-                const redirect = (response?.data as {redirectUrl: string})?.redirectUrl;
-                Cookies.set("orderId", (response.data as {order_id: string}).order_id)
+                const redirect = (response?.data as {data: { paymentUrl: string }})?.data?.paymentUrl;
+                Cookies.set("orderId", (response.data as {data: { orderId: string }})?.data?.orderId)
                 if (redirect) {
                     window.location.href = redirect;
                 }
