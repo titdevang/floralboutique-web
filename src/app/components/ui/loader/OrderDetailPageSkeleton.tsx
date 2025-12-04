@@ -7,7 +7,7 @@ export default function OrderDetailPageSkeleton() {
       <div className="h-6 w-40 bg-gray rounded"></div>
 
       {/* Order Summary Card */}
-      <div className="border border-gray-light p-6 bg-white">
+      <div className="border border-gray-light p-6 ">
         <div className="h-4 w-32 bg-gray mb-4 pb-4 border-b border-soft-secondary"></div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-10">

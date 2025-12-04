@@ -1,5 +1,6 @@
 "use client";
 
+import SmoothAccordion from "@/app/components/section/accordion/SmoothAccordion";
 import OrderDetailPageSkeleton from "@/app/components/ui/loader/OrderDetailPageSkeleton";
 import ProductDetailSkeleton from "@/app/components/ui/loader/ProductDetailSkeleton";
 import { apiRequest } from "@/app/utils/apiRequest";
@@ -31,7 +32,7 @@ export default function OrderDetail({ params }: OrderDetailProps) {
     if (pathname) fetchOrder();
   }, [pathname]);
 
-  if (!orderDetail) return <OrderDetailPageSkeleton/>
+  if (!orderDetail) return <OrderDetailPageSkeleton />;
 
   const address = orderDetail.shippingAddress;
 
@@ -89,80 +90,61 @@ export default function OrderDetail({ params }: OrderDetailProps) {
       </div>
 
       {/* Product Details Table */}
-      <div className="border border-gray-light p-4">
+      <div className="border border-gray-light lg:p-4 p-2">
         <h2 className="font-semibold text-sm  p-4">Order Details</h2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full ">
-            <thead className="">
-              <tr className="text-left text-gray-dark">
-                <th className="py-3 px-3 font-semibold">#</th>
-                <th className="py-3 px-3 font-semibold">Product</th>
-                <th className="py-3 px-3 font-semibold">Variation</th>
-                <th className="py-3 px-3 font-semibold">Unit price</th>
-                <th className="py-3 px-3 font-semibold">QTY</th>
-                <th className="py-3 px-3 font-semibold">Net Price</th>
-                <th className="py-3 px-3 font-semibold">Tax</th>
-                <th className="py-3 px-3 font-semibold">Delivery Price</th>
-                <th className="py-3 px-3 font-semibold">Total</th>
-                <th className="py-3 px-3 font-semibold">Refund</th>
-                <th className="py-3 px-3 font-semibold">Review</th>
-              </tr>
-            </thead>
+        <SmoothAccordion
+          items={orderDetail.products.map((item: any, index: number) => ({
+            title: (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-[500]">
+                    #{String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm font-[400] line-clamp-1">
+                    {item.name}
+                  </span>
+                </div>
+                <span className=" font-light">₹{item.total}</span>
+              </div>
+            ),
+            content: (
+              <div className="text-sm grid grid-cols-1 md:grid-cols-2 mt-4 lg:pl-6">
+                <DataRow label="Variation" value={item.variation} />
+                <DataRow label="Unit Price" value={`₹ ${item.unitPrice}`} />
+                <DataRow label="Quantity" value={item.quantity} />
+                <DataRow label="Net Price" value={`₹ ${item.netPrice}`} />
+                <DataRow label="Tax" value={`₹ ${item.tax}`} />
+                <DataRow
+                  label="Delivery Price"
+                  value={`₹ ${item.deliveryPrice}`}
+                />
+                <DataRow label="Total" value={`₹ ${item.total}`} />
+                <DataRow label="Refund" value="N/A" />
+                <DataRow label="Shipping method" value={item.shippingMethod} />
+                <DataRow
+                  label="Address"
+                  value={`${[
+                    item.address.address_1,
+                    item.address.address_2,
+                    item.address.address_3,
+                    item.address.city,
+                    item.address.postalCode,
+                    item.address.state,
+                    item.address.country,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}`}
+                />
+              </div>
+            ),
+          }))}
+          titleClasses="text-sm"
+          contentClasses="text-sm"
+          contentWithHTMLFormate={false}
+        />
 
-            <tbody>
-              {orderDetail.products.map((item: any, index: number) => (
-                <tr
-                  key={item.id}
-                  className="border-t border-soft-secondary align-top text-sm"
-                >
-                  {/* Index */}
-                  <td className="p-3">{String(index + 1).padStart(2, "0")}</td>
-
-                  {/* Product Name (multi-line) */}
-                  <td className="p-3 text-primary font-light whitespace-pre-line">
-                    <Link href={`/product/${item.slug}`}>{item.name}</Link>
-                  </td>
-
-                  {/* Variation */}
-                  <td className="p-3 font-light">{item.variation}</td>
-
-                  {/* Unit Price */}
-                  <td className="p-3 font-light truncate">
-                    ₹ {item.unitPrice}
-                  </td>
-
-                  {/* Quantity */}
-                  <td className="p-3 font-light">{item.quantity}</td>
-
-                  {/* Net Price */}
-                  <td className="p-3 truncate font-light">₹ {item.netPrice}</td>
-
-                  {/* Tax */}
-                  <td className="p-3 truncate font-light">₹ {item.tax}</td>
-
-                  {/* Delivery Price */}
-                  <td className="p-3 truncate font-light">
-                    {item.deliveryPrice}
-                  </td>
-
-                  {/* Total */}
-                  <td className="p-3 truncate font-light">₹ {item.total}</td>
-
-                  {/* Refund */}
-                  <td className="p-3 font-semibold">N/A</td>
-
-                  {/* Review */}
-                  <td className="p-3 text-danger font-light">
-                    Not Delivered
-                    <br />
-                    Yet
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Accordion Ends */}
       </div>
 
       {/* Summary */}
