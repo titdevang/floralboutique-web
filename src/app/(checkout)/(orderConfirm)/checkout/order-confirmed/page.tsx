@@ -144,7 +144,7 @@ export default function PaymentStatusPage() {
             </div>
 
             {/* Product Details Table */}
-              <div className={"grid grid-cols-3 gap-6"}>
+              <div className={"md:grid grid-cols-3 gap-6"}>
                 <div className="col-span-2 border border-gray-light lg:p-4 p-2 ">
               <h2 className="font-semibold text-sm  p-4">Order Details</h2>
 
