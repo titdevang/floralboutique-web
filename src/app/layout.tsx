@@ -11,6 +11,7 @@ import { CategoryListCacheProvider } from "./context/CategoryListCacheContext";
 import AuthProviderWrapper from "./context/AuthProviderWrapper";
 import LoginModal from "./components/ui/modal/LoginModal";
 import { LocationHierarchyProvider } from "./context/LocationHierarchyContext";
+import {Analytics} from "@vercel/analytics/vue";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -53,6 +54,7 @@ export default function RootLayout({
                   <MainLayout>
                     <LoginModal />
                     {children}
+                    <Analytics />
                     <SpeedInsights />
                   </MainLayout>
                 </CategoryListCacheProvider>
