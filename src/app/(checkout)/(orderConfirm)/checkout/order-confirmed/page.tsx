@@ -101,7 +101,7 @@ export default function PaymentStatusPage() {
               </h2>
 
               {/* Grid */}
-              <div className="md:grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-10">
                 {/* Left column */}
                 <div>
                     <DataRow label="Order Code" value={orderDetail.orderId}/>
@@ -144,8 +144,8 @@ export default function PaymentStatusPage() {
             </div>
 
             {/* Product Details Table */}
-              <div className={"md:grid grid-cols-3 gap-6"}>
-                <div className="col-span-2 border border-gray-light lg:p-4 p-2 ">
+              <div className={"grid lg:grid-cols-3 gap-6"}>
+                <div className="lg:col-span-2 border border-gray-light lg:p-4 p-2 ">
               <h2 className="font-semibold text-sm  p-4">Order Details</h2>
 
               <div>
