@@ -31,17 +31,19 @@ export default function PaymentStatusPage() {
         const checkPaymentStatus = async () => {
             setLoading(true);
             try {
-                const response = await apiRequest<{ paymentStatus: string, orderId: string }>(
-                    "GET",
-                    `/phonepe/status?merchantTransactionId=${orderId}`
+                const response = await apiRequest<{
+                data: {
+                    state: string, orderId: string
+                }}>(
+                    "POST",
+                    `/orders/payment/status/${orderId}`
                 );
 
-
                 if (response?.status == 200) {
-                    const PaymentStatus = response?.data?.paymentStatus
+                    const PaymentStatus = response?.data?.data?.state
                     setStatus(PaymentStatus);
-                    if (PaymentStatus == "COMPLETED") {
-                        fetchOrder(response?.data.orderId);
+                    if (PaymentStatus == "PENDING") {
+                        fetchOrder(response?.data?.data?.orderId);
                     }
                 }
 

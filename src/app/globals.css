@@ -256,7 +256,7 @@ input[type="range"] {
 }
 
 .loader>div {
-    background-color: #030712BF;
+    /*background-color: #030712BF;*/
     height: 100%;
     width: 6px;
     display: inline-block;
@@ -265,18 +265,22 @@ input[type="range"] {
 
 .loader .rect2 {
     animation-delay: -1.1s;
+    background-color: #8E3B5A;
 }
 
 .loader .rect3 {
     animation-delay: -1.0s;
+    background-color: #B66677;
 }
 
 .loader .rect4 {
     animation-delay: -0.9s;
+    background-color: #E7A9A0;
 }
 
 .loader .rect5 {
     animation-delay: -0.8s;
+    background-color: #F4CFC6;
 }
 
 @keyframes sk-stretchdelay {
