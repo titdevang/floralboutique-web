@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 
 interface FullPageLoaderProps {
     isLoading: boolean;
+    className?: string
 }
 
-const FullPageLoader: React.FC<FullPageLoaderProps> = ({ isLoading }) => {
+const FullPageLoader: React.FC<FullPageLoaderProps> = ({ isLoading, className }) => {
     const [isMounted, setIsMounted] = useState<boolean>(isLoading);
     const [opacityClass, setOpacityClass] = useState<string>(
         isLoading ? "opacity-100" : "opacity-0"
@@ -33,7 +34,7 @@ const FullPageLoader: React.FC<FullPageLoaderProps> = ({ isLoading }) => {
     return (
         <div
             id="customFullPageLoader"
-            className={`h-[70vh] w-full flex justify-center items-center  transition-opacity duration-1000 backdrop-blur-[0.7px] bg-opacity-60 ${opacityClass} ${
+            className={` ${className} h-[70vh] w-full flex justify-center items-center  transition-opacity duration-1000 backdrop-blur-[0.7px] bg-opacity-60 ${opacityClass} ${
                 opacityClass === "!opacity-0" ? "!pointer-events-none" : ""
             }`}
         >

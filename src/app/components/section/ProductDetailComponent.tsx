@@ -17,6 +17,7 @@ import { getDate } from "@/app/lib/getDate";
 import DatePickerPopup from "@/app/components/common/fields/DatePickerPopup";
 import { ApiResponse } from "@/app/types/ApiRequest";
 import SelectField from "@/app/components/common/fields/SelectField";
+import {toastError} from "@/app/lib/toast";
 
 interface ProductProps {
   productData: Product;
@@ -54,7 +55,7 @@ export default function ProductDetail({ productData, setOpenModal }: ProductProp
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong. Please try again.");
+      toastError("Something went wrong. Please try again.");
     }
   };
 
@@ -79,7 +80,7 @@ export default function ProductDetail({ productData, setOpenModal }: ProductProp
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong. Please try again.");
+      toastError("Something went wrong. Please try again.");
     }
   };
 

@@ -6,6 +6,7 @@ import { apiRequest } from "@/app/utils/apiRequest";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import {toastError} from "@/app/lib/toast";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -32,16 +33,16 @@ export default function RegisterPage() {
 
     if (!formData.phone || !formData.email) {
       if (!formData.email && showEmailField) {
-        toast.error("Email is required.");
+        toastError("Email is required.");
         return;
       } else if (!formData.phone && !showEmailField) {
-        toast.error("Phone Number is required.");
+        toastError("Phone Number is required.");
         return;
       }
     }
 
     if (formData.phone.length != 10) {
-      toast.error("Mobile number is not valid");
+      toastError("Mobile number is not valid");
       return;
     }
 
@@ -55,11 +56,11 @@ export default function RegisterPage() {
           email: "",
         });
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toastError("Something went wrong. Please try again.");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong. Please try again.");
+      toastError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

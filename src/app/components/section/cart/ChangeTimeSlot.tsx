@@ -8,6 +8,7 @@ import DatePickerPopup from '../../common/fields/DatePickerPopup';
 import { getDate } from '@/app/lib/getDate';
 import SelectField from '../../common/fields/SelectField';
 import { useCart } from '@/app/context/CartContext';
+import {toastError} from "@/app/lib/toast";
 
 interface ChangeTimeSlotProps {
   product?: Product;
@@ -50,7 +51,7 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong. Please try again.");
+      toastError("Something went wrong. Please try again.");
     }
   };
 
@@ -69,7 +70,7 @@ const ChangeTimeSlot: React.FC<ChangeTimeSlotProps> = ({
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong. Please try again.");
+      toastError("Something went wrong. Please try again.");
     }
   };
 

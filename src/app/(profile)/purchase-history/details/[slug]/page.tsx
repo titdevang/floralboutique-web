@@ -5,7 +5,7 @@ import OrderDetailPageSkeleton from "@/app/components/ui/loader/OrderDetailPageS
 import ProductDetailSkeleton from "@/app/components/ui/loader/ProductDetailSkeleton";
 import { apiRequest } from "@/app/utils/apiRequest";
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 interface OrderDetailProps {
   params: Promise<{ slug: string }>;
@@ -54,21 +54,22 @@ export default function OrderDetail({ params }: OrderDetailProps) {
             <DataRow label="Order Code" value={orderDetail.orderId} />
             <DataRow label="Customer" value={orderDetail.customer} />
             <DataRow label="Email" value={orderDetail.email ?? "N/A"} />
-
-            <div className="mb-4 grid grid-cols-2">
-              <p className="font-semibold">Shipping address:</p>
-              <p className="leading-6 font-[400]">
-                {address.address}, {address.city}, <br />
-                {address.state} - {address.postalCode}, <br />
-                {address.country}
-              </p>
-            </div>
           </div>
 
           {/* Right column */}
           <div>
             <DataRow label="Order date" value={orderDetail.orderDate} />
-            <DataRow label="Order status" value={orderDetail.orderStatus} />
+              <DataRow label="Order status"
+                       value={`
+                                  <p class="
+                                    ${orderDetail.orderStatus === "pending" ? "text-warning" :
+                           orderDetail.orderStatus === "complete" ? "text-success" : "text-danger"
+                       }
+                                  ">
+                                    ${orderDetail.orderStatus}
+                                  </p>
+                                 `}
+              />
             <DataRow
               label="Total order amount"
               value={`₹ ${orderDetail.grandTotal}`}
@@ -179,7 +180,7 @@ function DataRow({ label, value }: { label: string; value: any }) {
   return (
     <div className="mb-4 grid grid-cols-2">
       <p className=" font-semibold">{label}:</p>
-      <p className=" font-[400] capitalize">{value}</p>
+        <p className=" font-[400] capitalize" dangerouslySetInnerHTML={{__html: value}}/>
     </div>
   );
 }

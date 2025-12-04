@@ -8,6 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import {toastError, toastSuccess} from "@/app/lib/toast";
+import {ApiResponse} from "@/app/types/ApiRequest";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -38,45 +40,45 @@ export default function RegisterPage() {
     setMessage("");
 
     if (!formData.fullName) {
-      toast.error("Full Name is required.");
+      toastError("Full Name is required.");
       return;
     }
 
     if (!formData.phone) {
-      toast.error("Phone Number is required.");
+      toastError("Phone Number is required.");
       return;
     }
 
      if (formData.phone.length != 10) {
-       toast.error("Mobile number is not valid");
+       toastError("Mobile number is not valid");
        return;
      }
 
     if (!formData.password) {
-      toast.error("Password is required.");
+      toastError("Password is required.");
       return;
     }
 
     if (!formData.confirmPassword) {
-      toast.error("Confirm Password is required.");
+      toastError("Confirm Password is required.");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Password and confirm password not match");
+      toastError("Password and confirm password not match");
       return;
     }
 
     if (!formData.agree) {
-      toast.error("You must agree to the terms.");
+      toastError("You must agree to the terms.");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await apiRequest("POST", "/register", formData);
+      const response = await apiRequest<ApiResponse>("POST", "/register", formData);
       if (response?.status == 200) {
-        toast.success("Account created successfully!");
+        toastSuccess(response.data?.message);
         setFormData({
           fullName: "",
           phone: "",
@@ -85,11 +87,11 @@ export default function RegisterPage() {
           agree: false,
         });
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toastError("Something went wrong. Please try again.");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong. Please try again.");
+      toastError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }

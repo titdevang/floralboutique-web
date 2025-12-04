@@ -103,37 +103,35 @@ export default function PaymentStatusPage() {
               {/* Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-10">
                 {/* Left column */}
-                {/* <div>
-                            <DataRow label="Order Code" value={orderDetail.orderId}/>
-                            <DataRow label="Customer" value={orderDetail.customer}/>
-                            <DataRow label="Email" value={orderDetail.email ?? "N/A"}/>
-
-                            <div className="mb-4 grid grid-cols-2">
-                                <p className="font-semibold">Shipping address:</p>
-                                <p className="leading-6 font-[400]">
-                                    {address.address}, {address.city}, <br/>
-                                    {address.state} - {address.postalCode}, <br/>
-                                    {address.country}
-                                </p>
-                            </div>
-                        </div> */}
+                <div>
+                    <DataRow label="Order Code" value={orderDetail.orderId}/>
+                    <DataRow label="Customer" value={orderDetail.customer}/>
+                    <DataRow label="Email" value={orderDetail.email ?? "N/A"}/>
+                    <DataRow
+                        label="Payment method"
+                        value={orderDetail.paymentMethod}
+                    />
+                </div>
 
                 {/* Right column */}
                 <div>
                   <DataRow label="Order date" value={orderDetail.orderDate} />
-                  <DataRow
-                    label="Order status"
-                    value={orderDetail.orderStatus}
-                  />
+                    <DataRow label="Order status"
+                             value={`
+                                  <p class="
+                                    ${orderDetail.orderStatus === "pending" ? "text-warning" :
+                                                                 orderDetail.orderStatus === "complete" ? "text-success" : "text-danger"
+                                                             }
+                                  ">
+                                    ${orderDetail.orderStatus}
+                                  </p>
+                                 `}
+                    />
                   <DataRow
                     label="Total order amount"
                     value={`₹ ${orderDetail.grandTotal}`}
                   />
 
-                  <DataRow
-                    label="Payment method"
-                    value={orderDetail.paymentMethod}
-                  />
                   {/* Additional Info */}
                   {orderDetail.additionalInfo && (
                     <div className="grid grid-cols-2">
@@ -146,7 +144,8 @@ export default function PaymentStatusPage() {
             </div>
 
             {/* Product Details Table */}
-            <div className="border border-gray-light lg:p-4 p-2 ">
+              <div className={"grid grid-cols-3 gap-6"}>
+                <div className="col-span-2 border border-gray-light lg:p-4 p-2 ">
               <h2 className="font-semibold text-sm  p-4">Order Details</h2>
 
               <div>
@@ -215,38 +214,39 @@ export default function PaymentStatusPage() {
                 {/* Accordion Ends */}
               </div>
             </div>
+                  {/* Summary */}
+                  <div className="md:flex items-start">
+                      <div className="border border-gray-light p-4 w-full">
+                          <h2 className="font-semibold mb-4 pb-4 border-b border-soft-secondary">
+                              Order Amount
+                          </h2>
 
-            {/* Summary */}
-            <div className="md:flex items-center justify-end">
-              <div className="border border-gray-light p-4 md:w-1/2">
-                <h2 className="font-semibold mb-4 pb-4 border-b border-soft-secondary">
-                  Order Amount
-                </h2>
+                          <div className="space-y-6  ">
+                              <PriceRow label="Subtotal" value={orderDetail.subTotal} />
+                              <PriceRow
+                                  label="Delivery Price"
+                                  value={orderDetail.deliveryPrice}
+                              />
+                              <PriceRow
+                                  label="Shipping Cost"
+                                  value={orderDetail.shippingCost}
+                              />
+                              <PriceRow
+                                  label="Coupon Discount"
+                                  value={`${orderDetail.Coupon}`}
+                              />
 
-                <div className="space-y-6  ">
-                  <PriceRow label="Subtotal" value={orderDetail.subTotal} />
-                  <PriceRow
-                    label="Delivery Price"
-                    value={orderDetail.deliveryPrice}
-                  />
-                  <PriceRow
-                    label="Shipping Cost"
-                    value={orderDetail.shippingCost}
-                  />
-                  <PriceRow
-                    label="Coupon Discount"
-                    value={`${orderDetail.Coupon}`}
-                  />
-
-                  <div className="flex justify-between mb-2">
-                    <span className="font-semibold">Grand Total</span>
-                    <span className="font-semibold">
+                              <div className="flex justify-between mb-2">
+                                  <span className="font-semibold">Grand Total</span>
+                                  <span className="font-semibold">
                       ₹ {orderDetail.grandTotal}
                     </span>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-                </div>
               </div>
-            </div>
+
           </div>
         )}
       </div>
@@ -258,7 +258,7 @@ function DataRow({label, value}: { label: string; value: any }) {
     return (
         <div className="mb-4 grid grid-cols-2">
             <p className=" font-semibold">{label}:</p>
-            <p className=" font-[400] capitalize">{value}</p>
+            <p className=" font-[400] capitalize" dangerouslySetInnerHTML={{__html: value}}/>
         </div>
     );
 }

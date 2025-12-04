@@ -11,6 +11,7 @@ import Modal from "../modal/modal";
 import { apiRequest } from "@/app/utils/apiRequest";
 import { toast } from "react-toastify";
 import { ApiResponse } from "@/app/types/ApiRequest";
+import {toastError} from "@/app/lib/toast";
 
 export type RowData = {
   id: number;
@@ -58,10 +59,10 @@ const Table = <T,>({
         toast.success(response.data.message);
         setRefreshData(selectedId?.toString() || "");
       } else {
-        toast.error("something went wrong");
+        toastError("something went wrong");
       }
     } catch (error) {
-      toast.error("something went wrong");
+      toastError("something went wrong");
       console.error(error);
     }
   };

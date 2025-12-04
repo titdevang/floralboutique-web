@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import InputField from "@/app/components/common/fields/InputField";
 import ButtonLoder from "@/app/components/ui/loader/ButtonLoder";
 import {toast} from "react-toastify";
+import {toastError} from "@/app/lib/toast";
 
 type OTPVerifyProps = {
     length?: number;
@@ -123,7 +124,7 @@ export default function OTPVerify({
 
     const handleSubmit = async () => {
         if (!isComplete) {
-            toast.error("Please enter the full 6-digit code.");
+            toastError("Please enter the full 6-digit code.");
             return;
         }
         setIsLoading(true);
@@ -133,11 +134,11 @@ export default function OTPVerify({
                 toast.success("OTP verified successfully!");
                 onSuccess?.(currentOtp);
             } else {
-                toast.error("Invalid OTP. Please try again.");
+                toastError("Invalid OTP. Please try again.");
                 onFailure?.(currentOtp);
             }
         } catch (err) {
-            toast.error("Verification failed. Network or server error.");
+            toastError("Verification failed. Network or server error.");
             console.error(err);
             onFailure?.(currentOtp);
         } finally {

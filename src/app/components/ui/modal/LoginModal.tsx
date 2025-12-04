@@ -14,6 +14,7 @@ import PhoneInput from "@/app/components/common/fields/PhoneInput";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 import { getGuestToken } from "@/app/utils/cartToken";
 import Modal from "./modal";
+import {toastError} from "@/app/lib/toast";
 
 export default function LoginPage() {
     const [phone, setPhone] = useState("");
@@ -27,11 +28,11 @@ export default function LoginPage() {
     const handleRequestCode = async () => {
         setMessage("");
         if (!phone) {
-            toast.error("Mobile number is required.");
+            toastError("Mobile number is required.");
             return;
         }
         if (phone.length != 12) {
-            toast.error("Mobile number is not valid");
+            toastError("Mobile number is not valid");
             return;
         }
 
@@ -46,11 +47,11 @@ export default function LoginPage() {
                 setShowVerifyFlag(true);
                 toast.success(response.data.message);
             } else {
-                toast.error(response?.data.message);
+                toastError(response?.data.message);
             }
         } catch (err) {
             console.error(err);
-            toast.error("Something went wrong. Please try again.");
+            toastError("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -84,12 +85,12 @@ export default function LoginPage() {
                 setGuestUser(false);
                 return true;
             } else {
-                toast.error(response?.data.message);
+                toastError(response?.data.message);
                 return false;
             }
         } catch (err) {
             console.error(err);
-            toast.error("Something went wrong. Please try again.");
+            toastError("Something went wrong. Please try again.");
             return false;
         } finally {
             setLoading(false);

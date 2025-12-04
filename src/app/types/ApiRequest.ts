@@ -24,7 +24,7 @@ export interface ApiResponse {
   subCategory: subCategory[];
   minPrice: number;
   maxPrice: number;
-  data: Product[];
+  data: any;
   metaDescription: string;
   catDescription: string;
   faqs: accordionItem[];

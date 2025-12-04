@@ -9,6 +9,7 @@ import React, {
 import { apiRequest } from "../utils/apiRequest";
 import { toast } from "react-toastify";
 import { UserProfileData } from "../types/user";
+import {toastError} from "@/app/lib/toast";
 
 interface UserProfileState {
   userProfileData: UserProfileData | null;
@@ -43,7 +44,7 @@ export const UserProfileProvider: React.FC<UserProfileProviderProps> = ({
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
-        toast.error("Something went wrong!");
+        toastError("Something went wrong!");
         setUserProfileData(null);
       }
     };

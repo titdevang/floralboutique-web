@@ -31,8 +31,14 @@ export default function MainLayout({
       </div>
 
       {/*  add error by bg color*/}
-      <ToastContainer position="bottom-left" hideProgressBar autoClose={2000} transition={Slide} limit={5} theme="colored"
-/>
+      <ToastContainer
+          position="bottom-left"
+          hideProgressBar
+          autoClose={2000}
+          transition={Slide}
+          limit={5}
+          theme="colored"
+      />
 
       {isAuthenticated && <Footer />}
     </>

@@ -25,6 +25,7 @@ import SelectField from "@/app/components/common/fields/SelectField";
 import AddonsUI from "@/app/components/ui/modal/AddonsUI";
 import {AddonsSkeleton} from "@/app/components/ui/loader/AddonsSkeleton";
 import MobileImageSlider from "@/app/components/ui/ProductDetailMobileImageSlider";
+import {toastError} from "@/app/lib/toast";
 
 interface ProductProps {
     params: Promise<{ slug: string }>;
@@ -87,7 +88,7 @@ export default function ProductDetail({params}: ProductProps) {
                 }
             } catch (error) {
                 console.error(error);
-                toast.error("Something went wrong. Please try again.");
+                toastError("Something went wrong. Please try again.");
             }
         };
 
@@ -112,7 +113,7 @@ export default function ProductDetail({params}: ProductProps) {
             }
         } catch (error) {
             console.error(error);
-            toast.error("Something went wrong. Please try again.");
+            toastError("Something went wrong. Please try again.");
         }
     };
 
@@ -137,7 +138,7 @@ export default function ProductDetail({params}: ProductProps) {
             }
         } catch (error) {
             console.error(error);
-            toast.error("Something went wrong. Please try again.");
+            toastError("Something went wrong. Please try again.");
         }
     };
 

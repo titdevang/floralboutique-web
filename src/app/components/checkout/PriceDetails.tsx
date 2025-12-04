@@ -8,6 +8,9 @@ import {apiRequest} from "@/app/utils/apiRequest";
 import {toast} from "react-toastify";
 import Cookies from "js-cookie";
 import SvgIcon from "@/app/components/ui/SvgIcon";
+import {ApiResponse} from "@/app/types/ApiRequest";
+import {toastError} from "@/app/lib/toast";
+import {useAppContext} from "@/app/context/AppContext";
 
 const PriceDetails = () => {
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -16,7 +19,7 @@ const PriceDetails = () => {
     const {cartData, calculateTotal, deliveryChargeTotal, loading} = useCart();
     const {message, paymentMethod, senderDetails} = useCheckout()
     const varifyCartAddress = cartData.find(item => ((item.address as unknown as []).length == 0) || (!item.address));
-
+    const { setLoading } = useAppContext();
     const placeOrderPayload = {
         // cartIds: cartIds,
         message: message,
@@ -31,20 +34,24 @@ const PriceDetails = () => {
         }
 
         setSubmitLoading(true);
+        setLoading(true);
         try {
-            const response = await apiRequest("POST", "/orders/place", placeOrderPayload);
+            const response = await apiRequest<ApiResponse>("POST", "/orders/place", placeOrderPayload);
             if(response?.status == 200) {
-                const redirect = (response?.data as {data: { paymentUrl: string }})?.data?.paymentUrl;
-                Cookies.set("orderId", (response.data as {data: { orderId: string }})?.data?.orderId)
+                const redirect = response?.data?.data?.paymentUrl;
+                Cookies.set("orderId", response.data?.data?.orderId)
                 if (redirect) {
                     window.location.href = redirect;
                 }
                 toast.success('Order placed successfully');
+            } else {
+                toastError(response?.data?.message)
             }
         } catch (e) {
 
         } finally {
             setSubmitLoading(false);
+            setLoading(false);
         }
     }
 

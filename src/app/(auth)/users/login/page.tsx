@@ -13,6 +13,7 @@ import OTPVerify from "@/app/components/common/fields/OTPVerify";
 import PhoneInput from "@/app/components/common/fields/PhoneInput";
 import SvgIcon from "@/app/components/ui/SvgIcon";
 import { getGuestToken } from "@/app/utils/cartToken";
+import {toastError, toastSuccess} from "@/app/lib/toast";
 
 export default function LoginPage() {
     const [phone, setPhone] = useState("");
@@ -26,11 +27,11 @@ export default function LoginPage() {
     const handleRequestCode = async () => {
         setMessage("");
         if (!phone) {
-            toast.error("Mobile number is required.");
+            toastError("Mobile number is required.");
             return;
         }
         if (phone.length != 12) {
-            toast.error("Mobile number is not valid");
+            toastError("Mobile number is not valid");
             return;
         }
 
@@ -43,13 +44,13 @@ export default function LoginPage() {
             );
             if (response?.status == 200) {
                 setShowVerifyFlag(true);
-                toast.success(response.data.message);
+                toastSuccess(response.data.message);
             } else {
-                toast.error(response?.data.message);
+                toastError(response?.data.message);
             }
         } catch (err) {
             console.error(err);
-            toast.error("Something went wrong. Please try again.");
+            toastError("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -72,7 +73,7 @@ export default function LoginPage() {
             );
 
             if (response?.status === 201) {
-                toast.success(response.data.message);
+                toastSuccess(response.data.message);
                 const {user, token} = response.data;
 
                 login(token, user.name);
@@ -82,12 +83,12 @@ export default function LoginPage() {
                 router.push("/");
                 return true;
             } else {
-                toast.error(response?.data.message);
+                toastError(response?.data.message);
                 return false;
             }
         } catch (err) {
             console.error(err);
-            toast.error("Something went wrong. Please try again.");
+            toastError("Something went wrong. Please try again.");
             return false;
         } finally {
             setLoading(false);
